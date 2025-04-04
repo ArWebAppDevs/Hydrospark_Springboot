@@ -1,0 +1,1129 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Hydrospark - Contact Us</title>
+  <link rel="icon" type="image/png" th:href="'data:image/png;base64,' + ${session.img}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    :root {
+        --primary-color: #1a1a1a;
+        --secondary-color: #ff6b00;
+        --accent-color: #ffffff;
+        --background-color: #f5f5f5;
+        --highlight-color: #00c4b4;
+        --error-color: #ff4f4f;
+        --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        --text-muted: #666;
+        --header-height: 100px;
+        --blue-name: #007bff;
+        --mobile-header-height: 70px;
+    }
+
+    /* Header Styles */
+    header {
+        background: var(--accent-color);
+        padding: 20px 40px;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: var(--shadow);
+        min-height: var(--header-height);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #ffffff, #f0f4f8);
+    }
+
+    .header-container {
+        max-width: 1400px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-shrink: 0;
+        position: relative;
+    }
+
+    .logo img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+    .logo:hover img {
+        transform: scale(1.1);
+    }
+
+    .logo-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .logo-text a {
+        text-decoration: none;
+        color: var(--blue-name);
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .logo-text .hydrospark {
+        font-size: 2rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        text-shadow: 1px 1px 3px rgba(0, 123, 255, 0.3);
+    }
+
+    .logo-text .innovations {
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+        position: relative;
+        left: -10px;
+        text-transform: uppercase;
+    }
+
+    .search-nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-grow: 1;
+        justify-content: space-between;
+    }
+
+    .search-bar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 300px;
+        max-width: 100%;
+    }
+
+    .search-bar i {
+        position: absolute;
+        left: 15px;
+        color: var(--text-muted);
+        font-size: 1.2rem;
+    }
+
+    .search-bar input {
+        padding: 10px 15px 10px 40px;
+        border: none;
+        border-radius: 30px;
+        background: rgba(0, 123, 255, 0.1);
+        color: var(--primary-color);
+        font-size: 1rem;
+        width: 100%;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .search-bar input:focus {
+        background: rgba(0, 123, 255, 0.2);
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+        outline: none;
+    }
+
+    .search-bar input::placeholder {
+        color: var(--primary-color);
+        opacity: 0.7;
+    }
+
+    .hamburger {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        cursor: pointer;
+        display: none;
+        transition: transform 0.3s ease;
+        z-index: 1001;
+        padding: 10px;
+    }
+
+    .hamburger:hover {
+        transform: scale(1.1);
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .nav-btn {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        position: relative;
+        padding: 5px 10px;
+    }
+
+    .nav-btn::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 50%;
+        background: var(--secondary-color);
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+
+    .nav-btn:hover::after {
+        width: 100%;
+    }
+
+    .nav-btn:hover {
+        color: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    /* Body Styles */
+    body {
+        background: var(--background-color);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding-top: var(--header-height);
+    }
+
+    main {
+        flex: 1 0 auto;
+        padding: 40px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Main Content Styles */
+    .main-content {
+        background: var(--accent-color);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        padding: 40px;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .main-content h2 {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 30px;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2);
+        outline: none;
+    }
+
+    .error-message {
+        color: var(--error-color);
+        background: rgba(255, 79, 79, 0.1);
+        padding: 15px;
+        border-radius: 6px;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        background: var(--secondary-color);
+        color: var(--accent-color);
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-top: 10px;
+    }
+
+    button[type="submit"]:hover {
+        background: #e65c00;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+
+    /* Footer Styles */
+    footer {
+        background: var(--accent-color);
+        padding: 20px 20px;
+        color: var(--primary-color);
+        text-align: center;
+        box-shadow: var(--shadow);
+        background: linear-gradient(135deg, #ffffff, #f0f4f8);
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    footer .footer-content {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    footer h3 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: var(--blue-name);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 700;
+        text-shadow: 1px 1px 2px rgba(0, 123, 255, 0.2);
+    }
+
+    footer .contact-info {
+        margin: 10px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+        text-align: left;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    footer .contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    footer .contact-item i {
+        color: var(--secondary-color);
+        font-size: 1.1rem;
+        margin-top: 2px;
+        width: 18px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    footer .contact-item p {
+        margin: 0;
+        flex: 1;
+    }
+
+    footer .contact-item:hover {
+        color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+
+    footer .contact-item:hover i {
+        transform: scale(1.1);
+    }
+
+    footer a {
+        color: var(--highlight-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+        color: var(--secondary-color);
+    }
+
+    footer .social-links {
+        margin-top: 15px;
+    }
+
+    footer .social-links a {
+        margin: 0 10px;
+        font-size: 1.3rem;
+        color: var(--primary-color);
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    footer .social-links a:hover {
+        transform: scale(1.1);
+        color: var(--secondary-color);
+    }
+
+    footer .copyright {
+        margin-top: 10px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        :root {
+            --header-height: 80px;
+        }
+
+        header {
+            padding: 15px 20px;
+        }
+
+        .search-bar {
+            width: 200px;
+        }
+
+        .hamburger {
+            display: block;
+        }
+
+        .nav-buttons {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            position: absolute;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            z-index: 999;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-buttons.active {
+            display: flex;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        :root {
+            --header-height: var(--mobile-header-height);
+        }
+
+        header {
+            padding: 10px 15px;
+        }
+
+        .logo-text .hydrospark {
+            font-size: 1.5rem;
+        }
+
+        .logo-text .innovations {
+            font-size: 1rem;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .search-bar {
+            width: 180px;
+        }
+
+        .main-content {
+            padding: 25px 20px;
+        }
+
+        .main-content h2 {
+            font-size: 1.8rem;
+        }
+
+        .hamburger {
+            padding: 5px;
+            font-size: 1.3rem;
+        }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-container">
+    <div class="logo">
+      <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />
+      <div class="logo-text">
+        <a th:href="@{ / }" class="hydrospark">Hydrospark</a>
+        <a th:href="@{ / }" class="innovations">Innovations</a>
+      </div>
+    </div>
+    <div class="search-nav">
+      <form class="search-bar" action="/search" method="GET">
+        <i class="fas fa-search"></i>
+        <input type="text" name="query" placeholder="Search...">
+      </form>
+      <button class="hamburger" onclick="toggleMenu(event)">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="nav-buttons">
+        <a class="nav-btn" th:href="@{/}">Home</a>
+        <a class="nav-btn" th:href="@{/about}">About</a>
+        <div th:if="${session.employee != null}">
+          <a class="nav-btn" th:href="@{/admin}">Admin</a>
+          <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>
+          <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>
+        </div>
+        <div th:if="${session.employee == null and session.user != null}">
+          <a class="nav-btn" th:href="@{/profile}">Profile</a>
+          <a class="nav-btn" th:href="@{/logout}">Logout</a>
+        </div>
+        <div th:if="${session.employee == null and session.user == null}">
+          <a class="nav-btn" th:href="@{/signin}">Sign In</a>
+          <a class="nav-btn" th:href="@{/signup}">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="main-content">
+    <h2>Contact Us</h2>
+    <form th:action="@{/enquiry}" method="POST">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="Name" required placeholder="Enter your name">
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="Email" required placeholder="Enter your email">
+      </div>
+      <div class="form-group">
+        <label for="enquiry">Your Enquiry</label>
+        <textarea id="enquiry" name="Enquiry" required placeholder="Type your enquiry here" rows="5"></textarea>
+      </div>
+      <div th:if="${session.error}" class="error-message">
+        <p th:text="${session.error}"></p>
+      </div>
+      <div th:if="${error}" class="error-message">
+        <p th:text="${error}"></p>
+      </div>
+      <button type="submit">Submit Enquiry</button>
+    </form>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <h3>Hydrospark Innovations</h3>
+    <div class="contact-info">
+      <div class="contact-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <p>Sr. No. 101, Wadmukhwadi Road, Tapkir Nagar, Alandi Haveli, Pune - 412105</p>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-phone-alt"></i>
+        <p><a href="tel:+919156261672">+91 91562 61672</a> | <a href="tel:+918691937235">+91 86919 37235</a></p>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-envelope"></i>
+        <p><a href="mailto:sachin@hydrospark.org">sachin@hydrospark.org</a> | <a href="mailto:info@hydrospark.org">info@hydrospark.org</a></p>
+      </div>
+    </div>
+    <div class="social-links">
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+    <p class="copyright">© 2025 Hydrospark Innovations. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // Toggle menu functionality
+  function toggleMenu(event) {
+      event.stopPropagation();
+      const navButtons = document.querySelector('.nav-buttons');
+      navButtons.classList.toggle('active');
+
+      // Toggle hamburger icon between bars and times
+      const hamburgerIcon = document.querySelector('.hamburger i');
+      if (navButtons.classList.contains('active')) {
+          hamburgerIcon.classList.remove('fa-bars');
+          hamburgerIcon.classList.add('fa-times');
+      } else {
+          hamburgerIcon.classList.remove('fa-times');
+          hamburgerIcon.classList.add('fa-bars');
+      }
+  }
+
+  // Close menu when clicking anywhere
+  document.addEventListener('click', function() {
+      const navButtons = document.querySelector('.nav-buttons');
+      if (navButtons.classList.contains('active')) {
+          navButtons.classList.remove('active');
+          const hamburgerIcon = document.querySelector('.hamburger i');
+          hamburgerIcon.classList.remove('fa-times');
+          hamburgerIcon.classList.add('fa-bars');
+      }
+  });
+
+  // Prevent clicks inside menu from closing it
+  document.querySelector('.nav-buttons').addEventListener('click', function(event) {
+      event.stopPropagation();
+  });
+</script>
+</body>
+</html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">-->
+<!--  <title>Hydrospark - Enquiry</title>-->
+<!--  <link rel="icon" type="image/png" th:href="'data:image/png;base64,' + ${session.img}" />-->
+<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">-->
+<!--  <style>-->
+<!--    * {-->
+<!--        margin: 0;-->
+<!--        padding: 0;-->
+<!--        box-sizing: border-box;-->
+<!--        font-family: 'Segoe UI', sans-serif;-->
+<!--    }-->
+
+<!--    :root {-->
+<!--        &#45;&#45;primary-color: #1a1a1a;-->
+<!--        &#45;&#45;secondary-color: #ff6b00;-->
+<!--        &#45;&#45;accent-color: #ffffff;-->
+<!--        &#45;&#45;background-color: #f5f5f5;-->
+<!--        &#45;&#45;highlight-color: #00c4b4;-->
+<!--        &#45;&#45;error-color: #ff4f4f;-->
+<!--        &#45;&#45;shadow: 0 8px 25px rgba(0, 0, 0, 0.1);-->
+<!--        &#45;&#45;text-muted: #666;-->
+<!--        &#45;&#45;header-height: 90px;-->
+<!--    }-->
+
+<!--    body {-->
+<!--        background: var(&#45;&#45;background-color);-->
+<!--        min-height: 100vh;-->
+<!--        display: flex;-->
+<!--        flex-direction: column;-->
+<!--    }-->
+
+<!--    /* Header Styles */-->
+<!--    header {-->
+<!--        background: linear-gradient(135deg, var(&#45;&#45;primary-color), #333);-->
+<!--        padding: 20px 40px;-->
+<!--        position: fixed;-->
+<!--        width: 100%;-->
+<!--        top: 0;-->
+<!--        z-index: 1000;-->
+<!--        box-shadow: var(&#45;&#45;shadow);-->
+<!--        min-height: var(&#45;&#45;header-height);-->
+<!--    }-->
+
+<!--    .header-container {-->
+<!--        max-width: 1400px;-->
+<!--        margin: 0 auto;-->
+<!--        display: flex;-->
+<!--        justify-content: space-between;-->
+<!--        align-items: center;-->
+<!--        flex-wrap: wrap;-->
+<!--        gap: 15px;-->
+<!--    }-->
+
+<!--    .logo {-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        font-size: 1.9rem;-->
+<!--        font-weight: 600;-->
+<!--        letter-spacing: 1px;-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        gap: 10px;-->
+<!--        flex-shrink: 0;-->
+<!--    }-->
+
+<!--    .logo img {-->
+<!--        width: 50px;-->
+<!--        height: 50px;-->
+<!--        object-fit: contain;-->
+<!--    }-->
+
+<!--    .search-nav {-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        gap: 20px;-->
+<!--        flex-grow: 1;-->
+<!--        justify-content: space-between;-->
+<!--    }-->
+
+<!--    .search-bar {-->
+<!--        position: relative;-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        width: 250px;-->
+<!--        max-width: 100%;-->
+<!--        margin-left: 20px;-->
+<!--    }-->
+
+<!--    .search-bar i {-->
+<!--        position: absolute;-->
+<!--        left: 15px;-->
+<!--        color: var(&#45;&#45;text-muted);-->
+<!--        font-size: 1.2rem;-->
+<!--    }-->
+
+<!--    .search-bar input[type="text"] {-->
+<!--        padding: 10px 15px 10px 40px;-->
+<!--        border: none;-->
+<!--        border-radius: 30px;-->
+<!--        background: rgba(255, 255, 255, 0.1);-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        font-size: 1rem;-->
+<!--        width: 100%;-->
+<!--        transition: background 0.3s ease, box-shadow 0.3s ease;-->
+<!--    }-->
+
+<!--    .search-bar input[type="text"]:focus {-->
+<!--        background: rgba(255, 255, 255, 0.2);-->
+<!--        box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);-->
+<!--        outline: none;-->
+<!--    }-->
+
+<!--    .search-bar input[type="text"]::placeholder {-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        opacity: 0.7;-->
+<!--    }-->
+
+<!--    .hamburger {-->
+<!--        background: none;-->
+<!--        border: none;-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        font-size: 1.5rem;-->
+<!--        cursor: pointer;-->
+<!--        display: none;-->
+<!--        transition: transform 0.3s ease;-->
+<!--    }-->
+
+<!--    .hamburger:hover {-->
+<!--        transform: scale(1.1);-->
+<!--    }-->
+
+<!--    .nav-buttons {-->
+<!--        display: flex;-->
+<!--        gap: 10px;-->
+<!--        align-items: center;-->
+<!--    }-->
+
+<!--    .nav-btn {-->
+<!--        padding: 8px 20px;-->
+<!--        border: 2px solid var(&#45;&#45;secondary-color);-->
+<!--        border-radius: 20px;-->
+<!--        background: transparent;-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        font-weight: 600;-->
+<!--        text-transform: uppercase;-->
+<!--        letter-spacing: 1px;-->
+<!--        cursor: pointer;-->
+<!--        transition: all 0.3s ease;-->
+<!--        text-decoration: none;-->
+<!--        text-align: center;-->
+<!--    }-->
+
+<!--    .nav-btn:hover {-->
+<!--        background: var(&#45;&#45;secondary-color);-->
+<!--        transform: translateY(-2px);-->
+<!--        box-shadow: var(&#45;&#45;shadow);-->
+<!--    }-->
+
+<!--    /* Main Content */-->
+<!--    .main-content {-->
+<!--        flex: 1 0 auto;-->
+<!--        padding: calc(var(&#45;&#45;header-height) + 40px) 40px 40px 40px;-->
+<!--        display: flex;-->
+<!--        flex-direction: column;-->
+<!--        justify-content: center;-->
+<!--        align-items: center;-->
+<!--        transition: padding-top 0.3s ease;-->
+<!--    }-->
+
+<!--    .main-content h2 {-->
+<!--        font-size: 2rem;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        margin-bottom: 25px;-->
+<!--        font-weight: 700;-->
+<!--        text-align: center;-->
+<!--        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), var(&#45;&#45;highlight-color));-->
+<!--        -webkit-background-clip: text;-->
+<!--        -webkit-text-fill-color: transparent;-->
+<!--    }-->
+
+<!--    .main-content form {-->
+<!--        max-width: 450px;-->
+<!--        width: 100%;-->
+<!--        display: flex;-->
+<!--        flex-direction: column;-->
+<!--        gap: 20px;-->
+<!--    }-->
+
+<!--    .form-group {-->
+<!--        display: flex;-->
+<!--        flex-direction: column;-->
+<!--    }-->
+
+<!--    .form-group label {-->
+<!--        font-size: 1.1rem;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        margin-bottom: 8px;-->
+<!--        font-weight: 500;-->
+<!--    }-->
+
+<!--    .form-group input[type="text"],-->
+<!--    .form-group input[type="email"],-->
+<!--    .form-group textarea {-->
+<!--        width: 100%;-->
+<!--        padding: 12px 15px;-->
+<!--        border: 1px solid #e0e0e0;-->
+<!--        border-radius: 8px;-->
+<!--        font-size: 1rem;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        background: #fafafa;-->
+<!--        transition: border-color 0.3s ease, box-shadow 0.3s ease;-->
+<!--        resize: vertical;-->
+<!--    }-->
+
+<!--    .form-group input[type="text"]:focus,-->
+<!--    .form-group input[type="email"]:focus,-->
+<!--    .form-group textarea:focus {-->
+<!--        border-color: var(&#45;&#45;secondary-color);-->
+<!--        box-shadow: 0 0 8px rgba(255, 107, 0, 0.2);-->
+<!--        outline: none;-->
+<!--        background: #fff;-->
+<!--    }-->
+
+<!--    .form-group input[type="text"]::placeholder,-->
+<!--    .form-group input[type="email"]::placeholder,-->
+<!--    .form-group textarea::placeholder {-->
+<!--        color: #bbb;-->
+<!--    }-->
+
+<!--    .error-message {-->
+<!--        color: var(&#45;&#45;error-color);-->
+<!--        font-size: 1rem;-->
+<!--        padding: 12px;-->
+<!--        background: rgba(255, 79, 79, 0.1);-->
+<!--        border-radius: 8px;-->
+<!--        text-align: center;-->
+<!--        width: 100%;-->
+<!--    }-->
+
+<!--    .main-content button {-->
+<!--        padding: 12px 30px;-->
+<!--        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), #ff8c00);-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        border: none;-->
+<!--        border-radius: 50px;-->
+<!--        font-size: 1.1rem;-->
+<!--        font-weight: 600;-->
+<!--        cursor: pointer;-->
+<!--        transition: all 0.3s ease;-->
+<!--        width: 100%;-->
+<!--        max-width: 300px;-->
+<!--        align-self: center;-->
+<!--    }-->
+
+<!--    .main-content button:hover {-->
+<!--        background: linear-gradient(90deg, #e65c00, #ff6b00);-->
+<!--        transform: scale(1.02);-->
+<!--        box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);-->
+<!--    }-->
+
+<!--    /* Footer Styles */-->
+<!--    footer {-->
+<!--        background: linear-gradient(135deg, var(&#45;&#45;primary-color), #2c2c2c);-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        padding: 40px 20px;-->
+<!--        text-align: center;-->
+<!--        position: relative;-->
+<!--        overflow: hidden;-->
+<!--        flex-shrink: 0;-->
+<!--    }-->
+
+<!--    footer::before {-->
+<!--        content: '';-->
+<!--        position: absolute;-->
+<!--        top: -50%;-->
+<!--        left: -50%;-->
+<!--        width: 200%;-->
+<!--        height: 200%;-->
+<!--        background: radial-gradient(circle, rgba(255, 107, 0, 0.1) 0%, transparent 70%);-->
+<!--        animation: rotate 20s linear infinite;-->
+<!--        z-index: 0;-->
+<!--    }-->
+
+<!--    footer .footer-content {-->
+<!--        position: relative;-->
+<!--        z-index: 1;-->
+<!--        max-width: 800px;-->
+<!--        margin: 0 auto;-->
+<!--    }-->
+
+<!--    footer h3 {-->
+<!--        font-size: 1.8rem;-->
+<!--        margin-bottom: 20px;-->
+<!--        color: var(&#45;&#45;secondary-color);-->
+<!--        text-transform: uppercase;-->
+<!--        letter-spacing: 2px;-->
+<!--        text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);-->
+<!--    }-->
+
+<!--    footer p {-->
+<!--        font-size: 1rem;-->
+<!--        margin: 8px 0;-->
+<!--        color: #ddd;-->
+<!--    }-->
+
+<!--    footer a {-->
+<!--        color: var(&#45;&#45;highlight-color);-->
+<!--        text-decoration: none;-->
+<!--        transition: color 0.3s ease;-->
+<!--    }-->
+
+<!--    footer a:hover {-->
+<!--        color: var(&#45;&#45;secondary-color);-->
+<!--    }-->
+
+<!--    footer .social-links {-->
+<!--        margin-top: 20px;-->
+<!--    }-->
+
+<!--    footer .social-links a {-->
+<!--        margin: 0 10px;-->
+<!--        font-size: 1.5rem;-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        transition: transform 0.3s ease, color 0.3s ease;-->
+<!--    }-->
+
+<!--    footer .social-links a:hover {-->
+<!--        transform: scale(1.2);-->
+<!--        color: var(&#45;&#45;secondary-color);-->
+<!--    }-->
+
+<!--    @keyframes rotate {-->
+<!--        0% { transform: rotate(0deg); }-->
+<!--        100% { transform: rotate(360deg); }-->
+<!--    }-->
+
+<!--    /* Responsive Design */-->
+<!--    @media (max-width: 1024px) {-->
+<!--        :root { &#45;&#45;header-height: 80px; }-->
+<!--        header { padding: 15px 30px; }-->
+<!--        .search-bar { width: 200px; margin-left: 10px; }-->
+<!--        .main-content { padding: calc(var(&#45;&#45;header-height) + 30px) 30px 30px 30px; }-->
+<!--    }-->
+
+<!--    @media (max-width: 768px) {-->
+<!--        :root { &#45;&#45;header-height: 70px; }-->
+<!--        header { padding: 15px 20px; }-->
+<!--        .logo { font-size: 1.6rem; }-->
+<!--        .search-bar { width: 180px; }-->
+<!--        .hamburger { display: block; }-->
+<!--        .nav-buttons {-->
+<!--            display: none;-->
+<!--            flex-direction: column;-->
+<!--            width: 100%;-->
+<!--            gap: 10px;-->
+<!--            background: rgba(0, 0, 0, 0.9);-->
+<!--            padding: 15px;-->
+<!--            position: absolute;-->
+<!--            top: 100%;-->
+<!--            left: 0;-->
+<!--            right: 0;-->
+<!--            z-index: 999;-->
+<!--        }-->
+<!--        .nav-buttons.active { display: flex; }-->
+<!--        .main-content { padding: calc(var(&#45;&#45;header-height) + 20px) 20px 20px 20px; }-->
+<!--        .main-content h2 { font-size: 1.8rem; }-->
+<!--        .form-group label { font-size: 1rem; }-->
+<!--        .form-group input[type="text"],-->
+<!--        .form-group input[type="email"],-->
+<!--        .form-group textarea { padding: 10px 12px; font-size: 0.95rem; }-->
+<!--        .main-content button { padding: 10px 25px; font-size: 1rem; max-width: 250px; }-->
+<!--        .error-message { font-size: 0.9rem; padding: 10px; }-->
+<!--    }-->
+
+<!--    @media (max-width: 480px) {-->
+<!--        :root { &#45;&#45;header-height: 60px; }-->
+<!--        header { padding: 10px 15px; }-->
+<!--        .logo { font-size: 1.5rem; }-->
+<!--        .logo img { width: 40px; height: 40px; }-->
+<!--        .search-bar { width: 150px; margin-left: 5px; }-->
+<!--        .hamburger { font-size: 1.3rem; }-->
+<!--        .main-content { padding: calc(var(&#45;&#45;header-height) + 15px) 15px 15px 15px; }-->
+<!--        .main-content h2 { font-size: 1.6rem; margin-bottom: 20px; }-->
+<!--        .form-group label { font-size: 0.9rem; }-->
+<!--        .form-group input[type="text"],-->
+<!--        .form-group input[type="email"],-->
+<!--        .form-group textarea { padding: 8px 10px; font-size: 0.9rem; }-->
+<!--        .error-message { font-size: 0.9rem; padding: 8px; }-->
+<!--        .main-content button { padding: 10px 20px; font-size: 0.95rem; max-width: 200px; }-->
+<!--        footer h3 { font-size: 1.5rem; }-->
+<!--        footer p { font-size: 0.9rem; }-->
+<!--        footer .social-links a { font-size: 1.3rem; }-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--&lt;!&ndash; Header &ndash;&gt;-->
+<!--<header>-->
+<!--  <div class="header-container">-->
+<!--    <div class="logo">-->
+<!--      <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />-->
+<!--      <a th:href="@{ / }" style="text-decoration: none; color: white;">Hydrospark</a>-->
+<!--    </div>-->
+<!--    <div class="search-nav">-->
+<!--      <form class="search-bar" action="/search" method="GET">-->
+<!--        <i class="fas fa-search"></i>-->
+<!--        <input type="text" name="query" placeholder="Search...">-->
+<!--      </form>-->
+<!--      <button class="hamburger" onclick="toggleMenu()">-->
+<!--        <i class="fas fa-bars"></i>-->
+<!--      </button>-->
+<!--      <div class="nav-buttons">-->
+<!--        <a class="nav-btn" th:href="@{/}">Home</a>-->
+<!--        <a class="nav-btn" th:href="@{/about}">About</a>-->
+<!--        <div th:if="${session.employee != null}">-->
+<!--          <a class="nav-btn" th:href="@{/admin}">Admin</a>-->
+<!--          <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>-->
+<!--          <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>-->
+<!--        </div>-->
+<!--        <div th:if="${session.employee == null and session.user != null}">-->
+<!--          <a class="nav-btn" th:href="@{/profile}">Profile</a>-->
+<!--          <a class="nav-btn" th:href="@{/logout}">Logout</a>-->
+<!--        </div>-->
+<!--        <div th:if="${session.employee == null and session.user == null}">-->
+<!--          <a class="nav-btn" th:href="@{/signin}">Sign In</a>-->
+<!--          <a class="nav-btn" th:href="@{/signup}">Sign Up</a>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</header>-->
+
+<!--&lt;!&ndash; Main Content &ndash;&gt;-->
+<!--<div class="main-content">-->
+<!--  <h2>Contact Us</h2>-->
+<!--  <form th:action="@{/enquiry}" method="POST">-->
+<!--    <div class="form-group">-->
+<!--      <label for="name">Name</label>-->
+<!--      <input type="text" id="name" name="Name" required placeholder="Enter your name">-->
+<!--    </div>-->
+<!--    <div class="form-group">-->
+<!--      <label for="email">Email</label>-->
+<!--      <input type="email" id="email" name="Email" required placeholder="Enter your email">-->
+<!--    </div>-->
+<!--    <div class="form-group">-->
+<!--      <label for="enquiry">Your Enquiry</label>-->
+<!--      <textarea id="enquiry" name="Enquiry" required placeholder="Type your enquiry here" rows="5"></textarea>-->
+<!--    </div>-->
+<!--    <div th:if="${session.error}" class="error-message">-->
+<!--      <p th:text="${session.error}"></p>-->
+<!--    </div>-->
+<!--    <div th:if="${error}" class="error-message">-->
+<!--      <p th:text="${error}"></p>-->
+<!--    </div>-->
+<!--    <button type="submit">Submit Enquiry</button>-->
+<!--  </form>-->
+<!--</div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Footer &ndash;&gt;-->
+<!--<footer>-->
+<!--  <div class="footer-content">-->
+<!--    <h3>Hydrospark Innovations</h3>-->
+<!--    <p>Address: Sr. No. 101, Wadmukhwadi Road, Tapkir Nagar, Khadi Machine Road, Near Apulki Hotel Pimpri Chinchawad, Alandi Haveli, Pune - 412105</p>-->
+<!--    <p>Mob No: +91 9156261672 / +91 8691937235</p>-->
+<!--    <p>Email: <a href="mailto:sachin@hydrospark.org">sachin@hydrospark.org</a> / <a href="mailto:info@hydrospark.org">info@hydrospark.org</a></p>-->
+<!--    <div class="social-links">-->
+<!--      <a href="#"><i class="fab fa-facebook-f"></i></a>-->
+<!--      <a href="#"><i class="fab fa-twitter"></i></a>-->
+<!--      <a href="#"><i class="fab fa-linkedin-in"></i></a>-->
+<!--      <a href="#"><i class="fab fa-instagram"></i></a>-->
+<!--    </div>-->
+<!--    <p>© 2025 Hydrospark Innovations. All rights reserved.</p>-->
+<!--  </div>-->
+<!--</footer>-->
+
+<!--<script>-->
+<!--  function toggleMenu() {-->
+<!--      const navButtons = document.querySelector('.nav-buttons');-->
+<!--      navButtons.classList.toggle('active');-->
+<!--      adjustContentPadding();-->
+<!--  }-->
+
+<!--  function adjustContentPadding() {-->
+<!--      const mainContent = document.querySelector('.main-content');-->
+<!--      const header = document.querySelector('header');-->
+<!--      const navButtons = document.querySelector('.nav-buttons');-->
+<!--      const headerHeight = header.offsetHeight;-->
+
+<!--      if (navButtons.classList.contains('active') && window.innerWidth <= 768) {-->
+<!--          const navHeight = navButtons.offsetHeight;-->
+<!--          mainContent.style.paddingTop = `${headerHeight + navHeight + 20}px`;-->
+<!--      } else {-->
+<!--          mainContent.style.paddingTop = `${headerHeight + 40}px`;-->
+<!--      }-->
+<!--  }-->
+
+<!--  window.addEventListener('load', adjustContentPadding);-->
+<!--  window.addEventListener('resize', adjustContentPadding);-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->

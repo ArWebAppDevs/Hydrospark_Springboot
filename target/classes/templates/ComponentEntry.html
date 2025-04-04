@@ -1,0 +1,3211 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Hydrospark - Admin</title>
+  <link rel="icon" type="image/png" th:href="@{'data:image/png;base64,' + ${session.img}}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    :root {
+        --primary-color: #1a1a1a;
+        --secondary-color: #ff6b00;
+        --accent-color: #ffffff;
+        --background-color: #f5f5f5;
+        --highlight-color: #00c4b4;
+        --error-color: #ff4f4f;
+        --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        --text-muted: #666;
+        --header-height: 90px;
+        --sidebar-width: 300px;
+        --sidebar-bg: #000000;
+    }
+
+    header {
+        background: linear-gradient(135deg, var(--primary-color), #333);
+        padding: 20px 40px;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: var(--shadow);
+        height: var(--header-height);
+    }
+
+    .header-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .logo {
+        color: var(--accent-color);
+        font-size: 1.9rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .logo img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+    }
+
+    .nav-toggle {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .hamburger {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--accent-color);
+        font-size: 1.5rem;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .hamburger:hover {
+        transform: scale(1.1);
+        background: var(--secondary-color);
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .nav-btn {
+        padding: 8px 20px;
+        border: 2px solid var(--secondary-color);
+        border-radius: 20px;
+        background: transparent;
+        color: var(--accent-color);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+
+    body {
+        background: var(--background-color);
+        margin: 0;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .page-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .container {
+        display: flex;
+        padding-top: var(--header-height);
+        flex: 1;
+        width: 100%;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        width: var(--sidebar-width);
+        height: calc(100vh - var(--header-height));
+        background: var(--sidebar-bg);
+        padding: 20px;
+        z-index: 999;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar.visible {
+        transform: translateX(0);
+    }
+
+    .sidebar a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: var(--accent-color);
+        font-size: 1.1rem;
+        padding: 15px 20px;
+        margin: 8px 0;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar a:hover {
+        background: var(--secondary-color);
+        transform: translateX(5px);
+    }
+
+    .sidebar a.active {
+        background: var(--highlight-color);
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .sidebar a i {
+        margin-right: 12px;
+        font-size: 1.2rem;
+    }
+
+    .main-content {
+        padding: 40px;
+        background: var(--background-color);
+        transition: margin-left 0.3s ease;
+        width: 100%;
+        margin-left: 0;
+        flex: 1;
+    }
+
+    .sidebar-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+        position: fixed;
+        top: calc(var(--header-height) + 20px);
+        left: 20px;
+        z-index: 1001;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-toggle:hover {
+        transform: scale(1.1);
+        color: var(--secondary-color);
+    }
+
+    .form-content {
+        padding-top: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .component-form-container {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: var(--shadow);
+    }
+
+    .component-form-container h4 {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 25px;
+        font-weight: 700;
+        text-align: center;
+        background: linear-gradient(90deg, var(--secondary-color), var(--highlight-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        margin-bottom: 25px;
+    }
+
+    .form-row > div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-row label {
+        font-size: 1.1rem;
+        color: var(--primary-color);
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .form-row input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-row input:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2);
+        outline: none;
+    }
+
+    .component-entry {
+        background: #f9f9f9;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .remove-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--error-color);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 5px 10px;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+
+    .remove-btn:hover {
+        background: #e04040;
+    }
+
+    .error-message {
+        color: var(--error-color);
+        font-size: 1.1rem;
+        padding: 15px;
+        background: rgba(255, 79, 79, 0.1);
+        border-radius: 10px;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+
+    .button-group button,
+    .button-group a {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    #addEntryBtn {
+        background: var(--highlight-color);
+        color: var(--primary-color);
+        border: none;
+    }
+
+    #addEntryBtn:hover {
+        background: #00b3a3;
+    }
+
+    .button-group button[type="submit"] {
+        background: linear-gradient(90deg, var(--secondary-color), #ff8c00);
+        color: var(--accent-color);
+        border: none;
+    }
+
+    .button-group button[type="submit"]:hover {
+        background: linear-gradient(90deg, #e65c00, #ff6b00);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+    }
+
+    .skip-btn {
+        background: transparent;
+        color: var(--secondary-color);
+        border: 2px solid var(--secondary-color);
+    }
+
+    .skip-btn:hover {
+        background: var(--secondary-color);
+        color: var(--accent-color);
+    }
+
+    @media (min-width: 769px) {
+        .sidebar {
+            transform: translateX(0);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+
+        .sidebar-toggle,
+        .hamburger {
+            display: none !important;
+        }
+
+        .nav-buttons {
+            display: flex !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        :root {
+            --header-height: 70px;
+            --sidebar-width: 260px;
+        }
+
+        header {
+            padding: 15px 20px;
+        }
+
+        .hamburger {
+            display: flex;
+        }
+
+        .nav-buttons {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+
+        .nav-buttons.active {
+            display: flex;
+        }
+
+        .sidebar {
+            transform: translateX(-100%);
+            display: block;
+        }
+
+        .sidebar-toggle {
+            display: flex;
+        }
+
+        .sidebar.visible + .main-content .sidebar-toggle {
+            display: none;
+        }
+
+        .main-content {
+            padding: 25px;
+        }
+
+        .sidebar.visible + .main-content {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .button-group {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .button-group button,
+        .button-group a {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        :root {
+            --header-height: 60px;
+            --sidebar-width: 240px;
+        }
+
+        header {
+            padding: 10px 15px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .sidebar-toggle {
+            top: calc(var(--header-height) + 10px);
+            left: 10px;
+        }
+
+        .component-form-container h4 {
+            font-size: 1.7rem;
+        }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrapper">
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <img th:src="@{'data:image/png;base64,' + ${session.img}}" alt="Hydrospark">
+        <a th:href="@{/}" style="text-decoration: none; color: white;">Hydrospark</a>
+      </div>
+      <div class="nav-toggle">
+        <button class="hamburger" onclick="toggleNav(event)">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-buttons">
+          <a class="nav-btn" th:href="@{/}">Home</a>
+          <a class="nav-btn" th:href="@{/about}">About</a>
+          <a class="nav-btn" th:href="@{/enquiry}">Enquiry</a>
+          <div th:if="${session.employee != null}">
+            <a class="nav-btn" th:href="@{/admin}">Admin</a>
+            <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>
+            <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>
+          </div>
+          <div th:if="${session.employee == null and session.user != null}">
+            <a class="nav-btn" th:href="@{/profile}">Profile</a>
+            <a class="nav-btn" th:href="@{/logout}">Logout</a>
+          </div>
+          <div th:if="${session.employee == null and session.user == null}">
+            <a class="nav-btn" th:href="@{/signin}">Sign In</a>
+            <a class="nav-btn" th:href="@{/signup}">Sign Up</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="sidebar" th:classappend="${session.employee != null} ? '' : 'hidden'">
+      <a th:href="@{/admin/addEmployee}" >
+        <i class="fas fa-user-plus"></i> Add Employee
+      </a>
+      <a th:href="@{/admin/removeEmployee}">
+        <i class="fas fa-user-minus"></i> Remove Employee
+      </a>
+      <a th:href="@{/admin/addProduct}" >
+        <i class="fas fa-box-open"></i> Add Product
+      </a>
+      <a th:href="@{/admin/products}"><i class="fas fa-th-list"></i> All Products
+      </a>
+      <a th:href="@{/admin/showvisited}"> <i class="fas fa-eye"></i> Show Who Visited
+      </a>
+      <a class="active" > <i class="fas fa-eye"></i> Component Entry
+      </a>
+    </div>
+
+    <div class="main-content">
+      <button class="sidebar-toggle" th:if="${session.employee != null}" onclick="toggleSidebar(event)">
+        <i class="fas fa-list"></i>
+      </button>
+      <div class="form-content">
+        <div class="component-form-container">
+          <form method="post" th:action="@{'/admin/componentEntry/' + ${session.subprodId}}" id="componentForm">
+            <h4>Component Entry</h4>
+
+            <div id="componentEntries">
+              <div class="component-entry">
+                <div class="form-row">
+                  <div>
+                    <label for="partNo">Part No</label>
+                    <input type="text" id="partNo" name="partNo[]" required>
+                  </div>
+                  <div>
+                    <label for="hoseSizeD">Hose Size D</label>
+                    <input type="text" id="hoseSizeD" name="hoseSizeD[]" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div>
+                    <label for="bspThreadSizeD">BSP 'P' Thread Size D</label>
+                    <input type="text" id="bspThreadSizeD" name="bspThreadSizeD[]" required>
+                  </div>
+                  <div>
+                    <label for="a">A</label>
+                    <input type="text" id="a" name="a[]" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div>
+                    <label for="b">B</label>
+                    <input type="text" id="b" name="b[]" required>
+                  </div>
+                  <div>
+                    <label for="c">C</label>
+                    <input type="text" id="c" name="c[]" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div>
+                    <label for="e">E</label>
+                    <input type="text" id="e" name="e[]" required>
+                  </div>
+                  <div>
+                    <label for="f">F</label>
+                    <input type="text" id="f" name="f[]" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div>
+                    <label for="afHex">A/F HEX</label>
+                    <input type="text" id="afHex" name="afHex[]" required>
+                  </div>
+                </div>
+                <button type="button" class="remove-btn" onclick="removeEntry(this)">Remove</button>
+              </div>
+            </div>
+
+            <div th:if="${error}" class="error-message">
+              <p th:text="${error}"></p>
+            </div>
+
+            <div class="button-group">
+              <button type="button" id="addEntryBtn">Add Another Component</button>
+              <button type="submit">Submit</button>
+              <a th:href="@{/admin/products}" class="skip-btn">Skip</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Initialize sidebar state based on screen size
+  document.addEventListener('DOMContentLoaded', function() {
+      const sidebar = document.querySelector('.sidebar');
+      if (sidebar && window.innerWidth <= 768) {
+          sidebar.classList.remove('visible');
+      } else if (sidebar) {
+          sidebar.classList.add('visible');
+      }
+
+      // Add component entry functionality
+      document.getElementById('addEntryBtn').addEventListener('click', function() {
+          const componentEntries = document.getElementById('componentEntries');
+          const newEntry = componentEntries.firstElementChild.cloneNode(true);
+
+          // Clear all input values in the new entry
+          const inputs = newEntry.querySelectorAll('input');
+          inputs.forEach(input => input.value = '');
+
+          componentEntries.appendChild(newEntry);
+      });
+  });
+
+  function removeEntry(button) {
+      const entries = document.getElementById('componentEntries');
+      if (entries.children.length > 1) {
+          button.parentElement.remove();
+      } else {
+          alert("You need at least one component entry.");
+      }
+  }
+
+  function toggleNav(event) {
+      event.stopPropagation();
+      const navButtons = document.querySelector('.nav-buttons');
+      const sidebar = document.querySelector('.sidebar');
+
+      if (sidebar && sidebar.classList.contains('visible') && window.innerWidth <= 768) {
+          sidebar.classList.remove('visible');
+      }
+
+      if (navButtons) {
+          navButtons.classList.toggle('active');
+      }
+  }
+
+  function toggleSidebar(event) {
+      event.stopPropagation();
+      const sidebar = document.querySelector('.sidebar');
+      const navButtons = document.querySelector('.nav-buttons');
+
+      if (navButtons && navButtons.classList.contains('active')) {
+          navButtons.classList.remove('active');
+      }
+
+      if (sidebar) {
+          sidebar.classList.toggle('visible');
+      }
+  }
+
+  document.addEventListener('click', function(event) {
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarToggle = document.querySelector('.sidebar-toggle');
+      const navButtons = document.querySelector('.nav-buttons');
+      const hamburger = document.querySelector('.hamburger');
+
+      const isClickInsideSidebar = sidebar ? sidebar.contains(event.target) : false;
+      const isClickOnSidebarToggle = sidebarToggle ? sidebarToggle.contains(event.target) : false;
+      const isClickInsideNavButtons = navButtons ? navButtons.contains(event.target) : false;
+      const isClickOnHamburger = hamburger ? hamburger.contains(event.target) : false;
+
+      if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('visible') &&
+          !isClickInsideSidebar && !isClickOnSidebarToggle) {
+          sidebar.classList.remove('visible');
+      }
+
+      if (navButtons && navButtons.classList.contains('active') &&
+          !isClickInsideNavButtons && !isClickOnHamburger) {
+          navButtons.classList.remove('active');
+      }
+  });
+
+  window.addEventListener('resize', function() {
+      const sidebar = document.querySelector('.sidebar');
+      const navButtons = document.querySelector('.nav-buttons');
+
+      if (sidebar) {
+          if (window.innerWidth > 768) {
+              sidebar.classList.add('visible');
+              if (navButtons) {
+                  navButtons.classList.remove('active');
+              }
+          } else {
+              sidebar.classList.remove('visible');
+              if (navButtons) {
+                  navButtons.classList.remove('active');
+              }
+          }
+      }
+  });
+</script>
+</body>
+</html>
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">-->
+<!--  <title>Hydrospark - Admin</title>-->
+<!--  <link rel="icon" type="image/png" th:href="'data:image/png;base64,' + ${session.img}" />-->
+<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">-->
+<!--  <style>-->
+<!--    * {-->
+<!--        margin: 0;-->
+<!--        padding: 0;-->
+<!--        box-sizing: border-box;-->
+<!--        font-family: 'Segoe UI', sans-serif;-->
+<!--    }-->
+
+<!--    :root {-->
+<!--        &#45;&#45;primary-color: #1a1a1a;-->
+<!--        &#45;&#45;secondary-color: #ff6b00;-->
+<!--        &#45;&#45;accent-color: #ffffff;-->
+<!--        &#45;&#45;background-color: #f5f5f5;-->
+<!--        &#45;&#45;highlight-color: #00c4b4;-->
+<!--        &#45;&#45;error-color: #ff4f4f;-->
+<!--        &#45;&#45;shadow: 0 8px 25px rgba(0, 0, 0, 0.1);-->
+<!--        &#45;&#45;text-muted: #666;-->
+<!--        &#45;&#45;header-height: 90px;-->
+<!--        &#45;&#45;sidebar-width: 300px;-->
+<!--    }-->
+
+<!--    header {-->
+<!--        background: linear-gradient(135deg, var(&#45;&#45;primary-color), #333);-->
+<!--        padding: 20px 40px;-->
+<!--        position: fixed;-->
+<!--        width: 100%;-->
+<!--        top: 0;-->
+<!--        z-index: 1000;-->
+<!--        box-shadow: var(&#45;&#45;shadow);-->
+<!--        height: var(&#45;&#45;header-height);-->
+<!--    }-->
+
+<!--    .header-container {-->
+<!--        max-width: 1400px;-->
+<!--        margin: 0 auto;-->
+<!--        display: flex;-->
+<!--        justify-content: space-between;-->
+<!--        align-items: center;-->
+<!--        flex-wrap: wrap;-->
+<!--        gap: 15px;-->
+<!--    }-->
+
+<!--    .logo {-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        font-size: 1.9rem;-->
+<!--        font-weight: 600;-->
+<!--        letter-spacing: 1px;-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        gap: 10px;-->
+<!--        flex-shrink: 0;-->
+<!--    }-->
+
+<!--    .logo img {-->
+<!--        width: 50px;-->
+<!--        height: 50px;-->
+<!--        object-fit: contain;-->
+<!--    }-->
+
+<!--    .nav-toggle {-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        gap: 20px;-->
+<!--    }-->
+
+<!--    .hamburger {-->
+<!--        background: none;-->
+<!--        border: none;-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        font-size: 1.5rem;-->
+<!--        cursor: pointer;-->
+<!--        width: 40px;-->
+<!--        height: 40px;-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        justify-content: center;-->
+<!--        transition: transform 0.3s ease, background 0.3s ease;-->
+<!--    }-->
+
+<!--    .hamburger:hover {-->
+<!--        transform: scale(1.1);-->
+<!--        background: var(&#45;&#45;secondary-color);-->
+<!--    }-->
+
+<!--    .nav-buttons {-->
+<!--        display: flex;-->
+<!--        gap: 10px;-->
+<!--        align-items: center;-->
+<!--    }-->
+
+<!--    .nav-btn {-->
+<!--        padding: 8px 20px;-->
+<!--        border: 2px solid var(&#45;&#45;secondary-color);-->
+<!--        border-radius: 20px;-->
+<!--        background: transparent;-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        font-weight: 600;-->
+<!--        text-transform: uppercase;-->
+<!--        letter-spacing: 1px;-->
+<!--        text-decoration: none;-->
+<!--        text-align: center;-->
+<!--        cursor: pointer;-->
+<!--        transition: all 0.3s ease;-->
+<!--    }-->
+
+<!--    .nav-btn:hover {-->
+<!--        background: var(&#45;&#45;secondary-color);-->
+<!--        transform: translateY(-2px);-->
+<!--        box-shadow: var(&#45;&#45;shadow);-->
+<!--    }-->
+
+<!--    body {-->
+<!--        background: var(&#45;&#45;background-color);-->
+<!--        margin: 0;-->
+<!--        overflow-x: hidden;-->
+<!--    }-->
+
+<!--    .page-wrapper {-->
+<!--        display: flex;-->
+<!--        flex-direction: column;-->
+<!--        min-height: 100vh;-->
+<!--    }-->
+
+<!--    .container {-->
+<!--        display: flex;-->
+<!--        padding-top: var(&#45;&#45;header-height);-->
+<!--        flex: 1 0 auto;-->
+<!--    }-->
+
+<!--    .sidebar {-->
+<!--        position: fixed;-->
+<!--        top: var(&#45;&#45;header-height);-->
+<!--        left: 0;-->
+<!--        width: var(&#45;&#45;sidebar-width);-->
+<!--        background: var(&#45;&#45;primary-color);-->
+<!--        padding: 20px;-->
+<!--        z-index: 999;-->
+<!--        overflow-y: auto;-->
+<!--        transition: transform 0.3s ease;-->
+<!--        transform: translateX(-100%);-->
+<!--    }-->
+
+<!--    .sidebar.visible {-->
+<!--        transform: translateX(0);-->
+<!--    }-->
+
+<!--    .sidebar a {-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        text-decoration: none;-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        font-size: 1.1rem;-->
+<!--        padding: 15px 20px;-->
+<!--        margin: 8px 0;-->
+<!--        border-radius: 12px;-->
+<!--        transition: all 0.3s ease;-->
+<!--        background: rgba(255, 255, 255, 0.05);-->
+<!--    }-->
+
+<!--    .sidebar a:hover {-->
+<!--        background: var(&#45;&#45;highlight-color);-->
+<!--        transform: translateX(10px);-->
+<!--    }-->
+
+<!--    .sidebar a i {-->
+<!--        margin-right: 12px;-->
+<!--        font-size: 1.2rem;-->
+<!--    }-->
+
+<!--    .sidebar a.active {-->
+<!--        background: var(&#45;&#45;highlight-color);-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        font-weight: 600;-->
+<!--    }-->
+
+<!--    .main-content {-->
+<!--        flex: 1;-->
+<!--        padding: 40px;-->
+<!--        background: var(&#45;&#45;background-color);-->
+<!--        transition: margin-left 0.3s ease;-->
+<!--        width: 100%;-->
+<!--        margin-left: 0;-->
+<!--    }-->
+
+<!--    .sidebar.visible + .main-content {-->
+<!--        margin-left: var(&#45;&#45;sidebar-width);-->
+<!--    }-->
+
+<!--    .sidebar-toggle {-->
+<!--        background: none;-->
+<!--        border: none;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        font-size: 1.5rem;-->
+<!--        cursor: pointer;-->
+<!--        width: 40px;-->
+<!--        height: 40px;-->
+<!--        display: none;-->
+<!--        align-items: center;-->
+<!--        justify-content: center;-->
+<!--        transition: transform 0.3s ease;-->
+<!--        margin-bottom: 20px;-->
+<!--    }-->
+
+<!--    .sidebar-toggle:hover {-->
+<!--        transform: scale(1.1);-->
+<!--        color: var(&#45;&#45;secondary-color);-->
+<!--    }-->
+
+<!--    .form-content {-->
+<!--        padding-top: 20px;-->
+<!--        max-width: 1000px;-->
+<!--        margin: 0 auto;-->
+<!--    }-->
+
+<!--    .form-content h4 {-->
+<!--        font-size: 2rem;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        margin-bottom: 25px;-->
+<!--        font-weight: 700;-->
+<!--        text-align: center;-->
+<!--        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), var(&#45;&#45;highlight-color));-->
+<!--        -webkit-background-clip: text;-->
+<!--        -webkit-text-fill-color: transparent;-->
+<!--    }-->
+
+<!--    .form-group {-->
+<!--        margin-bottom: 0;-->
+<!--    }-->
+
+<!--    .form-group.full-width {-->
+<!--        grid-column: 1 / -1;-->
+<!--    }-->
+
+<!--    .form-group label {-->
+<!--        display: block;-->
+<!--        font-size: 1.2rem;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        margin-bottom: 10px;-->
+<!--        font-weight: 600;-->
+<!--    }-->
+
+<!--    .form-group input[type="text"],-->
+<!--    .form-group input[type="number"],-->
+<!--    .form-group textarea,-->
+<!--    .form-group input[type="file"] {-->
+<!--        width: 100%;-->
+<!--        padding: 14px 16px;-->
+<!--        border: none;-->
+<!--        border-radius: 10px;-->
+<!--        background: #f0f0f0;-->
+<!--        font-size: 1rem;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        transition: background 0.3s ease, box-shadow 0.3s ease;-->
+<!--        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);-->
+<!--    }-->
+
+<!--    .form-group textarea {-->
+<!--        min-height: 100px;-->
+<!--        resize: vertical;-->
+<!--    }-->
+
+<!--    .form-group input[type="file"] {-->
+<!--        padding: 10px 16px;-->
+<!--    }-->
+
+<!--    .form-group input[type="text"]:focus,-->
+<!--    .form-group input[type="number"]:focus,-->
+<!--    .form-group textarea:focus,-->
+<!--    .form-group input[type="file"]:focus {-->
+<!--        background: #fff;-->
+<!--        box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);-->
+<!--        outline: none;-->
+<!--    }-->
+
+<!--    .form-group input[type="text"]::placeholder,-->
+<!--    .form-group input[type="number"]::placeholder,-->
+<!--    .form-group textarea::placeholder {-->
+<!--        color: #999;-->
+<!--    }-->
+
+<!--    .error-message {-->
+<!--        color: var(&#45;&#45;error-color);-->
+<!--        font-size: 1.1rem;-->
+<!--        padding: 15px;-->
+<!--        background: rgba(255, 79, 79, 0.1);-->
+<!--        border-radius: 10px;-->
+<!--        margin-bottom: 25px;-->
+<!--        text-align: center;-->
+<!--        max-width: 500px;-->
+<!--        margin-left: auto;-->
+<!--        margin-right: auto;-->
+<!--    }-->
+
+<!--    .form-content button {-->
+<!--        padding: 14px 30px;-->
+<!--        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), #ff8c00);-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        border: none;-->
+<!--        border-radius: 50px;-->
+<!--        font-size: 1.2rem;-->
+<!--        font-weight: 600;-->
+<!--        cursor: pointer;-->
+<!--        transition: all 0.3s ease;-->
+<!--        width: 100%;-->
+<!--        max-width: 500px;-->
+<!--        display: block;-->
+<!--        margin: 0 auto;-->
+<!--    }-->
+
+<!--    .form-content button:hover {-->
+<!--        background: linear-gradient(90deg, #e65c00, #ff6b00);-->
+<!--        transform: scale(1.03);-->
+<!--        box-shadow: 0 5px 15px rgba(255, 107, 0, 0.4);-->
+<!--    }-->
+
+<!--    .radio-group {-->
+<!--        display: flex;-->
+<!--        flex-wrap: wrap;-->
+<!--        gap: 20px;-->
+<!--    }-->
+
+<!--    .radio-group div {-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        gap: 10px;-->
+<!--    }-->
+
+<!--    .radio-group input[type="radio"] {-->
+<!--        margin: 0;-->
+<!--        accent-color: var(&#45;&#45;secondary-color);-->
+<!--    }-->
+
+<!--    .radio-group label {-->
+<!--        font-size: 1rem;-->
+<!--        margin-bottom: 0;-->
+<!--        font-weight: 400;-->
+<!--    }-->
+
+<!--    .dashboard-card {-->
+<!--        background: #fff;-->
+<!--        padding: 30px;-->
+<!--        border-radius: 15px;-->
+<!--        box-shadow: var(&#45;&#45;shadow);-->
+<!--        max-width: 600px;-->
+<!--        margin: 0 auto;-->
+<!--    }-->
+
+<!--    .dashboard-card p {-->
+<!--        color: var(&#45;&#45;text-muted);-->
+<!--        font-size: 1.1rem;-->
+<!--        line-height: 1.6;-->
+<!--        text-align: center;-->
+<!--    }-->
+
+<!--    .dashboard-card span {-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        font-weight: 600;-->
+<!--    }-->
+
+<!--    .dashboard-card strong {-->
+<!--        color: var(&#45;&#45;secondary-color);-->
+<!--    }-->
+
+<!--    .product-table {-->
+<!--        max-width: 1000px;-->
+<!--        margin: 0 auto;-->
+<!--    }-->
+
+<!--    .product-table h2 {-->
+<!--        font-size: 2.5rem;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        margin-bottom: 30px;-->
+<!--        text-align: center;-->
+<!--        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), var(&#45;&#45;highlight-color));-->
+<!--        -webkit-background-clip: text;-->
+<!--        -webkit-text-fill-color: transparent;-->
+<!--    }-->
+
+<!--    .product-table h3 {-->
+<!--        font-size: 1.5rem;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        margin-bottom: 15px;-->
+<!--        margin-top: 20px;-->
+<!--    }-->
+
+<!--    .product-table form {-->
+<!--        display: flex;-->
+<!--        gap: 10px;-->
+<!--        margin-bottom: 20px;-->
+<!--    }-->
+
+<!--    .product-table input[type="text"] {-->
+<!--        flex: 1;-->
+<!--        padding: 12px 16px;-->
+<!--        border: none;-->
+<!--        border-radius: 10px;-->
+<!--        background: #f0f0f0;-->
+<!--        font-size: 1rem;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);-->
+<!--    }-->
+
+<!--    .product-table input[type="text"]:focus {-->
+<!--        background: #fff;-->
+<!--        box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);-->
+<!--        outline: none;-->
+<!--    }-->
+
+<!--    .product-table button {-->
+<!--        padding: 12px 24px;-->
+<!--        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), #ff8c00);-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        border: none;-->
+<!--        border-radius: 50px;-->
+<!--        font-size: 1rem;-->
+<!--        font-weight: 600;-->
+<!--        cursor: pointer;-->
+<!--        transition: all 0.3s ease;-->
+<!--    }-->
+
+<!--    .product-table button:hover {-->
+<!--        background: linear-gradient(90deg, #e65c00, #ff6b00);-->
+<!--        transform: scale(1.03);-->
+<!--        box-shadow: 0 5px 15px rgba(255, 107, 0, 0.4);-->
+<!--    }-->
+
+<!--    .product-table table {-->
+<!--        width: 100%;-->
+<!--        border-collapse: collapse;-->
+<!--        background: #fff;-->
+<!--        box-shadow: var(&#45;&#45;shadow);-->
+<!--        border-radius: 10px;-->
+<!--        overflow: hidden;-->
+<!--    }-->
+
+<!--    .product-table th,-->
+<!--    .product-table td {-->
+<!--        padding: 15px;-->
+<!--        text-align: left;-->
+<!--        border-bottom: 1px solid #eee;-->
+<!--    }-->
+
+<!--    .product-table th {-->
+<!--        background: var(&#45;&#45;primary-color);-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        font-weight: 600;-->
+<!--    }-->
+
+<!--    .product-table td {-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--    }-->
+
+<!--    .product-table tr:hover {-->
+<!--        background: #f9f9f9;-->
+<!--    }-->
+
+<!--    .product-table td form {-->
+<!--        display: inline-block;-->
+<!--        margin-right: 10px;-->
+<!--    }-->
+
+<!--    .product-table td button {-->
+<!--        padding: 8px 16px;-->
+<!--        font-size: 0.9rem;-->
+<!--        width: auto;-->
+<!--        display: inline-block;-->
+<!--    }-->
+
+<!--    .no-results {-->
+<!--        text-align: center;-->
+<!--        color: var(&#45;&#45;text-muted);-->
+<!--        font-size: 1.1rem;-->
+<!--        padding: 20px;-->
+<!--        background: #fff;-->
+<!--        border-radius: 10px;-->
+<!--        box-shadow: var(&#45;&#45;shadow);-->
+<!--    }-->
+
+<!--    .component-entry {-->
+<!--        background: #fff;-->
+<!--        padding: 20px;-->
+<!--        border-radius: 10px;-->
+<!--        box-shadow: var(&#45;&#45;shadow);-->
+<!--        margin-bottom: 20px;-->
+<!--    }-->
+
+<!--    .form-row {-->
+<!--        display: flex;-->
+<!--        gap: 20px;-->
+<!--        margin-bottom: 15px;-->
+<!--        flex-wrap: wrap;-->
+<!--    }-->
+
+<!--    .form-row div {-->
+<!--        flex: 1;-->
+<!--        min-width: 200px;-->
+<!--    }-->
+
+<!--    .remove-btn {-->
+<!--        background: linear-gradient(90deg, var(&#45;&#45;error-color), #ff7878);-->
+<!--        margin-top: 10px;-->
+<!--        width: 100%;-->
+<!--        max-width: 200px;-->
+<!--    }-->
+
+<!--    .remove-btn:hover {-->
+<!--        background: linear-gradient(90deg, #e64545, var(&#45;&#45;error-color));-->
+<!--    }-->
+
+<!--    .button-group {-->
+<!--        display: flex;-->
+<!--        flex-wrap: nowrap;-->
+<!--        gap: 15px;-->
+<!--        justify-content: center;-->
+<!--        margin-top: 20px;-->
+<!--    }-->
+
+<!--    .button-group button,-->
+<!--    .button-group a {-->
+<!--        width: auto;-->
+<!--        max-width: none;-->
+<!--        padding: 14px 25px;-->
+<!--        flex-shrink: 0;-->
+<!--    }-->
+
+<!--    .skip-btn {-->
+<!--        padding: 14px 30px;-->
+<!--        background: transparent;-->
+<!--        color: var(&#45;&#45;secondary-color);-->
+<!--        border: 2px solid var(&#45;&#45;secondary-color);-->
+<!--        border-radius: 50px;-->
+<!--        font-size: 1.2rem;-->
+<!--        font-weight: 600;-->
+<!--        text-decoration: none;-->
+<!--        cursor: pointer;-->
+<!--        transition: all 0.3s ease;-->
+<!--        text-align: center;-->
+<!--    }-->
+
+<!--    .skip-btn:hover {-->
+<!--        background: var(&#45;&#45;secondary-color);-->
+<!--        color: var(&#45;&#45;accent-color);-->
+<!--        transform: scale(1.03);-->
+<!--        box-shadow: 0 5px 15px rgba(255, 107, 0, 0.4);-->
+<!--    }-->
+
+<!--    .component-form-container {-->
+<!--        background: #fff;-->
+<!--        padding: 30px;-->
+<!--        border-radius: 15px;-->
+<!--        box-shadow: var(&#45;&#45;shadow);-->
+<!--        width: 100%;-->
+<!--        max-width: 1000px;-->
+<!--        margin: 0 auto;-->
+<!--    }-->
+
+<!--    .component-form-container .form-row div {-->
+<!--        display: flex;-->
+<!--        flex-direction: column;-->
+<!--        flex: 1;-->
+<!--        min-width: 200px;-->
+<!--    }-->
+
+<!--    .component-form-container label {-->
+<!--        font-size: 1.1rem;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        margin-bottom: 8px;-->
+<!--        font-weight: 500;-->
+<!--    }-->
+
+<!--    .component-form-container input[type="text"] {-->
+<!--        width: 100%;-->
+<!--        padding: 12px 14px;-->
+<!--        border: none;-->
+<!--        border-radius: 8px;-->
+<!--        background: #f0f0f0;-->
+<!--        font-size: 1rem;-->
+<!--        color: var(&#45;&#45;primary-color);-->
+<!--        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);-->
+<!--    }-->
+
+<!--    @media (max-width: 1024px) {-->
+<!--        :root {-->
+<!--            &#45;&#45;header-height: 80px;-->
+<!--            &#45;&#45;sidebar-width: 250px;-->
+<!--        }-->
+
+<!--        header {-->
+<!--            padding: 15px 30px;-->
+<!--        }-->
+
+<!--        .main-content {-->
+<!--            padding: 30px;-->
+<!--        }-->
+<!--    }-->
+
+<!--    @media (max-width: 768px) {-->
+<!--        :root {-->
+<!--            &#45;&#45;header-height: 70px;-->
+<!--            &#45;&#45;sidebar-width: 250px;-->
+<!--        }-->
+
+<!--        header {-->
+<!--            padding: 15px 20px;-->
+<!--        }-->
+
+<!--        .hamburger {-->
+<!--            display: flex;-->
+<!--        }-->
+
+<!--        .nav-buttons {-->
+<!--            display: none;-->
+<!--            flex-direction: column;-->
+<!--            width: 100%;-->
+<!--            gap: 10px;-->
+<!--            background: rgba(0, 0, 0, 0.9);-->
+<!--            padding: 15px;-->
+<!--            position: absolute;-->
+<!--            top: 100%;-->
+<!--            left: 0;-->
+<!--            right: 0;-->
+<!--            z-index: 999;-->
+<!--        }-->
+
+<!--        .nav-buttons.active {-->
+<!--            display: flex;-->
+<!--        }-->
+
+<!--        .sidebar-toggle {-->
+<!--            display: flex;-->
+<!--        }-->
+
+<!--        .main-content {-->
+<!--            padding: 20px;-->
+<!--        }-->
+
+<!--        .button-group {-->
+<!--            flex-wrap: wrap;-->
+<!--        }-->
+<!--    }-->
+
+<!--    @media (min-width: 769px) {-->
+<!--        .hamburger {-->
+<!--            display: none;-->
+<!--        }-->
+<!--    }-->
+
+<!--    @media (max-width: 480px) {-->
+<!--        :root {-->
+<!--            &#45;&#45;header-height: 60px;-->
+<!--            &#45;&#45;sidebar-width: 200px;-->
+<!--        }-->
+
+<!--        header {-->
+<!--            padding: 10px 15px;-->
+<!--        }-->
+
+<!--        .logo {-->
+<!--            font-size: 1.5rem;-->
+<!--        }-->
+
+<!--        .logo img {-->
+<!--            width: 40px;-->
+<!--            height: 40px;-->
+<!--        }-->
+
+<!--        .main-content {-->
+<!--            padding: 15px;-->
+<!--        }-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="page-wrapper">-->
+<!--  <header>-->
+<!--    <div class="header-container">-->
+<!--      <div class="logo">-->
+<!--        <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />-->
+<!--        <a th:href="@{ / }" style="text-decoration: none; color: white;">Hydrospark</a>-->
+<!--      </div>-->
+<!--      <div class="nav-toggle">-->
+<!--        <button class="hamburger" onclick="toggleNav(event)">-->
+<!--          <i class="fas fa-bars"></i>-->
+<!--        </button>-->
+<!--        <div class="nav-buttons">-->
+<!--          <a class="nav-btn" th:href="@{/}">Home</a>-->
+<!--          <a class="nav-btn" th:href="@{/about}">About</a>-->
+<!--          <a class="nav-btn" th:href="@{/enquiry}">Enquiry</a>-->
+<!--          <div th:if="${session.employee != null}">-->
+<!--            <a class="nav-btn" th:href="@{/admin}">Admin</a>-->
+<!--            <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>-->
+<!--            <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>-->
+<!--          </div>-->
+<!--          <div th:if="${session.employee == null and session.user != null}">-->
+<!--            <a class="nav-btn" th:href="@{/profile}">Profile</a>-->
+<!--            <a class="nav-btn" th:href="@{/logout}">Logout</a>-->
+<!--          </div>-->
+<!--          <div th:if="${session.employee == null and session.user == null}">-->
+<!--            <a class="nav-btn" th:href="@{/signin}">Sign In</a>-->
+<!--            <a class="nav-btn" th:href="@{/signup}">Sign Up</a>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </header>-->
+
+<!--  <div class="container">-->
+<!--    <div class="sidebar" th:classappend="${session.employee != null ? '' : 'hidden'}">-->
+<!--      <a th:href="@{/admin/addEmployee}"><i class="fas fa-user-plus"></i> Add Employee</a>-->
+<!--      <a th:href="@{/admin/removeEmployee}"><i class="fas fa-user-minus"></i> Remove Employee</a>-->
+<!--      <a th:href="@{/admin/addProduct}" class="active"><i class="fas fa-box-open"></i> Add Product</a>-->
+<!--      <a th:href="@{/admin/products}"><i class="fas fa-th-list"></i> All Products</a>-->
+<!--      <a th:href="@{/admin/showvisited}"><i class="fas fa-eye"></i> Show Who Visited</a>-->
+<!--    </div>-->
+<!--    <div class="main-content">-->
+<!--      <button class="sidebar-toggle" th:if="${session.employee != null}" onclick="toggleSidebar(event)">-->
+<!--        <i class="fas fa-list"></i>-->
+<!--      </button>-->
+<!--      <div class="form-content">-->
+<!--        <div class="component-form-container">-->
+<!--          <form method="post" th:action="@{'/admin/componentEntry/' + ${session.subprodId}}" id="componentForm">-->
+<!--            <h4>Component Entry</h4>-->
+
+<!--            <div id="componentEntries">-->
+<!--              <div class="component-entry">-->
+<!--                <div class="form-row">-->
+<!--                  <div>-->
+<!--                    <label for="partNo">Part No</label>-->
+<!--                    <input type="text" name="partNo[]" required />-->
+<!--                  </div>-->
+<!--                  <div>-->
+<!--                    <label for="hoseSizeD">Hose Size D</label>-->
+<!--                    <input type="text" name="hoseSizeD[]" required />-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--                <div class="form-row">-->
+<!--                  <div>-->
+<!--                    <label for="bspThreadSizeD">BSP 'P' Thread Size D</label>-->
+<!--                    <input type="text" name="bspThreadSizeD[]" required />-->
+<!--                  </div>-->
+<!--                  <div>-->
+<!--                    <label for="a">A</label>-->
+<!--                    <input type="text" name="a[]" required />-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--                <div class="form-row">-->
+<!--                  <div>-->
+<!--                    <label for="b">B</label>-->
+<!--                    <input type="text" name="b[]" required />-->
+<!--                  </div>-->
+<!--                  <div>-->
+<!--                    <label for="c">C</label>-->
+<!--                    <input type="text" name="c[]" required />-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--                <div class="form-row">-->
+<!--                  <div>-->
+<!--                    <label for="e">E</label>-->
+<!--                    <input type="text" name="e[]" required />-->
+<!--                  </div>-->
+<!--                  <div>-->
+<!--                    <label for="f">F</label>-->
+<!--                    <input type="text" name="f[]" required />-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--                <div class="form-row">-->
+<!--                  <div>-->
+<!--                    <label for="afHex">A/F HEX</label>-->
+<!--                    <input type="text" name="afHex[]" required />-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--                <button type="button" class="remove-btn" onclick="removeEntry(this)">Remove</button>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--            <div th:if="${error}" class="error-message">-->
+<!--              <p th:text="${error}"></p>-->
+<!--            </div>-->
+
+<!--            <div class="button-group">-->
+<!--              <button type="button" id="addEntryBtn">Add Another Component</button>-->
+<!--              <button type="submit">Submit</button>-->
+<!--              <a th:href="@{/admin/products}" class="skip-btn">Skip</a>-->
+<!--            </div>-->
+<!--          </form>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--  function toggleNav(event) {-->
+<!--      event.stopPropagation();-->
+<!--      const navButtons = document.querySelector('.nav-buttons');-->
+<!--      const sidebar = document.querySelector('.sidebar');-->
+
+<!--      // Hide sidebar if visible when toggling nav-->
+<!--      if (sidebar.classList.contains('visible')) {-->
+<!--          sidebar.classList.remove('visible');-->
+<!--          adjustMainContent();-->
+<!--      }-->
+
+<!--      navButtons.classList.toggle('active');-->
+<!--  }-->
+
+<!--  function toggleSidebar(event) {-->
+<!--      event.stopPropagation();-->
+<!--      const sidebar = document.querySelector('.sidebar');-->
+<!--      const navButtons = document.querySelector('.nav-buttons');-->
+
+<!--      // Hide nav if visible when toggling sidebar-->
+<!--      if (navButtons.classList.contains('active')) {-->
+<!--          navButtons.classList.remove('active');-->
+<!--      }-->
+
+<!--      sidebar.classList.toggle('visible');-->
+<!--      adjustMainContent();-->
+<!--  }-->
+
+<!--  function adjustMainContent() {-->
+<!--      const sidebar = document.querySelector('.sidebar');-->
+<!--      const mainContent = document.querySelector('.main-content');-->
+<!--      if (sidebar.classList.contains('visible')) {-->
+<!--          mainContent.style.marginLeft = getComputedStyle(document.documentElement).getPropertyValue('&#45;&#45;sidebar-width');-->
+<!--      } else {-->
+<!--          mainContent.style.marginLeft = '0';-->
+<!--      }-->
+<!--  }-->
+
+<!--  function adjustSidebarHeight() {-->
+<!--      const sidebar = document.querySelector('.sidebar');-->
+<!--      const mainContent = document.querySelector('.main-content');-->
+<!--      const sidebarHeight = mainContent.offsetHeight;-->
+<!--      sidebar.style.height = `${sidebarHeight}px`;-->
+<!--  }-->
+
+<!--  // Auto-hide both sidebar and nav on outside click-->
+<!--  document.addEventListener('click', (event) => {-->
+<!--      const sidebar = document.querySelector('.sidebar');-->
+<!--      const sidebarToggle = document.querySelector('.sidebar-toggle');-->
+<!--      const navButtons = document.querySelector('.nav-buttons');-->
+<!--      const hamburger = document.querySelector('.hamburger');-->
+
+<!--      const isClickInsideSidebar = sidebar.contains(event.target);-->
+<!--      const isClickOnSidebarToggle = sidebarToggle && sidebarToggle.contains(event.target);-->
+<!--      const isClickInsideNavButtons = navButtons.contains(event.target);-->
+<!--      const isClickOnHamburger = hamburger.contains(event.target);-->
+
+<!--      if (sidebar.classList.contains('visible') && !isClickInsideSidebar && !isClickOnSidebarToggle) {-->
+<!--          sidebar.classList.remove('visible');-->
+<!--          adjustMainContent();-->
+<!--      }-->
+
+<!--      if (navButtons.classList.contains('active') && !isClickInsideNavButtons && !isClickOnHamburger) {-->
+<!--          navButtons.classList.remove('active');-->
+<!--      }-->
+<!--  });-->
+
+<!--  // Handle window load and resize-->
+<!--  function handleSidebarAndNavVisibility() {-->
+<!--      const sidebar = document.querySelector('.sidebar');-->
+<!--      const mainContent = document.querySelector('.main-content');-->
+<!--      const navButtons = document.querySelector('.nav-buttons');-->
+
+<!--      if (window.innerWidth > 768) {-->
+<!--          if (!sidebar.classList.contains('hidden')) {-->
+<!--              sidebar.classList.add('visible'); // Show sidebar on large screens by default-->
+<!--              mainContent.style.marginLeft = getComputedStyle(document.documentElement).getPropertyValue('&#45;&#45;sidebar-width');-->
+<!--          }-->
+<!--          if (navButtons.classList.contains('active')) {-->
+<!--              navButtons.classList.remove('active'); // Hide nav on large screens-->
+<!--          }-->
+<!--      } else {-->
+<!--          // Hide sidebar on small screens until toggled-->
+<!--          if (sidebar.classList.contains('visible')) {-->
+<!--              sidebar.classList.remove('visible');-->
+<!--          }-->
+<!--          mainContent.style.marginLeft = '0';-->
+<!--      }-->
+<!--      adjustSidebarHeight();-->
+<!--  }-->
+
+<!--  window.addEventListener('load', handleSidebarAndNavVisibility);-->
+
+<!--  window.addEventListener('resize', () => {-->
+<!--      handleSidebarAndNavVisibility();-->
+<!--  });-->
+
+<!--  // Add JavaScript for dynamic component entry management-->
+<!--  document.getElementById('addEntryBtn').addEventListener('click', function() {-->
+<!--    const componentEntries = document.getElementById('componentEntries');-->
+<!--    const newEntry = componentEntries.firstElementChild.cloneNode(true);-->
+<!--    newEntry.querySelectorAll('input').forEach(input => input.value = '');-->
+<!--    componentEntries.appendChild(newEntry);-->
+<!--  });-->
+
+<!--  function removeEntry(button) {-->
+<!--    const componentEntries = document.getElementById('componentEntries');-->
+<!--    if (componentEntries.children.length > 1) {-->
+<!--      button.parentElement.remove();-->
+<!--    }-->
+<!--  }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
+<!--&lt;!&ndash;<!DOCTYPE html>&ndash;&gt;-->
+<!--&lt;!&ndash;<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">&ndash;&gt;-->
+<!--&lt;!&ndash;<head>&ndash;&gt;-->
+<!--&lt;!&ndash;  <meta charset="UTF-8">&ndash;&gt;-->
+<!--&lt;!&ndash;  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">&ndash;&gt;-->
+<!--&lt;!&ndash;  <title>Hydrospark - Component Entry</title>&ndash;&gt;-->
+<!--&lt;!&ndash;  <link rel="icon" type="image/png" th:href="'data:image/png;base64,' + ${session.img}" />&ndash;&gt;-->
+<!--&lt;!&ndash;  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">&ndash;&gt;-->
+<!--&lt;!&ndash;  <style>&ndash;&gt;-->
+<!--&lt;!&ndash;    * {&ndash;&gt;-->
+<!--&lt;!&ndash;        margin: 0;&ndash;&gt;-->
+<!--&lt;!&ndash;        padding: 0;&ndash;&gt;-->
+<!--&lt;!&ndash;        box-sizing: border-box;&ndash;&gt;-->
+<!--&lt;!&ndash;        font-family: 'Segoe UI', sans-serif;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    :root {&ndash;&gt;-->
+<!--&lt;!&ndash;        &#45;&#45;primary-color: #1a1a1a;&ndash;&gt;-->
+<!--&lt;!&ndash;        &#45;&#45;secondary-color: #ff6b00;&ndash;&gt;-->
+<!--&lt;!&ndash;        &#45;&#45;accent-color: #ffffff;&ndash;&gt;-->
+<!--&lt;!&ndash;        &#45;&#45;background-color: #f5f5f5;&ndash;&gt;-->
+<!--&lt;!&ndash;        &#45;&#45;highlight-color: #00c4b4;&ndash;&gt;-->
+<!--&lt;!&ndash;        &#45;&#45;error-color: #ff4f4f;&ndash;&gt;-->
+<!--&lt;!&ndash;        &#45;&#45;shadow: 0 8px 25px rgba(0, 0, 0, 0.1);&ndash;&gt;-->
+<!--&lt;!&ndash;        &#45;&#45;text-muted: #666;&ndash;&gt;-->
+<!--&lt;!&ndash;        &#45;&#45;header-height: 90px;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    /* Header Styles */&ndash;&gt;-->
+<!--&lt;!&ndash;    header {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: linear-gradient(135deg, var(&#45;&#45;primary-color), #333);&ndash;&gt;-->
+<!--&lt;!&ndash;        padding: 20px 40px;&ndash;&gt;-->
+<!--&lt;!&ndash;        position: fixed;&ndash;&gt;-->
+<!--&lt;!&ndash;        width: 100%;&ndash;&gt;-->
+<!--&lt;!&ndash;        top: 0;&ndash;&gt;-->
+<!--&lt;!&ndash;        z-index: 1000;&ndash;&gt;-->
+<!--&lt;!&ndash;        box-shadow: var(&#45;&#45;shadow);&ndash;&gt;-->
+<!--&lt;!&ndash;        min-height: var(&#45;&#45;header-height);&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .header-container {&ndash;&gt;-->
+<!--&lt;!&ndash;        max-width: 1400px;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin: 0 auto;&ndash;&gt;-->
+<!--&lt;!&ndash;        display: flex;&ndash;&gt;-->
+<!--&lt;!&ndash;        justify-content: space-between;&ndash;&gt;-->
+<!--&lt;!&ndash;        align-items: center;&ndash;&gt;-->
+<!--&lt;!&ndash;        flex-wrap: wrap;&ndash;&gt;-->
+<!--&lt;!&ndash;        gap: 15px;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .logo {&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 1.9rem;&ndash;&gt;-->
+<!--&lt;!&ndash;        font-weight: 600;&ndash;&gt;-->
+<!--&lt;!&ndash;        letter-spacing: 1px;&ndash;&gt;-->
+<!--&lt;!&ndash;        display: flex;&ndash;&gt;-->
+<!--&lt;!&ndash;        align-items: center;&ndash;&gt;-->
+<!--&lt;!&ndash;        gap: 10px;&ndash;&gt;-->
+<!--&lt;!&ndash;        flex-shrink: 0;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .logo img {&ndash;&gt;-->
+<!--&lt;!&ndash;        width: 50px;&ndash;&gt;-->
+<!--&lt;!&ndash;        height: 50px;&ndash;&gt;-->
+<!--&lt;!&ndash;        object-fit: contain;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .search-nav {&ndash;&gt;-->
+<!--&lt;!&ndash;        display: flex;&ndash;&gt;-->
+<!--&lt;!&ndash;        align-items: center;&ndash;&gt;-->
+<!--&lt;!&ndash;        gap: 20px;&ndash;&gt;-->
+<!--&lt;!&ndash;        flex-grow: 1;&ndash;&gt;-->
+<!--&lt;!&ndash;        justify-content: space-between;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .search-bar {&ndash;&gt;-->
+<!--&lt;!&ndash;        position: relative;&ndash;&gt;-->
+<!--&lt;!&ndash;        display: flex;&ndash;&gt;-->
+<!--&lt;!&ndash;        align-items: center;&ndash;&gt;-->
+<!--&lt;!&ndash;        width: 250px;&ndash;&gt;-->
+<!--&lt;!&ndash;        max-width: 100%;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin-left: 20px;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .search-bar i {&ndash;&gt;-->
+<!--&lt;!&ndash;        position: absolute;&ndash;&gt;-->
+<!--&lt;!&ndash;        left: 15px;&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;text-muted);&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 1.2rem;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .search-bar input {&ndash;&gt;-->
+<!--&lt;!&ndash;        padding: 10px 15px 10px 40px;&ndash;&gt;-->
+<!--&lt;!&ndash;        border: none;&ndash;&gt;-->
+<!--&lt;!&ndash;        border-radius: 30px;&ndash;&gt;-->
+<!--&lt;!&ndash;        background: rgba(255, 255, 255, 0.1);&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 1rem;&ndash;&gt;-->
+<!--&lt;!&ndash;        width: 100%;&ndash;&gt;-->
+<!--&lt;!&ndash;        transition: background 0.3s ease, box-shadow 0.3s ease;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .search-bar input:focus {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: rgba(255, 255, 255, 0.2);&ndash;&gt;-->
+<!--&lt;!&ndash;        box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);&ndash;&gt;-->
+<!--&lt;!&ndash;        outline: none;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .search-bar input::placeholder {&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        opacity: 0.7;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .hamburger {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: none;&ndash;&gt;-->
+<!--&lt;!&ndash;        border: none;&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 1.5rem;&ndash;&gt;-->
+<!--&lt;!&ndash;        cursor: pointer;&ndash;&gt;-->
+<!--&lt;!&ndash;        display: none;&ndash;&gt;-->
+<!--&lt;!&ndash;        transition: transform 0.3s ease;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .hamburger:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;        transform: scale(1.1);&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .nav-buttons {&ndash;&gt;-->
+<!--&lt;!&ndash;        display: flex;&ndash;&gt;-->
+<!--&lt;!&ndash;        gap: 10px;&ndash;&gt;-->
+<!--&lt;!&ndash;        align-items: center;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .nav-btn {&ndash;&gt;-->
+<!--&lt;!&ndash;        padding: 8px 20px;&ndash;&gt;-->
+<!--&lt;!&ndash;        border: 2px solid var(&#45;&#45;secondary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        border-radius: 20px;&ndash;&gt;-->
+<!--&lt;!&ndash;        background: transparent;&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        font-weight: 600;&ndash;&gt;-->
+<!--&lt;!&ndash;        text-transform: uppercase;&ndash;&gt;-->
+<!--&lt;!&ndash;        letter-spacing: 1px;&ndash;&gt;-->
+<!--&lt;!&ndash;        cursor: pointer;&ndash;&gt;-->
+<!--&lt;!&ndash;        transition: all 0.3s ease;&ndash;&gt;-->
+<!--&lt;!&ndash;        text-decoration: none;&ndash;&gt;-->
+<!--&lt;!&ndash;        text-align: center;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .nav-btn:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: var(&#45;&#45;secondary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        transform: translateY(-2px);&ndash;&gt;-->
+<!--&lt;!&ndash;        box-shadow: var(&#45;&#45;shadow);&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    /* Body Styles */&ndash;&gt;-->
+<!--&lt;!&ndash;    body {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: var(&#45;&#45;background-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        min-height: 100vh;&ndash;&gt;-->
+<!--&lt;!&ndash;        display: flex;&ndash;&gt;-->
+<!--&lt;!&ndash;        flex-direction: column;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .main-content {&ndash;&gt;-->
+<!--&lt;!&ndash;        flex: 1 0 auto; /* Allows body to grow and push footer down */&ndash;&gt;-->
+<!--&lt;!&ndash;        padding: calc(var(&#45;&#45;header-height) + 40px) 40px 40px 40px;&ndash;&gt;-->
+<!--&lt;!&ndash;        display: flex;&ndash;&gt;-->
+<!--&lt;!&ndash;        justify-content: center;&ndash;&gt;-->
+<!--&lt;!&ndash;        align-items: center;&ndash;&gt;-->
+<!--&lt;!&ndash;        transition: padding-top 0.3s ease;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    form {&ndash;&gt;-->
+<!--&lt;!&ndash;        max-width: 700px;&ndash;&gt;-->
+<!--&lt;!&ndash;        width: 100%;&ndash;&gt;-->
+<!--&lt;!&ndash;        display: flex;&ndash;&gt;-->
+<!--&lt;!&ndash;        flex-direction: column;&ndash;&gt;-->
+<!--&lt;!&ndash;        gap: 20px;&ndash;&gt;-->
+<!--&lt;!&ndash;        align-items: center;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    form h4 {&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 2rem;&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;primary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        margin-bottom: 25px;&ndash;&gt;-->
+<!--&lt;!&ndash;        font-weight: 700;&ndash;&gt;-->
+<!--&lt;!&ndash;        text-align: center;&ndash;&gt;-->
+<!--&lt;!&ndash;        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), var(&#45;&#45;highlight-color));&ndash;&gt;-->
+<!--&lt;!&ndash;        -webkit-background-clip: text;&ndash;&gt;-->
+<!--&lt;!&ndash;        -webkit-text-fill-color: transparent;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .form-row {&ndash;&gt;-->
+<!--&lt;!&ndash;        display: grid;&ndash;&gt;-->
+<!--&lt;!&ndash;        grid-template-columns: 1fr 1fr;&ndash;&gt;-->
+<!--&lt;!&ndash;        gap: 20px;&ndash;&gt;-->
+<!--&lt;!&ndash;        width: 100%;&ndash;&gt;-->
+<!--&lt;!&ndash;        max-width: 600px;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .form-row div {&ndash;&gt;-->
+<!--&lt;!&ndash;        display: flex;&ndash;&gt;-->
+<!--&lt;!&ndash;        flex-direction: column;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .form-row label {&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;primary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 1rem;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin-bottom: 5px;&ndash;&gt;-->
+<!--&lt;!&ndash;        font-weight: 500;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .form-row input {&ndash;&gt;-->
+<!--&lt;!&ndash;        padding: 10px;&ndash;&gt;-->
+<!--&lt;!&ndash;        border: 1px solid var(&#45;&#45;text-muted);&ndash;&gt;-->
+<!--&lt;!&ndash;        border-radius: 8px;&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 1rem;&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;primary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        transition: border-color 0.3s ease;&ndash;&gt;-->
+<!--&lt;!&ndash;        width: 100%;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .form-row input:focus {&ndash;&gt;-->
+<!--&lt;!&ndash;        border-color: var(&#45;&#45;secondary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        outline: none;&ndash;&gt;-->
+<!--&lt;!&ndash;        box-shadow: 0 0 5px rgba(255, 107, 0, 0.3);&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .error-message {&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;error-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 1rem;&ndash;&gt;-->
+<!--&lt;!&ndash;        text-align: center;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin: 10px 0;&ndash;&gt;-->
+<!--&lt;!&ndash;        padding: 10px;&ndash;&gt;-->
+<!--&lt;!&ndash;        border-radius: 8px;&ndash;&gt;-->
+<!--&lt;!&ndash;        background: rgba(255, 75, 75, 0.1);&ndash;&gt;-->
+<!--&lt;!&ndash;        width: 100%;&ndash;&gt;-->
+<!--&lt;!&ndash;        max-width: 600px;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .button-group {&ndash;&gt;-->
+<!--&lt;!&ndash;        display: flex;&ndash;&gt;-->
+<!--&lt;!&ndash;        gap: 15px;&ndash;&gt;-->
+<!--&lt;!&ndash;        justify-content: center;&ndash;&gt;-->
+<!--&lt;!&ndash;        flex-wrap: wrap;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    form button, form .skip-btn, #addEntryBtn {&ndash;&gt;-->
+<!--&lt;!&ndash;        padding: 12px 30px;&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 1.1rem;&ndash;&gt;-->
+<!--&lt;!&ndash;        font-weight: 600;&ndash;&gt;-->
+<!--&lt;!&ndash;        border-radius: 25px;&ndash;&gt;-->
+<!--&lt;!&ndash;        cursor: pointer;&ndash;&gt;-->
+<!--&lt;!&ndash;        transition: all 0.3s ease;&ndash;&gt;-->
+<!--&lt;!&ndash;        min-width: 180px;&ndash;&gt;-->
+<!--&lt;!&ndash;        text-align: center;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    #addEntryBtn {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: var(&#45;&#45;highlight-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        border: none;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    #addEntryBtn::before {&ndash;&gt;-->
+<!--&lt;!&ndash;        content: '\f067'; /* Plus icon */&ndash;&gt;-->
+<!--&lt;!&ndash;        font-family: "Font Awesome 6 Free";&ndash;&gt;-->
+<!--&lt;!&ndash;        font-weight: 900;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin-right: 8px;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    #addEntryBtn:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: #00a399;&ndash;&gt;-->
+<!--&lt;!&ndash;        transform: scale(1.05);&ndash;&gt;-->
+<!--&lt;!&ndash;        box-shadow: 0 4px 12px rgba(0, 196, 180, 0.3);&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    form button[type="submit"] {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), #ff8c00);&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        border: none;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    form button[type="submit"]::before {&ndash;&gt;-->
+<!--&lt;!&ndash;        content: '\f00c'; /* Check icon */&ndash;&gt;-->
+<!--&lt;!&ndash;        font-family: "Font Awesome 6 Free";&ndash;&gt;-->
+<!--&lt;!&ndash;        font-weight: 900;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin-right: 8px;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    form button[type="submit"]:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: linear-gradient(90deg, #e65c00, #ff6b00);&ndash;&gt;-->
+<!--&lt;!&ndash;        transform: scale(1.05);&ndash;&gt;-->
+<!--&lt;!&ndash;        box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    form .skip-btn {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: transparent;&ndash;&gt;-->
+<!--&lt;!&ndash;        border: 2px solid var(&#45;&#45;secondary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;secondary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        text-decoration: none;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    form .skip-btn::before {&ndash;&gt;-->
+<!--&lt;!&ndash;        content: '\f054'; /* Chevron right icon */&ndash;&gt;-->
+<!--&lt;!&ndash;        font-family: "Font Awesome 6 Free";&ndash;&gt;-->
+<!--&lt;!&ndash;        font-weight: 900;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin-right: 8px;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    form .skip-btn:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: var(&#45;&#45;secondary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        transform: scale(1.05);&ndash;&gt;-->
+<!--&lt;!&ndash;        box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .component-entry {&ndash;&gt;-->
+<!--&lt;!&ndash;        border: 1px solid var(&#45;&#45;text-muted);&ndash;&gt;-->
+<!--&lt;!&ndash;        padding: 15px;&ndash;&gt;-->
+<!--&lt;!&ndash;        border-radius: 8px;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin-bottom: 20px;&ndash;&gt;-->
+<!--&lt;!&ndash;        position: relative;&ndash;&gt;-->
+<!--&lt;!&ndash;        width: 100%;&ndash;&gt;-->
+<!--&lt;!&ndash;        max-width: 600px;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .remove-btn {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: var(&#45;&#45;error-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        border: none;&ndash;&gt;-->
+<!--&lt;!&ndash;        padding: 8px 15px;&ndash;&gt;-->
+<!--&lt;!&ndash;        border-radius: 20px;&ndash;&gt;-->
+<!--&lt;!&ndash;        cursor: pointer;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin-top: 10px;&ndash;&gt;-->
+<!--&lt;!&ndash;        transition: all 0.3s ease;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .remove-btn:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: #e63939;&ndash;&gt;-->
+<!--&lt;!&ndash;        transform: scale(1.05);&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    /* Creative Footer Styles */&ndash;&gt;-->
+<!--&lt;!&ndash;    footer {&ndash;&gt;-->
+<!--&lt;!&ndash;        background: linear-gradient(135deg, var(&#45;&#45;primary-color), #2c2c2c);&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        padding: 40px 20px;&ndash;&gt;-->
+<!--&lt;!&ndash;        text-align: center;&ndash;&gt;-->
+<!--&lt;!&ndash;        position: relative;&ndash;&gt;-->
+<!--&lt;!&ndash;        overflow: hidden;&ndash;&gt;-->
+<!--&lt;!&ndash;        flex-shrink: 0;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    footer::before {&ndash;&gt;-->
+<!--&lt;!&ndash;        content: '';&ndash;&gt;-->
+<!--&lt;!&ndash;        position: absolute;&ndash;&gt;-->
+<!--&lt;!&ndash;        top: -50%;&ndash;&gt;-->
+<!--&lt;!&ndash;        left: -50%;&ndash;&gt;-->
+<!--&lt;!&ndash;        width: 200%;&ndash;&gt;-->
+<!--&lt;!&ndash;        height: 200%;&ndash;&gt;-->
+<!--&lt;!&ndash;        background: radial-gradient(circle, rgba(255, 107, 0, 0.1) 0%, transparent 70%);&ndash;&gt;-->
+<!--&lt;!&ndash;        animation: rotate 20s linear infinite;&ndash;&gt;-->
+<!--&lt;!&ndash;        z-index: 0;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    footer .footer-content {&ndash;&gt;-->
+<!--&lt;!&ndash;        position: relative;&ndash;&gt;-->
+<!--&lt;!&ndash;        z-index: 1;&ndash;&gt;-->
+<!--&lt;!&ndash;        max-width: 800px;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin: 0 auto;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    footer h3 {&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 1.8rem;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin-bottom: 20px;&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;secondary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        text-transform: uppercase;&ndash;&gt;-->
+<!--&lt;!&ndash;        letter-spacing: 2px;&ndash;&gt;-->
+<!--&lt;!&ndash;        text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    footer p {&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 1rem;&ndash;&gt;-->
+<!--&lt;!&ndash;        margin: 8px 0;&ndash;&gt;-->
+<!--&lt;!&ndash;        color: #ddd;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    footer a {&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;highlight-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        text-decoration: none;&ndash;&gt;-->
+<!--&lt;!&ndash;        transition: color 0.3s ease;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    footer a:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;secondary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    footer .social-links {&ndash;&gt;-->
+<!--&lt;!&ndash;        margin-top: 20px;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    footer .social-links a {&ndash;&gt;-->
+<!--&lt;!&ndash;        margin: 0 10px;&ndash;&gt;-->
+<!--&lt;!&ndash;        font-size: 1.5rem;&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;-->
+<!--&lt;!&ndash;        transition: transform 0.3s ease, color 0.3s ease;&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    footer .social-links a:hover {&ndash;&gt;-->
+<!--&lt;!&ndash;        transform: scale(1.2);&ndash;&gt;-->
+<!--&lt;!&ndash;        color: var(&#45;&#45;secondary-color);&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    @keyframes rotate {&ndash;&gt;-->
+<!--&lt;!&ndash;        0% { transform: rotate(0deg); }&ndash;&gt;-->
+<!--&lt;!&ndash;        100% { transform: rotate(360deg); }&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    /* Responsive Design */&ndash;&gt;-->
+<!--&lt;!&ndash;    @media (max-width: 1024px) {&ndash;&gt;-->
+<!--&lt;!&ndash;        :root { &#45;&#45;header-height: 80px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        header { padding: 15px 30px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .main-content { padding: calc(var(&#45;&#45;header-height) + 30px) 30px 30px 30px; }&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    @media (max-width: 768px) {&ndash;&gt;-->
+<!--&lt;!&ndash;        :root { &#45;&#45;header-height: 70px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        header { padding: 15px 20px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .main-content { padding: calc(var(&#45;&#45;header-height) + 20px) 20px 20px 20px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .logo { font-size: 1.6rem; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .search-bar { width: 200px; margin-left: 10px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .hamburger { display: block; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .nav-buttons {&ndash;&gt;-->
+<!--&lt;!&ndash;            display: none;&ndash;&gt;-->
+<!--&lt;!&ndash;            flex-direction: column;&ndash;&gt;-->
+<!--&lt;!&ndash;            width: 100%;&ndash;&gt;-->
+<!--&lt;!&ndash;            gap: 10px;&ndash;&gt;-->
+<!--&lt;!&ndash;            background: rgba(0, 0, 0, 0.9);&ndash;&gt;-->
+<!--&lt;!&ndash;            padding: 15px;&ndash;&gt;-->
+<!--&lt;!&ndash;            position: absolute;&ndash;&gt;-->
+<!--&lt;!&ndash;            top: 100%;&ndash;&gt;-->
+<!--&lt;!&ndash;            left: 0;&ndash;&gt;-->
+<!--&lt;!&ndash;            right: 0;&ndash;&gt;-->
+<!--&lt;!&ndash;            z-index: 999;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+<!--&lt;!&ndash;        .nav-buttons.active { display: flex; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .nav-btn { width: 100%; padding: 8px 15px; font-size: 0.9rem; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .form-row { grid-template-columns: 1fr; gap: 15px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .button-group { flex-direction: column; gap: 10px; }&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    @media (max-width: 480px) {&ndash;&gt;-->
+<!--&lt;!&ndash;        :root { &#45;&#45;header-height: 60px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        header { padding: 10px 15px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .main-content { padding: calc(var(&#45;&#45;header-height) + 15px) 15px 15px 15px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .logo { font-size: 1.5rem; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .logo img { width: 40px; height: 40px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .search-bar { width: 150px; margin-left: 5px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .hamburger { font-size: 1.3rem; }&ndash;&gt;-->
+<!--&lt;!&ndash;        form h4 { font-size: 1.8rem; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .form-row label { font-size: 0.9rem; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .form-row input { padding: 8px; font-size: 0.9rem; }&ndash;&gt;-->
+<!--&lt;!&ndash;        form button, form .skip-btn, #addEntryBtn { padding: 10px 25px; font-size: 1rem; min-width: 160px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        .error-message { font-size: 0.9rem; padding: 8px; }&ndash;&gt;-->
+<!--&lt;!&ndash;        footer h3 { font-size: 1.5rem; }&ndash;&gt;-->
+<!--&lt;!&ndash;        footer p { font-size: 0.9rem; }&ndash;&gt;-->
+<!--&lt;!&ndash;        footer .social-links a { font-size: 1.3rem; }&ndash;&gt;-->
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+<!--&lt;!&ndash;  </style>&ndash;&gt;-->
+<!--&lt;!&ndash;</head>&ndash;&gt;-->
+<!--&lt;!&ndash;<body>&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash; Header &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;<header>&ndash;&gt;-->
+<!--&lt;!&ndash;  <div class="header-container">&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="logo">&ndash;&gt;-->
+<!--&lt;!&ndash;      <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />&ndash;&gt;-->
+<!--&lt;!&ndash;      <a th:href="@{ / }" style="text-decoration: none; color: white;">Hydrospark</a>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="search-nav">&ndash;&gt;-->
+<!--&lt;!&ndash;      <form class="search-bar" action="/search" method="GET">&ndash;&gt;-->
+<!--&lt;!&ndash;        <i class="fas fa-search"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;        <input type="text" name="query" placeholder="Search...">&ndash;&gt;-->
+<!--&lt;!&ndash;      </form>&ndash;&gt;-->
+<!--&lt;!&ndash;      <button class="hamburger" onclick="toggleMenu()">&ndash;&gt;-->
+<!--&lt;!&ndash;        <i class="fas fa-bars"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;      </button>&ndash;&gt;-->
+<!--&lt;!&ndash;      <div class="nav-buttons">&ndash;&gt;-->
+<!--&lt;!&ndash;        <a class="nav-btn" th:href="@{/}">Home</a>&ndash;&gt;-->
+<!--&lt;!&ndash;        <a class="nav-btn" th:href="@{//about}">About</a>&ndash;&gt;-->
+<!--&lt;!&ndash;        <a class="nav-btn" th:href="@{/enquiry}">Enquiry</a>&ndash;&gt;-->
+<!--&lt;!&ndash;        <div th:if="${session.employee != null}">&ndash;&gt;-->
+<!--&lt;!&ndash;          <a class="nav-btn" th:href="@{/admin}">Admin</a>&ndash;&gt;-->
+<!--&lt;!&ndash;          <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>&ndash;&gt;-->
+<!--&lt;!&ndash;          <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        <div th:if="${session.employee == null and session.user != null}">&ndash;&gt;-->
+<!--&lt;!&ndash;          <a class="nav-btn" th:href="@{/profile}">Profile</a>&ndash;&gt;-->
+<!--&lt;!&ndash;          <a class="nav-btn" th:href="@{/logout}">Logout</a>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        <div th:if="${session.employee == null and session.user == null}">&ndash;&gt;-->
+<!--&lt;!&ndash;          <a class="nav-btn" th:href="@{/signin}">Sign In</a>&ndash;&gt;-->
+<!--&lt;!&ndash;          <a class="nav-btn" th:href="@{/signup}">Sign Up</a>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;      </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;  </div>&ndash;&gt;-->
+<!--&lt;!&ndash;</header>&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash; Main Content &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;<div class="main-content">&ndash;&gt;-->
+<!--&lt;!&ndash;  <form method="post" th:action="@{'/admin/componentEntry/' + ${session.subprodId}}" id="componentForm">&ndash;&gt;-->
+<!--&lt;!&ndash;    <h4>Component Entry</h4>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <div id="componentEntries">&ndash;&gt;-->
+<!--&lt;!&ndash;      <div class="component-entry">&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="form-row">&ndash;&gt;-->
+<!--&lt;!&ndash;          <div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <label for="partNo">Part No</label>&ndash;&gt;-->
+<!--&lt;!&ndash;            <input type="text" name="partNo[]" required />&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--&lt;!&ndash;          <div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <label for="hoseSizeD">Hose Size D</label>&ndash;&gt;-->
+<!--&lt;!&ndash;            <input type="text" name="hoseSizeD[]" required />&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="form-row">&ndash;&gt;-->
+<!--&lt;!&ndash;          <div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <label for="bspThreadSizeD">BSP 'P' Thread Size D</label>&ndash;&gt;-->
+<!--&lt;!&ndash;            <input type="text" name="bspThreadSizeD[]" required />&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--&lt;!&ndash;          <div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <label for="a">A</label>&ndash;&gt;-->
+<!--&lt;!&ndash;            <input type="text" name="a[]" required />&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="form-row">&ndash;&gt;-->
+<!--&lt;!&ndash;          <div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <label for="b">B</label>&ndash;&gt;-->
+<!--&lt;!&ndash;            <input type="text" name="b[]" required />&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--&lt;!&ndash;          <div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <label for="c">C</label>&ndash;&gt;-->
+<!--&lt;!&ndash;            <input type="text" name="c[]" required />&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="form-row">&ndash;&gt;-->
+<!--&lt;!&ndash;          <div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <label for="e">E</label>&ndash;&gt;-->
+<!--&lt;!&ndash;            <input type="text" name="e[]" required />&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--&lt;!&ndash;          <div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <label for="f">F</label>&ndash;&gt;-->
+<!--&lt;!&ndash;            <input type="text" name="f[]" required />&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="form-row">&ndash;&gt;-->
+<!--&lt;!&ndash;          <div>&ndash;&gt;-->
+<!--&lt;!&ndash;            <label for="afHex">A/F HEX</label>&ndash;&gt;-->
+<!--&lt;!&ndash;            <input type="text" name="afHex[]" required />&ndash;&gt;-->
+<!--&lt;!&ndash;          </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        <button type="button" class="remove-btn" onclick="removeEntry(this)">Remove</button>&ndash;&gt;-->
+<!--&lt;!&ndash;      </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <div th:if="${error}" class="error-message">&ndash;&gt;-->
+<!--&lt;!&ndash;      <p th:text="${error}"></p>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <div class="button-group">&ndash;&gt;-->
+<!--&lt;!&ndash;      <button type="button" id="addEntryBtn">Add Another Component</button>&ndash;&gt;-->
+<!--&lt;!&ndash;      <button type="submit">Submit</button>&ndash;&gt;-->
+<!--&lt;!&ndash;      <a th:href="@{/admin/products}" class="skip-btn">Skip</a>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;  </form>&ndash;&gt;-->
+<!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash; Footer &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;<footer>&ndash;&gt;-->
+<!--&lt;!&ndash;  <div class="footer-content">&ndash;&gt;-->
+<!--&lt;!&ndash;    <h3>Hydrospark Innovations</h3>&ndash;&gt;-->
+<!--&lt;!&ndash;    <p>Address: Sr. No. 101, Wadmukhwadi Road, Tapkir Nagar, Khadi Machine Road, Near Apulki Hotel Pimpri Chinchawad, Alandi Haveli, Pune - 412105</p>&ndash;&gt;-->
+<!--&lt;!&ndash;    <p>Mob No: +91 9156261672 / +91 8691937235</p>&ndash;&gt;-->
+<!--&lt;!&ndash;    <p>Email: <a href="mailto:sachin@hydrospark.org">sachin@hydrospark.org</a> / <a href="mailto:info@hydrospark.org">info@hydrospark.org</a></p>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="social-links">&ndash;&gt;-->
+<!--&lt;!&ndash;      <a href="#"><i class="fab fa-facebook-f"></i></a>&ndash;&gt;-->
+<!--&lt;!&ndash;      <a href="#"><i class="fab fa-twitter"></i></a>&ndash;&gt;-->
+<!--&lt;!&ndash;      <a href="#"><i class="fab fa-linkedin-in"></i></a>&ndash;&gt;-->
+<!--&lt;!&ndash;      <a href="#"><i class="fab fa-instagram"></i></a>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <p>© 2025 Hydrospark Innovations. All rights reserved.</p>&ndash;&gt;-->
+<!--&lt;!&ndash;  </div>&ndash;&gt;-->
+<!--&lt;!&ndash;</footer>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<script>&ndash;&gt;-->
+<!--&lt;!&ndash;  document.getElementById('addEntryBtn').addEventListener('click', function() {&ndash;&gt;-->
+<!--&lt;!&ndash;      const template = document.querySelector('.component-entry');&ndash;&gt;-->
+<!--&lt;!&ndash;      const clone = template.cloneNode(true);&ndash;&gt;-->
+<!--&lt;!&ndash;      clone.querySelectorAll('input').forEach(input => input.value = '');&ndash;&gt;-->
+<!--&lt;!&ndash;      document.getElementById('componentEntries').appendChild(clone);&ndash;&gt;-->
+<!--&lt;!&ndash;      adjustContentPadding();&ndash;&gt;-->
+<!--&lt;!&ndash;  });&ndash;&gt;-->
+
+<!--&lt;!&ndash;  function removeEntry(button) {&ndash;&gt;-->
+<!--&lt;!&ndash;      const entries = document.querySelectorAll('.component-entry');&ndash;&gt;-->
+<!--&lt;!&ndash;      if (entries.length > 1) {&ndash;&gt;-->
+<!--&lt;!&ndash;          button.parentElement.remove();&ndash;&gt;-->
+<!--&lt;!&ndash;          adjustContentPadding();&ndash;&gt;-->
+<!--&lt;!&ndash;      }&ndash;&gt;-->
+<!--&lt;!&ndash;  }&ndash;&gt;-->
+
+<!--&lt;!&ndash;  function toggleMenu() {&ndash;&gt;-->
+<!--&lt;!&ndash;      const navButtons = document.querySelector('.nav-buttons');&ndash;&gt;-->
+<!--&lt;!&ndash;      navButtons.classList.toggle('active');&ndash;&gt;-->
+<!--&lt;!&ndash;      adjustContentPadding();&ndash;&gt;-->
+<!--&lt;!&ndash;  }&ndash;&gt;-->
+
+<!--&lt;!&ndash;  function adjustContentPadding() {&ndash;&gt;-->
+<!--&lt;!&ndash;      const mainContent = document.querySelector('.main-content');&ndash;&gt;-->
+<!--&lt;!&ndash;      const header = document.querySelector('header');&ndash;&gt;-->
+<!--&lt;!&ndash;      const navButtons = document.querySelector('.nav-buttons');&ndash;&gt;-->
+<!--&lt;!&ndash;      const headerHeight = header.offsetHeight;&ndash;&gt;-->
+
+<!--&lt;!&ndash;      if (navButtons.classList.contains('active')) {&ndash;&gt;-->
+<!--&lt;!&ndash;          const navHeight = navButtons.offsetHeight;&ndash;&gt;-->
+<!--&lt;!&ndash;          mainContent.style.paddingTop = `${headerHeight + navHeight + 20}px`;&ndash;&gt;-->
+<!--&lt;!&ndash;      } else {&ndash;&gt;-->
+<!--&lt;!&ndash;          mainContent.style.paddingTop = `${headerHeight + 40}px`;&ndash;&gt;-->
+<!--&lt;!&ndash;      }&ndash;&gt;-->
+<!--&lt;!&ndash;  }&ndash;&gt;-->
+
+<!--&lt;!&ndash;  window.addEventListener('load', adjustContentPadding);&ndash;&gt;-->
+<!--&lt;!&ndash;  window.addEventListener('resize', adjustContentPadding);&ndash;&gt;-->
+<!--&lt;!&ndash;</script>&ndash;&gt;-->
+<!--&lt;!&ndash;</body>&ndash;&gt;-->
+<!--&lt;!&ndash;</html>&ndash;&gt;-->
+
+
+<!--&lt;!&ndash;&lt;!&ndash;<!DOCTYPE html>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;<head>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <meta charset="UTF-8">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <meta name="viewport" content="width=device-width, initial-scale=1.0">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <title>Hydrospark - Component Entry</title>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <link rel="icon" type="image/png" th:href="'data:image/png;base64,' + ${session.img}" />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <style>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    * {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-sizing: border-box;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-family: 'Segoe UI', sans-serif;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    :root {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;primary-color: #1a1a1a;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;secondary-color: #ff6b00;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;accent-color: #ffffff;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;background-color: #f5f5f5;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;highlight-color: #00c4b4;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;error-color: #ff4f4f;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;shadow: 0 8px 25px rgba(0, 0, 0, 0.1);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;text-muted: #666;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;header-height: 90px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    header {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: linear-gradient(135deg, var(&#45;&#45;primary-color), #333);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 20px 40px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        position: fixed;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        top: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        z-index: 1000;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-shadow: var(&#45;&#45;shadow);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        min-height: var(&#45;&#45;header-height);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .header-container {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        max-width: 1400px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin: 0 auto;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        justify-content: space-between;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        flex-wrap: wrap;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .logo {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1.9rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 600;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        letter-spacing: 1px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        flex-shrink: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .logo img {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 50px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        height: 50px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        object-fit: contain;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .search-nav {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 15px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        flex-grow: 1;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        justify-content: flex-end;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .hamburger {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1.5rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        cursor: pointer;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: transform 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .hamburger:hover {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transform: scale(1.1);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .nav-buttons {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .nav-btn {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 8px 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: 2px solid var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: transparent;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 600;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-transform: uppercase;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        letter-spacing: 1px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        cursor: pointer;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: all 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-decoration: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-align: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .nav-btn:hover {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transform: translateY(-2px);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-shadow: var(&#45;&#45;shadow);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    body {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: var(&#45;&#45;background-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        min-height: 100vh;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding-top: calc(var(&#45;&#45;header-height) + 40px);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .main-content {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 40px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        min-height: calc(100vh - var(&#45;&#45;header-height));&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        justify-content: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: padding-top 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    form {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        max-width: 700px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        flex-direction: column;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    form h4 {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 2rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;primary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin-bottom: 25px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 700;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-align: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), var(&#45;&#45;highlight-color));&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        -webkit-background-clip: text;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        -webkit-text-fill-color: transparent;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .form-row {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: grid;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        grid-template-columns: 1fr 1fr;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        max-width: 600px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .form-row div {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        flex-direction: column;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .form-row label {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;primary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin-bottom: 5px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 500;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .form-row input {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: 1px solid var(&#45;&#45;text-muted);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 8px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;primary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: border-color 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .form-row input:focus {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-color: var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        outline: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-shadow: 0 0 5px rgba(255, 107, 0, 0.3);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .error-message {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;error-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-align: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin: 10px 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 8px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: rgba(255, 75, 75, 0.1);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        max-width: 600px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    form button {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 12px 30px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), #ff8c00);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 25px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1.1rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 600;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        cursor: pointer;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: all 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 200px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    form button:hover {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: linear-gradient(90deg, #e65c00, #ff6b00);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transform: scale(1.05);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    form .skip-btn {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 12px 30px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: transparent;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: 2px solid var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 25px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1.1rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 600;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        cursor: pointer;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: all 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 200px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-decoration: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-align: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    form .skip-btn:hover {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transform: scale(1.05);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .component-entry {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: 1px solid var(&#45;&#45;text-muted);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 15px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 8px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin-bottom: 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        position: relative;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .remove-btn {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: var(&#45;&#45;error-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 8px 15px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        cursor: pointer;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin-top: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: all 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .remove-btn:hover {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: #e63939;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transform: scale(1.05);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    #addEntryBtn {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 10px 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: var(&#45;&#45;highlight-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        cursor: pointer;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin: 20px 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: all 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    #addEntryBtn:hover {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: #00a399;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transform: scale(1.05);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    @media (max-width: 1024px) {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        :root { &#45;&#45;header-height: 80px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        header { padding: 15px 30px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .main-content { padding: 30px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    @media (max-width: 768px) {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        :root { &#45;&#45;header-height: 70px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        header { padding: 15px 20px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .logo { font-size: 1.6rem; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .hamburger { display: block; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .nav-buttons {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            display: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            flex-direction: column;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            gap: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            background: rgba(0, 0, 0, 0.9);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 15px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            position: absolute;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            top: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            left: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            right: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            z-index: 999;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .nav-buttons.active { display: flex; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .nav-btn { width: 100%; padding: 8px 15px; font-size: 0.9rem; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .main-content { padding: 20px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .form-row { grid-template-columns: 1fr; gap: 15px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    @media (max-width: 480px) {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        :root { &#45;&#45;header-height: 60px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        header { padding: 10px 15px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .logo { font-size: 1.5rem; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .logo img { width: 40px; height: 40px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .hamburger { font-size: 1.3rem; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .main-content { padding: 15px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        form h4 { font-size: 1.8rem; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .form-row label { font-size: 0.9rem; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .form-row input { padding: 8px; font-size: 0.9rem; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        form button, form .skip-btn { padding: 10px 25px; font-size: 1rem; width: 180px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        .error-message { font-size: 0.9rem; padding: 8px; }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  </style>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</head>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;<body>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;<header>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <div class="header-container">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    <div class="logo">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <a th:href="@{ / }" style="text-decoration: none; color: white;">Hydrospark</a>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    <div class="search-nav">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <button class="hamburger" onclick="toggleMenu()">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <i class="fas fa-bars"></i>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </button>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div class="nav-buttons">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <a class="nav-btn" th:href="@{/}">Home</a>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <a class="nav-btn" th:href="@{/about}">About</a>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</header>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;<div class="main-content">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <form method="post" th:action="@{'/admin/componentEntry/' + ${session.subprodId}}" id="componentForm">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    <h4>Component Entry</h4>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    <div id="componentEntries">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div class="component-entry">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <div class="form-row">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <label for="partNo">Part No</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <input type="text" name="partNo[]" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <label for="hoseSizeD">Hose Size D</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <input type="text" name="hoseSizeD[]" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <div class="form-row">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <label for="bspThreadSizeD">BSP 'P' Thread Size D</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <input type="text" name="bspThreadSizeD[]" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <label for="a">A</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <input type="text" name="a[]" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <div class="form-row">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <label for="b">B</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <input type="text" name="b[]" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <label for="c">C</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <input type="text" name="c[]" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <div class="form-row">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <label for="e">E</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <input type="text" name="e[]" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <label for="f">F</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <input type="text" name="f[]" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <div class="form-row">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <label for="afHex">A/F HEX</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            <input type="text" name="afHex[]" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <button type="button" class="remove-btn" onclick="removeEntry(this)">Remove</button>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    <button type="button" id="addEntryBtn">Add Another Component</button>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    <div th:if="${error}" class="error-message">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <p th:text="${error}"></p>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    <button type="submit">Submit</button>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    <a th:href="@{/admin/products}" class="skip-btn">Skip</a>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  </form>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;<script>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  document.getElementById('addEntryBtn').addEventListener('click', function() {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    const template = document.querySelector('.component-entry');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    const clone = template.cloneNode(true);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    clone.querySelectorAll('input').forEach(input => input.value = '');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    document.getElementById('componentEntries').appendChild(clone);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    adjustContentPadding();&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  });&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;  function removeEntry(button) {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    const entries = document.querySelectorAll('.component-entry');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    if (entries.length > 1) {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      button.parentElement.remove();&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      adjustContentPadding();&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;  function toggleMenu() {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    const navButtons = document.querySelector('.nav-buttons');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    navButtons.classList.toggle('active');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    adjustContentPadding();&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;  function adjustContentPadding() {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    const mainContent = document.querySelector('.main-content');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    const header = document.querySelector('header');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    const navButtons = document.querySelector('.nav-buttons');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    const headerHeight = header.offsetHeight;&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    if (navButtons.classList.contains('active')) {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      const navHeight = navButtons.offsetHeight;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      mainContent.style.paddingTop = `${headerHeight + navHeight + 20}px`;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    } else {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      mainContent.style.paddingTop = `${headerHeight + 40}px`;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;  window.addEventListener('load', adjustContentPadding);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  window.addEventListener('resize', adjustContentPadding);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</script>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</body>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</html>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;<!DOCTYPE html>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;<head>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <meta charset="UTF-8">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <meta name="viewport" content="width=device-width, initial-scale=1.0">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <title>Hydrospark - Component Entry</title>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <link rel="icon" type="image/png" th:href="'data:image/png;base64,' + ${session.img}" />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <style>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    * {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-sizing: border-box;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-family: 'Segoe UI', sans-serif;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    :root {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;primary-color: #1a1a1a;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;secondary-color: #ff6b00;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;accent-color: #ffffff;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;background-color: #f5f5f5;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;highlight-color: #00c4b4;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;error-color: #ff4f4f;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;shadow: 0 8px 25px rgba(0, 0, 0, 0.1);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;text-muted: #666;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        &#45;&#45;header-height: 90px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    /* Header Styles */&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    header {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: linear-gradient(135deg, var(&#45;&#45;primary-color), #333);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 20px 40px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        position: fixed;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        top: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        z-index: 1000;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-shadow: var(&#45;&#45;shadow);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        min-height: var(&#45;&#45;header-height);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .header-container {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        max-width: 1400px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin: 0 auto;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        justify-content: space-between;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        flex-wrap: wrap;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .logo {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1.9rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 600;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        letter-spacing: 1px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        flex-shrink: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .logo img {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 50px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        height: 50px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        object-fit: contain;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .search-nav {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 15px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        flex-grow: 1;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        justify-content: flex-end;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .hamburger {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1.5rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        cursor: pointer;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: transform 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .hamburger:hover {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transform: scale(1.1);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .nav-buttons {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .nav-btn {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 8px 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: 2px solid var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: transparent;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 600;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-transform: uppercase;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        letter-spacing: 1px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        cursor: pointer;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: all 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-decoration: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-align: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .nav-btn:hover {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transform: translateY(-2px);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-shadow: var(&#45;&#45;shadow);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    /* Main Content */&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    body {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: var(&#45;&#45;background-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        min-height: 100vh;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding-top: calc(var(&#45;&#45;header-height) + 40px); /* Prevent overlap */&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .main-content {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 40px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        min-height: calc(100vh - var(&#45;&#45;header-height));&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        justify-content: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: padding-top 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    /* Form Styles */&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    form {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        max-width: 700px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        flex-direction: column;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        align-items: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    form h4 {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 2rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;primary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin-bottom: 25px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 700;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-align: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), var(&#45;&#45;highlight-color));&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        -webkit-background-clip: text;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        -webkit-text-fill-color: transparent;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .form-row {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: grid;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        grid-template-columns: 1fr 1fr;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        gap: 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        max-width: 600px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .form-row div {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        flex-direction: column;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .form-row label {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;primary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin-bottom: 5px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 500;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .form-row input {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: 1px solid var(&#45;&#45;text-muted);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 8px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;primary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: border-color 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .form-row input:focus {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-color: var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        outline: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-shadow: 0 0 5px rgba(255, 107, 0, 0.3);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    .error-message {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;error-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-align: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        margin: 10px 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 8px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: rgba(255, 75, 75, 0.1);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        max-width: 600px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    form button {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 12px 30px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: linear-gradient(90deg, var(&#45;&#45;secondary-color), #ff8c00);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 25px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1.1rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 600;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        cursor: pointer;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: all 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 200px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    form button:hover {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: linear-gradient(90deg, #e65c00, #ff6b00);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transform: scale(1.05);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    form .skip-btn {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        padding: 12px 30px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: transparent;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border: 2px solid var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        border-radius: 25px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-size: 1.1rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        font-weight: 600;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        cursor: pointer;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transition: all 0.3s ease;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        width: 200px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-decoration: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        text-align: center;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    form .skip-btn:hover {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        background: var(&#45;&#45;secondary-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        color: var(&#45;&#45;accent-color);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        transform: scale(1.05);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    /* Responsive Design */&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    @media (max-width: 1024px) {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        :root {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            &#45;&#45;header-height: 80px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        header {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 15px 30px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .main-content {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 30px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    @media (max-width: 768px) {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        :root {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            &#45;&#45;header-height: 70px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        header {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 15px 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .logo {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            font-size: 1.6rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .hamburger {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            display: block;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .nav-buttons {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            display: none;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            flex-direction: column;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            gap: 10px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            background: rgba(0, 0, 0, 0.9);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 15px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            position: absolute;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            top: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            left: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            right: 0;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            z-index: 999;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .nav-buttons.active {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            display: flex;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .nav-btn {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            width: 100%;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 8px 15px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            font-size: 0.9rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .main-content {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 20px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .form-row {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            grid-template-columns: 1fr;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            gap: 15px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    @media (max-width: 480px) {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        :root {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            &#45;&#45;header-height: 60px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        header {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 10px 15px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .logo {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            font-size: 1.5rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .logo img {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            width: 40px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            height: 40px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .hamburger {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            font-size: 1.3rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .main-content {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 15px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        form h4 {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            font-size: 1.8rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .form-row label {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            font-size: 0.9rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .form-row input {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 8px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            font-size: 0.9rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        form button, form .skip-btn {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 10px 25px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            font-size: 1rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            width: 180px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;        .error-message {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            font-size: 0.9rem;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;            padding: 8px;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  </style>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</head>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;<body>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;&lt;!&ndash; Header &ndash;&gt;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;<header>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <div class="header-container">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    <div class="logo">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <a th:href="@{ / }" style="text-decoration: none; color: white;">Hydrospark</a>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    <div class="search-nav">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <button class="hamburger" onclick="toggleMenu()">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <i class="fas fa-bars"></i>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </button>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div class="nav-buttons">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <a class="nav-btn" th:href="@{/}">Home</a>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <a class="nav-btn" th:href="@{/about}">About</a>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</header>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;&lt;!&ndash; Main Content &ndash;&gt;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;<div class="main-content">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  <form method="post" th:action="@{'/admin/componentEntry/' + ${session.subprodId}}">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    <h4>Component Entry</h4>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    <div class="form-row">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <label for="partNo">Part No</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <input type="text" id="partNo" name="partNo" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <label for="hoseSizeD">Hose Size D</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <input type="text" id="hoseSizeD" name="hoseSizeD" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    <div class="form-row">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <label for="bspThreadSizeD">BSP 'P' Thread Size D</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <input type="text" id="bspThreadSizeD" name="bspThreadSizeD" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <label for="a">A</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <input type="text" id="a" name="a" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    <div class="form-row">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <label for="b">B</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <input type="text" id="b" name="b" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <label for="c">C</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <input type="text" id="c" name="c" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    <div class="form-row">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <label for="e">E</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <input type="text" id="e" name="e" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <label for="f">F</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <input type="text" id="f" name="f" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    <div class="form-row">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <label for="afHex">A/F HEX</label>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;        <input type="text" id="afHex" name="afHex" required />&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    <div th:if="${error}" class="error-message">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      <p th:text="${error}"></p>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    </div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;    <button type="submit">Submit</button>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;    <a th:href="@{/admin/products}" class="skip-btn">Skip</a>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  </form>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;<script>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  // Toggle menu and adjust padding&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  function toggleMenu() {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      const navButtons = document.querySelector('.nav-buttons');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      navButtons.classList.toggle('active');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      adjustContentPadding();&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;  // Function to adjust content padding dynamically&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  function adjustContentPadding() {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      const mainContent = document.querySelector('.main-content');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      const header = document.querySelector('header');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      const navButtons = document.querySelector('.nav-buttons');&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      const headerHeight = header.offsetHeight;&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;      if (navButtons.classList.contains('active')) {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          const navHeight = navButtons.offsetHeight;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          mainContent.style.paddingTop = `${headerHeight + navHeight + 20}px`;&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      } else {&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;          mainContent.style.paddingTop = `${headerHeight + 40}px`; // Default padding with buffer&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;      }&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  }&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;&lt;!&ndash;  // Adjust padding on page load and resize&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  window.addEventListener('load', adjustContentPadding);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;  window.addEventListener('resize', adjustContentPadding);&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</script>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</body>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;</html>&ndash;&gt;&ndash;&gt;-->
