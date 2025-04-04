@@ -34,10 +34,8 @@ public class GlobalAspect {
             Hydrospark hyd = hydrosparkRepo.findByName("Hydro1...").get(0);
             Hydrospark Banner1 = hydrosparkRepo.findByName("Banner1").get(0);
             Hydrospark Banner2 = hydrosparkRepo.findByName("Banner2").get(0);
-            Hydrospark Banner3 = null;
-            if (hydrosparkRepo.findByName("Banner3").size() > 0) {
-                Banner3 = hydrosparkRepo.findByName("Banner3").get(0);
-            }
+            Hydrospark Banner3 = hydrosparkRepo.findByName("Banner3").get(0);
+
             Blob blob = new SerialBlob(hyd.getImg());
             Blob Banner1Blob = new SerialBlob(Banner1.getImg());
             Blob Banner2Blob = new SerialBlob(Banner2.getImg());
@@ -55,7 +53,7 @@ public class GlobalAspect {
             session.setAttribute("img", base64Image);
             session.setAttribute("banner1", Banner1base64Image);
             session.setAttribute("banner2", Banner2base64Image);
-            session.setAttribute("banner3", Banner2base64Image);
+            session.setAttribute("banner3", Banner3base64Image);
         }
     }
 }
