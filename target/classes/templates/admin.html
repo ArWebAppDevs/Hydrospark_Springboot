@@ -1,12 +1,13 @@
 
+
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Hydrospark - Admin</title>
-    <link rel="icon" type="image/png" th:href="@{'data:image/*;base64,' + ${session.img}}"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <link rel="icon" type="image/png" th:href="'data:image/png;base64,' + ${session.img}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -21,33 +22,23 @@
             --accent-color: #ffffff;
             --background-color: #f5f5f5;
             --highlight-color: #00c4b4;
-            --text-muted: #666;
+            --error-color: #ff4f4f;
             --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            --blue-name: #007bff;
-            --header-height: 100px;
-            --footer-height: 200px;
+            --text-muted: #666;
+            --header-height: 90px;
             --sidebar-width: 300px;
-            --sidebar-bg: #333;
+            --sidebar-bg: #000000;
         }
 
-        body {
-            background: var(--background-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header Styles */
         header {
-            background: var(--accent-color);
+            background: linear-gradient(135deg, var(--primary-color), #333);
             padding: 20px 40px;
             position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
+            top: 0;
             z-index: 1000;
             box-shadow: var(--shadow);
-            background: linear-gradient(135deg, #ffffff, #f0f4f8);
+            height: var(--header-height);
         }
 
         .header-container {
@@ -61,9 +52,13 @@
         }
 
         .logo {
+            color: var(--accent-color);
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
             flex-shrink: 0;
         }
 
@@ -73,98 +68,81 @@
             object-fit: contain;
         }
 
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .logo-text a {
-            text-decoration: none;
-            color: var(--blue-name);
-            font-weight: 700;
-        }
-
-        .logo-text .hydrospark {
-            font-size: 1.8rem;
-            line-height: 1;
-        }
-
-        .logo-text .innovations {
-            font-size: 1rem;
-            margin-top: -5px;
-        }
-
-        .search-nav {
+        .nav-toggle {
             display: flex;
             align-items: center;
-            gap: 15px;
-            flex: 1;
-            justify-content: flex-end;
-        }
-
-        .search-bar {
-            position: relative;
-            display: flex;
-            align-items: center;
-            width: 100%;
-            max-width: 300px;
-            min-width: 120px;
-            transition: width 0.3s ease;
-        }
-
-        .search-bar i {
-            position: absolute;
-            left: 15px;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 10px 15px 10px 40px;
-            border: none;
-            border-radius: 30px;
-            background: rgba(0, 123, 255, 0.1);
-            color: var(--primary-color);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .search-bar input:focus {
-            outline: none;
-            background: rgba(0, 123, 255, 0.2);
+            gap: 20px;
         }
 
         .hamburger {
             display: none;
             background: none;
             border: none;
-            color: var(--primary-color);
+            color: var(--accent-color);
             font-size: 1.5rem;
             cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .hamburger:hover {
+            transform: scale(1.1);
+            background: var(--secondary-color);
         }
 
         .nav-buttons {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
         }
 
         .nav-btn {
-            color: var(--primary-color);
+            padding: 8px 20px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--accent-color);
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
             transition: all 0.3s ease;
-            white-space: nowrap;
         }
 
         .nav-btn:hover {
-            color: var(--secondary-color);
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
 
-        /* Sidebar Styles */
+        body {
+            background: var(--background-color);
+            margin: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            padding-top: var(--header-height);
+            flex: 1;
+            width: 100%;
+        }
+
         .sidebar {
             position: fixed;
             top: var(--header-height);
@@ -177,6 +155,10 @@
             overflow-y: auto;
             transition: transform 0.3s ease;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.visible {
+            transform: translateX(0);
         }
 
         .sidebar a {
@@ -194,6 +176,13 @@
 
         .sidebar a:hover {
             background: var(--secondary-color);
+            transform: translateX(5px);
+        }
+
+        .sidebar a.active {
+            background: var(--highlight-color);
+            color: var(--primary-color);
+            font-weight: 600;
         }
 
         .sidebar a i {
@@ -201,30 +190,65 @@
             font-size: 1.2rem;
         }
 
-        /* Main Content Styles */
         .main-content {
-            flex: 1 0 auto;
-            padding: calc(var(--header-height) + 20px) 40px calc(var(--footer-height) + 20px);
+            padding: 40px;
+            background: var(--background-color);
+            transition: margin-left 0.3s ease;
             width: 100%;
             margin-left: 0;
-            transition: margin-left 0.3s ease, width 0.3s ease, padding-top 0.3s ease;
+            flex: 1;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            text-align: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+            position: fixed;
+            top: calc(var(--header-height) + 20px);
+            left: 20px;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            color: var(--secondary-color);
         }
 
         .form-content {
+            padding-top: 20px;
             max-width: 800px;
-            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .dashboard-card h4 {
-            font-size: 2rem;
-            color: var(--primary-color);
+            font-size: 1.8rem;
             margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--primary-color);
+            background: linear-gradient(90deg, var(--secondary-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .dashboard-card p {
@@ -233,1015 +257,296 @@
             margin-bottom: 25px;
         }
 
-        .dashboard-card p strong {
-            color: var(--primary-color);
-        }
-
-        .dashboard-card span {
-            font-weight: 600;
-            color: var(--secondary-color);
-        }
-
         .error-message {
-            color: #ff4f4f;
+            color: var(--error-color);
+            font-size: 1.1rem;
             padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
             background: rgba(255, 79, 79, 0.1);
-            width: 100%;
-            max-width: 600px;
+            border-radius: 10px;
+            margin-bottom: 25px;
         }
 
         button {
             padding: 12px 30px;
-            background: var(--secondary-color);
+            background: linear-gradient(90deg, var(--secondary-color), #ff8c00);
             color: var(--accent-color);
             border: none;
-            border-radius: 6px;
-            font-size: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         button:hover {
-            background: #e65c00;
+            background: linear-gradient(90deg, #e65c00, #ff6b00);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
         }
 
-        .sidebar-toggle {
-            display: none;
-            background: var(--accent-color);
-            border: none;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            top: calc(var(--header-height) + 20px);
-            left: 20px;
-            z-index: 1001;
-            border-radius: 50%;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        /* Footer Styles */
-        footer {
-            background: #333;
-            padding: 40px;
-            color: var(--accent-color);
-            flex-shrink: 0;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-        }
-
-        .footer-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 30px;
-        }
-
-        .footer-left {
-            flex: 1;
-            min-width: 250px;
-            position: relative;
-        }
-
-        .footer-middle {
-            flex: 2;
-            min-width: 300px;
-        }
-
-        .footer-left::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: -15px;
-            width: 1px;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .footer-left .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .footer-left .logo-section img {
-            width: 75px;
-            height: 56px;
-        }
-
-        .footer-left .logo-section .logo-text span {
-            color: var(--accent-color);
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .footer-left .logo-section .logo-text .hydrospark {
-            font-size: 1.2rem;
-            text-transform: uppercase;
-        }
-
-        .footer-left .logo-section .logo-text .innovations {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            opacity: 0.9;
-        }
-
-        .footer-left .footer-label {
-            font-size: 1rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--highlight-color);
-            margin-bottom: 15px;
-        }
-
-        .footer-left .social-links a {
-            margin-right: 15px;
-            font-size: 1.3rem;
-            color: var(--accent-color);
-            transition: color 0.3s ease;
-        }
-
-        .footer-left .social-links a:hover {
-            color: var(--highlight-color);
-        }
-
-        .footer-middle .footer-label {
-            font-size: 1rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--highlight-color);
-            margin-bottom: 15px;
-        }
-
-        .footer-middle .contact-info {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .footer-middle .contact-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            font-size: 0.9rem;
-        }
-
-        .footer-middle .contact-item i {
-            color: var(--accent-color);
-            font-size: 1.1rem;
-            margin-top: 2px;
-            width: 18px;
-        }
-
-        .footer-middle a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-
-        .footer-bottom {
-            width: 100%;
-            text-align: center;
-            margin-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: 15px;
-        }
-
-        .footer-bottom .copyright {
-            font-size: 0.8rem;
-            opacity: 0.8;
-        }
-
-        /* Responsive Design */
         @media (min-width: 769px) {
-            .sidebar { transform: translateX(0); }
+            .sidebar {
+                transform: translateX(0);
+            }
+
             .main-content {
+                margin-left: var(--sidebar-width);
+                width: calc(100% - var(--sidebar-width));
+                padding-left: 60px;
+                padding-right: 60px;
+            }
+
+            .sidebar-toggle,
+            .hamburger {
+                display: none !important;
+            }
+
+            .nav-buttons {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --header-height: 70px;
+                --sidebar-width: 260px;
+            }
+
+            header {
+                padding: 15px 20px;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-buttons {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.9);
+                padding: 15px;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                z-index: 999;
+            }
+
+            .nav-buttons.active {
+                display: flex;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                display: block;
+            }
+
+            .sidebar-toggle {
+                display: flex;
+            }
+
+            .sidebar.visible + .main-content .sidebar-toggle {
+                display: none;
+            }
+
+            .main-content {
+                padding: 25px;
+            }
+
+            .sidebar.visible + .main-content {
                 margin-left: var(--sidebar-width);
                 width: calc(100% - var(--sidebar-width));
             }
         }
 
-        @media (max-width: 1024px) {
-            :root {
-                --header-height: 90px;
-                --footer-height: 180px;
-                --sidebar-width: 280px;
-            }
-            header { padding: 15px 30px; }
-            .search-bar { max-width: 250px; }
-            .main-content { padding: calc(var(--header-height) + 15px) 30px calc(var(--footer-height) + 15px); }
-        }
-
-        @media (max-width: 768px) {
-            :root {
-                --header-height: 80px;
-                --footer-height: 250px;
-                --sidebar-width: 260px;
-            }
-            .hamburger { display: block; }
-            .nav-buttons {
-                display: none;
-                position: fixed;
-                top: var(--header-height);
-                left: 0;
-                width: 100%;
-                background: white;
-                flex-direction: column;
-                padding: 20px;
-                box-shadow: var(--shadow);
-                z-index: 999;
-            }
-            .nav-buttons.active { display: flex; }
-            .search-bar { max-width: 200px; }
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.visible { transform: translateX(0); }
-            .sidebar-toggle { display: flex; }
-            .main-content { padding: calc(var(--header-height) + 15px) 15px calc(var(--footer-height) + 15px); }
-            .sidebar.visible + .main-content { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); }
-            .footer-left::after { display: none; }
-            .footer-left, .footer-middle { min-width: 100%; }
-        }
-
         @media (max-width: 480px) {
             :root {
-                --header-height: 70px;
-                --footer-height: 300px;
+                --header-height: 60px;
                 --sidebar-width: 240px;
             }
-            header { padding: 10px 15px; }
-            .logo img { width: 40px; height: 40px; }
-            .logo-text .hydrospark { font-size: 1.5rem; }
-            .logo-text .innovations { font-size: 0.9rem; }
-            .search-bar { max-width: 150px; }
-            .main-content { padding: calc(var(--header-height) + 10px) 10px calc(var(--footer-height) + 10px); }
-            .dashboard-card h4 { font-size: 1.8rem; }
-            .dashboard-card p { font-size: 1rem; }
-            .sidebar-toggle { top: calc(var(--header-height) + 10px); left: 10px; }
-            .error-message { font-size: 0.9rem; padding: 10px; }
-            button { padding: 10px 20px; font-size: 0.9rem; }
+
+            header {
+                padding: 10px 15px;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .logo img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .sidebar-toggle {
+                top: calc(var(--header-height) + 10px);
+                left: 10px;
+            }
+
+            .dashboard-card h4 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-<!-- Header -->
-<header>
-    <div class="header-container">
-        <div class="logo">
-            <img th:src="@{'data:image/*;base64,' + ${session.img}}" alt="Hydrospark"/>
-            <div class="logo-text">
-                <a th:href="@{/}" class="hydrospark">Hydrospark</a>
-                <a th:href="@{/}" class="innovations">Innovations</a>
+<div class="page-wrapper">
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />
+                <a th:href="@{ / }" style="text-decoration: none; color: white;">Hydrospark</a>
             </div>
-        </div>
-        <div class="search-nav">
-            <form class="search-bar" th:action="@{/search}" method="get">
-                <i class="fas fa-search"></i>
-                <input type="text" name="query" placeholder="Search..."/>
-            </form>
-            <button class="hamburger" onclick="toggleMenu()">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="nav-buttons">
-                <a class="nav-btn" th:href="@{/}">Home</a>
-                <a class="nav-btn" th:href="@{/about}">About</a>
-                <a class="nav-btn" th:href="@{/enquiry}">Enquiry</a>
-                <div th:if="${session.employee != null}">
-                    <a class="nav-btn" th:href="@{/admin}">Admin</a>
-                    <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>
-                    <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>
-                </div>
-                <div th:if="${session.employee == null and session.user != null}">
-                    <a class="nav-btn" th:href="@{/profile}">Profile</a>
-                    <a class="nav-btn" th:href="@{/logout}">Logout</a>
-                </div>
-                <div th:if="${session.employee == null and session.user == null}">
-                    <a class="nav-btn" th:href="@{/signin}">Sign In</a>
-                    <a class="nav-btn" th:href="@{/signup}">Sign Up</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
-
-<!-- Main Content -->
-<div class="sidebar" th:if="${session.employee != null}">
-    <a th:href="@{/admin/addEmployee}"><i class="fas fa-user-plus"></i> Add Employee</a>
-    <a th:href="@{/admin/removeEmployee}"><i class="fas fa-user-minus"></i> Remove Employee</a>
-    <a th:href="@{/admin/addProduct}"><i class="fas fa-box-open"></i> Add Product</a>
-    <a th:href="@{/admin/products}"><i class="fas fa-th-list"></i> All Products</a>
-    <a th:href="@{/admin/showvisited}"><i class="fas fa-eye"></i> Show Who Visited</a>
-</div>
-<div class="main-content">
-    <button class="sidebar-toggle" th:if="${session.employee != null}" onclick="toggleSidebar()">
-        <i class="fas fa-list"></i>
-    </button>
-    <div class="form-content">
-        <div class="dashboard-card">
-            <div th:if="${session.employee == null}">
-                <h4>Admin Access</h4>
-                <div class="error-message">
-                    <p>You are not logged in. Please log in to access the admin panel.</p>
-                </div>
-                <button th:onclick="'window.location.href=\'/admin/employeeLogin\''">
-                    Login Now
+            <div class="nav-toggle">
+                <button class="hamburger" onclick="toggleNav(event)">
+                    <i class="fas fa-bars"></i>
                 </button>
+                <div class="nav-buttons">
+                    <a class="nav-btn" th:href="@{/}">Home</a>
+                    <a class="nav-btn" th:href="@{/about}">About</a>
+                    <a class="nav-btn" th:href="@{/enquiry}">Enquiry</a>
+                    <div th:if="${session.employee != null}">
+                        <a class="nav-btn" th:href="@{/admin}">Admin</a>
+                        <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>
+                        <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>
+                    </div>
+                    <div th:if="${session.employee == null and session.user != null}">
+                        <a class="nav-btn" th:href="@{/profile}">Profile</a>
+                        <a class="nav-btn" th:href="@{/logout}">Logout</a>
+                    </div>
+                    <div th:if="${session.employee == null and session.user == null}">
+                        <a class="nav-btn" th:href="@{/signin}">Sign In</a>
+                        <a class="nav-btn" th:href="@{/signup}">Sign Up</a>
+                    </div>
+                </div>
             </div>
-            <div th:if="${session.employee != null}">
-                <h4>Welcome Back!</h4>
-                <p>Hello, <span th:text="${session.employee}">Employee</span>! You're logged in as: <strong th:text="${session.role}">Role</strong>. Manage your dashboard with ease.</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar - Only shown when employee is logged in -->
+        <div class="sidebar" th:if="${session.employee != null}">
+            <a th:href="@{/admin/addEmployee}"><i class="fas fa-user-plus"></i> Add Employee</a>
+            <a th:href="@{/admin/removeEmployee}"><i class="fas fa-user-minus"></i> Remove Employee</a>
+            <a th:href="@{/admin/addProduct}"><i class="fas fa-box-open"></i> Add Product</a>
+            <a th:href="@{/admin/products}"><i class="fas fa-th-list"></i> All Products</a>
+            <a th:href="@{/admin/showvisited}"><i class="fas fa-eye"></i> Show Who Visited</a>
+        </div>
+
+        <div class="main-content" th:classappend="${session.employee != null} ? 'sidebar-shown' : ''">
+            <button class="sidebar-toggle" th:if="${session.employee != null}" onclick="toggleSidebar(event)">
+                <i class="fas fa-list"></i>
+            </button>
+            <div class="form-content">
+                <div class="dashboard-card">
+                    <!-- If employee is not logged in -->
+                    <div th:if="${session.employee == null}">
+                        <h4>Admin Access</h4>
+                        <div class="error-message">
+                            <p>You are not logged in. Please log in to access the admin panel.</p>
+                        </div>
+                        <button th:onclick="'window.location.href=\'/admin/employeeLogin\''">
+                            Login Now
+                        </button>
+                    </div>
+
+                    <!-- If employee is logged in -->
+                    <div th:if="${session.employee != null}">
+                        <h4>Welcome Back!</h4>
+                        <p>Hello, <span th:text="${session.employee}">Employee</span>! You're logged in as: <strong th:text="${session.role}">Role</strong>. Manage your dashboard with ease.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Footer -->
-<footer>
-    <div class="footer-container">
-        <div class="footer-left">
-            <div class="logo-section">
-                <img th:src="@{'data:image/png;base64,' + ${session.img}}" alt="Hydrospark" />
-                <div class="logo-section">
-                    <span class="hydrospark">Hydrospark</span>
-                    <span class="innovations">Innovations</span>
-                </div>
-            </div>
-            <div class="footer-label">Follow Us</div>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-        <div class="footer-middle">
-            <div class="footer-label">Contact Info</div>
-            <div class="contact-info">
-                <div class="contact-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <p>Sr. No. 101, Wadmukhwadi Road, Tapkir Nagar, Alandi Haveli, Pune - 412105</p>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-phone-alt"></i>
-                    <p><a href="tel:+919156261672">+91 91562 61672</a> | <a href="tel:+918691937235">+91 86919 37235</a></p>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-envelope"></i>
-                    <p><a href="mailto:sachin@hydrospark.org">sachin@hydrospark.org</a> | <a href="mailto:info@hydrospark.org">info@hydrospark.org</a></p>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="copyright">
-                © 2025 Hydrospark Innovations. All rights reserved.
-            </div>
-        </div>
-    </div>
-</footer>
 
 <script>
-    function toggleMenu() {
+    // Initialize sidebar state based on screen size
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar && window.innerWidth <= 768) {
+            sidebar.classList.remove('visible');
+        } else if (sidebar) {
+            sidebar.classList.add('visible');
+        }
+    });
+
+    function toggleNav(event) {
+        event.stopPropagation();
         const navButtons = document.querySelector('.nav-buttons');
         const sidebar = document.querySelector('.sidebar');
-        navButtons.classList.toggle('active');
-        if (sidebar && sidebar.classList.contains('visible')) {
+
+        if (sidebar && sidebar.classList.contains('visible') && window.innerWidth <= 768) {
             sidebar.classList.remove('visible');
         }
-        updateLayout();
+
+        navButtons.classList.toggle('active');
     }
 
-    function toggleSidebar() {
+    function toggleSidebar(event) {
+        event.stopPropagation();
         const sidebar = document.querySelector('.sidebar');
         const navButtons = document.querySelector('.nav-buttons');
-        sidebar.classList.toggle('visible');
+
         if (navButtons.classList.contains('active')) {
             navButtons.classList.remove('active');
         }
-        updateLayout();
+
+        if (sidebar) {
+            sidebar.classList.toggle('visible');
+        }
     }
 
     document.addEventListener('click', (event) => {
-        if (window.innerWidth <= 768) {
-            const navButtons = document.querySelector('.nav-buttons');
-            const hamburger = document.querySelector('.hamburger');
-            const sidebar = document.querySelector('.sidebar');
-            const sidebarToggle = document.querySelector('.sidebar-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        const navButtons = document.querySelector('.nav-buttons');
+        const hamburger = document.querySelector('.hamburger');
 
-            if (!navButtons.contains(event.target) && !hamburger.contains(event.target)) {
+        const isClickInsideSidebar = sidebar ? sidebar.contains(event.target) : false;
+        const isClickOnSidebarToggle = sidebarToggle ? sidebarToggle.contains(event.target) : false;
+        const isClickInsideNavButtons = navButtons.contains(event.target);
+        const isClickOnHamburger = hamburger.contains(event.target);
+
+        if (window.innerWidth <= 768 &&
+            sidebar &&
+            sidebar.classList.contains('visible') &&
+            !isClickInsideSidebar &&
+            !isClickOnSidebarToggle) {
+            sidebar.classList.remove('visible');
+        }
+
+        if (navButtons.classList.contains('active') &&
+            !isClickInsideNavButtons &&
+            !isClickOnHamburger) {
+            navButtons.classList.remove('active');
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        const sidebar = document.querySelector('.sidebar');
+        const navButtons = document.querySelector('.nav-buttons');
+
+        if (sidebar) {
+            if (window.innerWidth > 768) {
+                sidebar.classList.add('visible');
+                navButtons.classList.remove('active');
+            } else {
+                sidebar.classList.remove('visible');
                 navButtons.classList.remove('active');
             }
-            if (sidebar && !sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
-                sidebar.classList.remove('visible');
-            }
-            updateLayout();
         }
     });
-
-    function updateLayout() {
-        const header = document.querySelector('header');
-        const navButtons = document.querySelector('.nav-buttons');
-        const footer = document.querySelector('footer');
-        const mainContent = document.querySelector('.main-content');
-        const sidebar = document.querySelector('.sidebar');
-
-        let headerHeight = header.offsetHeight;
-        const footerHeight = footer.offsetHeight;
-
-        if (window.innerWidth <= 768 && navButtons.classList.contains('active')) {
-            headerHeight += navButtons.offsetHeight;
-        }
-
-        document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
-        document.documentElement.style.setProperty('--footer-height', `${footerHeight}px`);
-
-        mainContent.style.paddingTop = `calc(${headerHeight}px + 20px)`;
-        if (window.innerWidth > 768 && sidebar) {
-            mainContent.style.marginLeft = `var(--sidebar-width)`;
-            mainContent.style.width = `calc(100% - var(--sidebar-width))`;
-        } else if (sidebar && sidebar.classList.contains('visible')) {
-            mainContent.style.marginLeft = `var(--sidebar-width)`;
-            mainContent.style.width = `calc(100% - var(--sidebar-width))`;
-        } else {
-            mainContent.style.marginLeft = '0';
-            mainContent.style.width = '100%';
-        }
-    }
-
-    window.addEventListener('load', () => {
-        const sidebar = document.querySelector('.sidebar');
-        if (sidebar && window.innerWidth > 768) {
-            sidebar.classList.add('visible');
-        }
-        updateLayout();
-    });
-
-    window.addEventListener('resize', updateLayout);
 </script>
 </body>
 </html>
-
-
-<!--<!DOCTYPE html>-->
-<!--<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">-->
-<!--    <title>Hydrospark - Admin</title>-->
-<!--    <link rel="icon" type="image/png" th:href="'data:image/png;base64,' + ${session.img}" />-->
-<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">-->
-<!--    <style>-->
-<!--        * {-->
-<!--            margin: 0;-->
-<!--            padding: 0;-->
-<!--            box-sizing: border-box;-->
-<!--            font-family: 'Segoe UI', sans-serif;-->
-<!--        }-->
-
-<!--        :root {-->
-<!--            &#45;&#45;primary-color: #1a1a1a;-->
-<!--            &#45;&#45;secondary-color: #ff6b00;-->
-<!--            &#45;&#45;accent-color: #ffffff;-->
-<!--            &#45;&#45;background-color: #f5f5f5;-->
-<!--            &#45;&#45;highlight-color: #00c4b4;-->
-<!--            &#45;&#45;error-color: #ff4f4f;-->
-<!--            &#45;&#45;shadow: 0 8px 25px rgba(0, 0, 0, 0.1);-->
-<!--            &#45;&#45;text-muted: #666;-->
-<!--            &#45;&#45;header-height: 90px;-->
-<!--            &#45;&#45;sidebar-width: 300px;-->
-<!--            &#45;&#45;sidebar-bg: #000000;-->
-<!--        }-->
-
-<!--        header {-->
-<!--            background: linear-gradient(135deg, var(&#45;&#45;primary-color), #333);-->
-<!--            padding: 20px 40px;-->
-<!--            position: fixed;-->
-<!--            width: 100%;-->
-<!--            top: 0;-->
-<!--            z-index: 1000;-->
-<!--            box-shadow: var(&#45;&#45;shadow);-->
-<!--            height: var(&#45;&#45;header-height);-->
-<!--        }-->
-
-<!--        .header-container {-->
-<!--            max-width: 1400px;-->
-<!--            margin: 0 auto;-->
-<!--            display: flex;-->
-<!--            justify-content: space-between;-->
-<!--            align-items: center;-->
-<!--            flex-wrap: wrap;-->
-<!--            gap: 15px;-->
-<!--        }-->
-
-<!--        .logo {-->
-<!--            color: var(&#45;&#45;accent-color);-->
-<!--            font-size: 1.9rem;-->
-<!--            font-weight: 600;-->
-<!--            letter-spacing: 1px;-->
-<!--            display: flex;-->
-<!--            align-items: center;-->
-<!--            gap: 10px;-->
-<!--            flex-shrink: 0;-->
-<!--        }-->
-
-<!--        .logo img {-->
-<!--            width: 50px;-->
-<!--            height: 50px;-->
-<!--            object-fit: contain;-->
-<!--        }-->
-
-<!--        .nav-toggle {-->
-<!--            display: flex;-->
-<!--            align-items: center;-->
-<!--            gap: 20px;-->
-<!--        }-->
-
-<!--        .hamburger {-->
-<!--            display: none;-->
-<!--            background: none;-->
-<!--            border: none;-->
-<!--            color: var(&#45;&#45;accent-color);-->
-<!--            font-size: 1.5rem;-->
-<!--            cursor: pointer;-->
-<!--            width: 40px;-->
-<!--            height: 40px;-->
-<!--            display: flex;-->
-<!--            align-items: center;-->
-<!--            justify-content: center;-->
-<!--            transition: transform 0.3s ease, background 0.3s ease;-->
-<!--        }-->
-
-<!--        .hamburger:hover {-->
-<!--            transform: scale(1.1);-->
-<!--            background: var(&#45;&#45;secondary-color);-->
-<!--        }-->
-
-<!--        .nav-buttons {-->
-<!--            display: flex;-->
-<!--            gap: 10px;-->
-<!--            align-items: center;-->
-<!--        }-->
-
-<!--        .nav-btn {-->
-<!--            padding: 8px 20px;-->
-<!--            border: 2px solid var(&#45;&#45;secondary-color);-->
-<!--            border-radius: 20px;-->
-<!--            background: transparent;-->
-<!--            color: var(&#45;&#45;accent-color);-->
-<!--            font-weight: 600;-->
-<!--            text-transform: uppercase;-->
-<!--            letter-spacing: 1px;-->
-<!--            text-decoration: none;-->
-<!--            text-align: center;-->
-<!--            cursor: pointer;-->
-<!--            transition: all 0.3s ease;-->
-<!--        }-->
-
-<!--        .nav-btn:hover {-->
-<!--            background: var(&#45;&#45;secondary-color);-->
-<!--            transform: translateY(-2px);-->
-<!--            box-shadow: var(&#45;&#45;shadow);-->
-<!--        }-->
-
-<!--        body {-->
-<!--            background: var(&#45;&#45;background-color);-->
-<!--            margin: 0;-->
-<!--            overflow-x: hidden;-->
-<!--            display: flex;-->
-<!--            flex-direction: column;-->
-<!--            min-height: 100vh;-->
-<!--        }-->
-
-<!--        .page-wrapper {-->
-<!--            display: flex;-->
-<!--            flex-direction: column;-->
-<!--            min-height: 100vh;-->
-<!--        }-->
-
-<!--        .container {-->
-<!--            display: flex;-->
-<!--            padding-top: var(&#45;&#45;header-height);-->
-<!--            flex: 1;-->
-<!--            width: 100%;-->
-<!--        }-->
-
-<!--        .sidebar {-->
-<!--            position: fixed;-->
-<!--            top: var(&#45;&#45;header-height);-->
-<!--            left: 0;-->
-<!--            width: var(&#45;&#45;sidebar-width);-->
-<!--            height: calc(100vh - var(&#45;&#45;header-height));-->
-<!--            background: var(&#45;&#45;sidebar-bg);-->
-<!--            padding: 20px;-->
-<!--            z-index: 999;-->
-<!--            overflow-y: auto;-->
-<!--            transition: transform 0.3s ease;-->
-<!--            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);-->
-<!--        }-->
-
-<!--        .sidebar.visible {-->
-<!--            transform: translateX(0);-->
-<!--        }-->
-
-<!--        .sidebar a {-->
-<!--            display: flex;-->
-<!--            align-items: center;-->
-<!--            text-decoration: none;-->
-<!--            color: var(&#45;&#45;accent-color);-->
-<!--            font-size: 1.1rem;-->
-<!--            padding: 15px 20px;-->
-<!--            margin: 8px 0;-->
-<!--            border-radius: 8px;-->
-<!--            transition: all 0.3s ease;-->
-<!--            background: rgba(255, 255, 255, 0.1);-->
-<!--        }-->
-
-<!--        .sidebar a:hover {-->
-<!--            background: var(&#45;&#45;secondary-color);-->
-<!--            transform: translateX(5px);-->
-<!--        }-->
-
-<!--        .sidebar a.active {-->
-<!--            background: var(&#45;&#45;highlight-color);-->
-<!--            color: var(&#45;&#45;primary-color);-->
-<!--            font-weight: 600;-->
-<!--        }-->
-
-<!--        .sidebar a i {-->
-<!--            margin-right: 12px;-->
-<!--            font-size: 1.2rem;-->
-<!--        }-->
-
-<!--        .main-content {-->
-<!--            padding: 40px;-->
-<!--            background: var(&#45;&#45;background-color);-->
-<!--            transition: margin-left 0.3s ease;-->
-<!--            width: 100%;-->
-<!--            margin-left: 0;-->
-<!--            flex: 1;-->
-<!--        }-->
-
-<!--        .sidebar-toggle {-->
-<!--            display: none;-->
-<!--            background: none;-->
-<!--            border: none;-->
-<!--            color: var(&#45;&#45;primary-color);-->
-<!--            font-size: 1.5rem;-->
-<!--            cursor: pointer;-->
-<!--            width: 40px;-->
-<!--            height: 40px;-->
-<!--            display: flex;-->
-<!--            align-items: center;-->
-<!--            justify-content: center;-->
-<!--            transition: transform 0.3s ease;-->
-<!--            position: fixed;-->
-<!--            top: calc(var(&#45;&#45;header-height) + 20px);-->
-<!--            left: 20px;-->
-<!--            z-index: 1001;-->
-<!--            background: rgba(255, 255, 255, 0.9);-->
-<!--            border-radius: 50%;-->
-<!--            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);-->
-<!--        }-->
-
-<!--        .sidebar-toggle:hover {-->
-<!--            transform: scale(1.1);-->
-<!--            color: var(&#45;&#45;secondary-color);-->
-<!--        }-->
-
-<!--        .form-content {-->
-<!--            padding-top: 20px;-->
-<!--            max-width: 800px;-->
-<!--            margin: 0 auto;-->
-<!--            text-align: center;-->
-<!--        }-->
-
-<!--        .dashboard-card {-->
-<!--            background: white;-->
-<!--            border-radius: 12px;-->
-<!--            padding: 30px;-->
-<!--            box-shadow: var(&#45;&#45;shadow);-->
-<!--            max-width: 600px;-->
-<!--            margin: 0 auto;-->
-<!--        }-->
-
-<!--        .dashboard-card h4 {-->
-<!--            font-size: 1.8rem;-->
-<!--            margin-bottom: 20px;-->
-<!--            color: var(&#45;&#45;primary-color);-->
-<!--            background: linear-gradient(90deg, var(&#45;&#45;secondary-color), var(&#45;&#45;highlight-color));-->
-<!--            -webkit-background-clip: text;-->
-<!--            -webkit-text-fill-color: transparent;-->
-<!--        }-->
-
-<!--        .dashboard-card p {-->
-<!--            font-size: 1.1rem;-->
-<!--            color: var(&#45;&#45;text-muted);-->
-<!--            margin-bottom: 25px;-->
-<!--        }-->
-
-<!--        .error-message {-->
-<!--            color: var(&#45;&#45;error-color);-->
-<!--            font-size: 1.1rem;-->
-<!--            padding: 15px;-->
-<!--            background: rgba(255, 79, 79, 0.1);-->
-<!--            border-radius: 10px;-->
-<!--            margin-bottom: 25px;-->
-<!--        }-->
-
-<!--        button {-->
-<!--            padding: 12px 30px;-->
-<!--            background: linear-gradient(90deg, var(&#45;&#45;secondary-color), #ff8c00);-->
-<!--            color: var(&#45;&#45;accent-color);-->
-<!--            border: none;-->
-<!--            border-radius: 8px;-->
-<!--            font-size: 1.1rem;-->
-<!--            font-weight: 600;-->
-<!--            cursor: pointer;-->
-<!--            transition: all 0.3s ease;-->
-<!--        }-->
-
-<!--        button:hover {-->
-<!--            background: linear-gradient(90deg, #e65c00, #ff6b00);-->
-<!--            transform: translateY(-2px);-->
-<!--            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);-->
-<!--        }-->
-
-<!--        @media (min-width: 769px) {-->
-<!--            .sidebar {-->
-<!--                transform: translateX(0);-->
-<!--            }-->
-
-<!--            .main-content {-->
-<!--                margin-left: var(&#45;&#45;sidebar-width);-->
-<!--                width: calc(100% - var(&#45;&#45;sidebar-width));-->
-<!--                padding-left: 60px;-->
-<!--                padding-right: 60px;-->
-<!--            }-->
-
-<!--            .sidebar-toggle,-->
-<!--            .hamburger {-->
-<!--                display: none !important;-->
-<!--            }-->
-
-<!--            .nav-buttons {-->
-<!--                display: flex !important;-->
-<!--            }-->
-<!--        }-->
-
-<!--        @media (max-width: 768px) {-->
-<!--            :root {-->
-<!--                &#45;&#45;header-height: 70px;-->
-<!--                &#45;&#45;sidebar-width: 260px;-->
-<!--            }-->
-
-<!--            header {-->
-<!--                padding: 15px 20px;-->
-<!--            }-->
-
-<!--            .hamburger {-->
-<!--                display: flex;-->
-<!--            }-->
-
-<!--            .nav-buttons {-->
-<!--                display: none;-->
-<!--                flex-direction: column;-->
-<!--                width: 100%;-->
-<!--                gap: 10px;-->
-<!--                background: rgba(0, 0, 0, 0.9);-->
-<!--                padding: 15px;-->
-<!--                position: absolute;-->
-<!--                top: 100%;-->
-<!--                left: 0;-->
-<!--                right: 0;-->
-<!--                z-index: 999;-->
-<!--            }-->
-
-<!--            .nav-buttons.active {-->
-<!--                display: flex;-->
-<!--            }-->
-
-<!--            .sidebar {-->
-<!--                transform: translateX(-100%);-->
-<!--                display: block;-->
-<!--            }-->
-
-<!--            .sidebar-toggle {-->
-<!--                display: flex;-->
-<!--            }-->
-
-<!--            .sidebar.visible + .main-content .sidebar-toggle {-->
-<!--                display: none;-->
-<!--            }-->
-
-<!--            .main-content {-->
-<!--                padding: 25px;-->
-<!--            }-->
-
-<!--            .sidebar.visible + .main-content {-->
-<!--                margin-left: var(&#45;&#45;sidebar-width);-->
-<!--                width: calc(100% - var(&#45;&#45;sidebar-width));-->
-<!--            }-->
-<!--        }-->
-
-<!--        @media (max-width: 480px) {-->
-<!--            :root {-->
-<!--                &#45;&#45;header-height: 60px;-->
-<!--                &#45;&#45;sidebar-width: 240px;-->
-<!--            }-->
-
-<!--            header {-->
-<!--                padding: 10px 15px;-->
-<!--            }-->
-
-<!--            .logo {-->
-<!--                font-size: 1.5rem;-->
-<!--            }-->
-
-<!--            .logo img {-->
-<!--                width: 40px;-->
-<!--                height: 40px;-->
-<!--            }-->
-
-<!--            .main-content {-->
-<!--                padding: 20px;-->
-<!--            }-->
-
-<!--            .sidebar-toggle {-->
-<!--                top: calc(var(&#45;&#45;header-height) + 10px);-->
-<!--                left: 10px;-->
-<!--            }-->
-
-<!--            .dashboard-card h4 {-->
-<!--                font-size: 1.5rem;-->
-<!--            }-->
-<!--        }-->
-<!--    </style>-->
-<!--</head>-->
-<!--<body>-->
-<!--<div class="page-wrapper">-->
-<!--    <header>-->
-<!--        <div class="header-container">-->
-<!--            <div class="logo">-->
-<!--                <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />-->
-<!--                <a th:href="@{ / }" style="text-decoration: none; color: white;">Hydrospark</a>-->
-<!--            </div>-->
-<!--            <div class="nav-toggle">-->
-<!--                <button class="hamburger" onclick="toggleNav(event)">-->
-<!--                    <i class="fas fa-bars"></i>-->
-<!--                </button>-->
-<!--                <div class="nav-buttons">-->
-<!--                    <a class="nav-btn" th:href="@{/}">Home</a>-->
-<!--                    <a class="nav-btn" th:href="@{/about}">About</a>-->
-<!--                    <a class="nav-btn" th:href="@{/enquiry}">Enquiry</a>-->
-<!--                    <div th:if="${session.employee != null}">-->
-<!--                        <a class="nav-btn" th:href="@{/admin}">Admin</a>-->
-<!--                        <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>-->
-<!--                        <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>-->
-<!--                    </div>-->
-<!--                    <div th:if="${session.employee == null and session.user != null}">-->
-<!--                        <a class="nav-btn" th:href="@{/profile}">Profile</a>-->
-<!--                        <a class="nav-btn" th:href="@{/logout}">Logout</a>-->
-<!--                    </div>-->
-<!--                    <div th:if="${session.employee == null and session.user == null}">-->
-<!--                        <a class="nav-btn" th:href="@{/signin}">Sign In</a>-->
-<!--                        <a class="nav-btn" th:href="@{/signup}">Sign Up</a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </header>-->
-
-<!--    <div class="container">-->
-<!--        &lt;!&ndash; Sidebar - Only shown when employee is logged in &ndash;&gt;-->
-<!--        <div class="sidebar" th:if="${session.employee != null}">-->
-<!--            <a th:href="@{/admin/addEmployee}"><i class="fas fa-user-plus"></i> Add Employee</a>-->
-<!--            <a th:href="@{/admin/removeEmployee}"><i class="fas fa-user-minus"></i> Remove Employee</a>-->
-<!--            <a th:href="@{/admin/addProduct}"><i class="fas fa-box-open"></i> Add Product</a>-->
-<!--            <a th:href="@{/admin/products}"><i class="fas fa-th-list"></i> All Products</a>-->
-<!--            <a th:href="@{/admin/showvisited}"><i class="fas fa-eye"></i> Show Who Visited</a>-->
-<!--        </div>-->
-
-<!--        <div class="main-content" th:classappend="${session.employee != null} ? 'sidebar-shown' : ''">-->
-<!--            <button class="sidebar-toggle" th:if="${session.employee != null}" onclick="toggleSidebar(event)">-->
-<!--                <i class="fas fa-list"></i>-->
-<!--            </button>-->
-<!--            <div class="form-content">-->
-<!--                <div class="dashboard-card">-->
-<!--                    &lt;!&ndash; If employee is not logged in &ndash;&gt;-->
-<!--                    <div th:if="${session.employee == null}">-->
-<!--                        <h4>Admin Access</h4>-->
-<!--                        <div class="error-message">-->
-<!--                            <p>You are not logged in. Please log in to access the admin panel.</p>-->
-<!--                        </div>-->
-<!--                        <button th:onclick="'window.location.href=\'/admin/employeeLogin\''">-->
-<!--                            Login Now-->
-<!--                        </button>-->
-<!--                    </div>-->
-
-<!--                    &lt;!&ndash; If employee is logged in &ndash;&gt;-->
-<!--                    <div th:if="${session.employee != null}">-->
-<!--                        <h4>Welcome Back!</h4>-->
-<!--                        <p>Hello, <span th:text="${session.employee}">Employee</span>! You're logged in as: <strong th:text="${session.role}">Role</strong>. Manage your dashboard with ease.</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-<!--<script>-->
-<!--    // Initialize sidebar state based on screen size-->
-<!--    document.addEventListener('DOMContentLoaded', function() {-->
-<!--        const sidebar = document.querySelector('.sidebar');-->
-<!--        if (sidebar && window.innerWidth <= 768) {-->
-<!--            sidebar.classList.remove('visible');-->
-<!--        } else if (sidebar) {-->
-<!--            sidebar.classList.add('visible');-->
-<!--        }-->
-<!--    });-->
-
-<!--    function toggleNav(event) {-->
-<!--        event.stopPropagation();-->
-<!--        const navButtons = document.querySelector('.nav-buttons');-->
-<!--        const sidebar = document.querySelector('.sidebar');-->
-
-<!--        if (sidebar && sidebar.classList.contains('visible') && window.innerWidth <= 768) {-->
-<!--            sidebar.classList.remove('visible');-->
-<!--        }-->
-
-<!--        navButtons.classList.toggle('active');-->
-<!--    }-->
-
-<!--    function toggleSidebar(event) {-->
-<!--        event.stopPropagation();-->
-<!--        const sidebar = document.querySelector('.sidebar');-->
-<!--        const navButtons = document.querySelector('.nav-buttons');-->
-
-<!--        if (navButtons.classList.contains('active')) {-->
-<!--            navButtons.classList.remove('active');-->
-<!--        }-->
-
-<!--        if (sidebar) {-->
-<!--            sidebar.classList.toggle('visible');-->
-<!--        }-->
-<!--    }-->
-
-<!--    document.addEventListener('click', (event) => {-->
-<!--        const sidebar = document.querySelector('.sidebar');-->
-<!--        const sidebarToggle = document.querySelector('.sidebar-toggle');-->
-<!--        const navButtons = document.querySelector('.nav-buttons');-->
-<!--        const hamburger = document.querySelector('.hamburger');-->
-
-<!--        const isClickInsideSidebar = sidebar ? sidebar.contains(event.target) : false;-->
-<!--        const isClickOnSidebarToggle = sidebarToggle ? sidebarToggle.contains(event.target) : false;-->
-<!--        const isClickInsideNavButtons = navButtons.contains(event.target);-->
-<!--        const isClickOnHamburger = hamburger.contains(event.target);-->
-
-<!--        if (window.innerWidth <= 768 &&-->
-<!--            sidebar &&-->
-<!--            sidebar.classList.contains('visible') &&-->
-<!--            !isClickInsideSidebar &&-->
-<!--            !isClickOnSidebarToggle) {-->
-<!--            sidebar.classList.remove('visible');-->
-<!--        }-->
-
-<!--        if (navButtons.classList.contains('active') &&-->
-<!--            !isClickInsideNavButtons &&-->
-<!--            !isClickOnHamburger) {-->
-<!--            navButtons.classList.remove('active');-->
-<!--        }-->
-<!--    });-->
-
-<!--    window.addEventListener('resize', () => {-->
-<!--        const sidebar = document.querySelector('.sidebar');-->
-<!--        const navButtons = document.querySelector('.nav-buttons');-->
-
-<!--        if (sidebar) {-->
-<!--            if (window.innerWidth > 768) {-->
-<!--                sidebar.classList.add('visible');-->
-<!--                navButtons.classList.remove('active');-->
-<!--            } else {-->
-<!--                sidebar.classList.remove('visible');-->
-<!--                navButtons.classList.remove('active');-->
-<!--            }-->
-<!--        }-->
-<!--    });-->
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->
 
 
 
