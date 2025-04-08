@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Hydrospark - Employee Sign In</title>
-    <link rel="icon" type="image/png" th:href="'data:image/png;base64,' + ${session.img}" />
+    <link rel="icon" type="image/png" th:href="@{'data:image/png;base64,' + ${session.img}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -129,29 +129,36 @@
 
         .nav-buttons {
             display: flex;
-            gap: 10px;
+            gap: 20px;
             align-items: center;
         }
 
         .nav-btn {
-            padding: 8px 20px;
-            border: 2px solid var(--secondary-color);
-            border-radius: 20px;
-            background: transparent;
-            color: var(--accent-color);
+            color: var(--primary-color);
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
-            text-align: center;
+            position: relative;
+            padding: 5px 10px;
         }
 
-        .nav-btn:hover {
+        .nav-btn::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
             background: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-btn:hover::after {
+            width: 100%;
         }
 
         /* Body Styles */
