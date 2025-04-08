@@ -1,12 +1,14 @@
 
+
+
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
     <title>Hydrospark - <span th:text="${session.prdName} ?: 'Products'"></span></title>
-    <link rel="icon" type="image/png" th:href="'data:image/png;base64,' + ${session.img}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/png" th:href="@{'data:image/*;base64,' + ${session.img}}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
     <style>
         * {
             margin: 0;
@@ -26,7 +28,6 @@
             --text-muted: #666;
             --header-height: 100px;
             --blue-name: #007bff;
-            --filter-bg: #f9f9f9;
         }
 
         body {
@@ -36,7 +37,6 @@
             flex-direction: column;
         }
 
-        /* ===== HEADER STYLES ===== */
         header {
             background: var(--accent-color);
             padding: 20px 40px;
@@ -56,12 +56,6 @@
             max-width: 1400px;
             width: 100%;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .header-top {
-            display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
@@ -73,47 +67,33 @@
             align-items: center;
             gap: 15px;
             flex-shrink: 0;
-            position: relative;
         }
 
         .logo img {
-            width: 73px;
-            height: 57px;
+            width: 50px;
+            height: 50px;
             object-fit: contain;
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover img {
-            transform: scale(1.1);
         }
 
         .logo-text {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
         }
 
         .logo-text a {
             text-decoration: none;
             color: var(--blue-name);
             font-weight: 700;
-            line-height: 1.2;
         }
 
         .logo-text .hydrospark {
-            font-size: 2rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-shadow: 1px 1px 3px rgba(0, 123, 255, 0.3);
+            font-size: 1.8rem;
+            line-height: 1;
         }
 
         .logo-text .innovations {
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-            position: relative;
-            left: -10px;
-            text-transform: uppercase;
+            font-size: 1rem;
+            margin-top: -5px;
         }
 
         .search-nav {
@@ -128,9 +108,8 @@
             position: relative;
             display: flex;
             align-items: center;
-            width: 300px;
+            width: clamp(150px, 40vw, 300px); /* Dynamic width for search bar */
             max-width: 100%;
-            margin-right: 10px;
         }
 
         .search-bar i {
@@ -148,13 +127,11 @@
             color: var(--primary-color);
             font-size: 1rem;
             width: 100%;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .search-bar input:focus {
-            background: rgba(0, 123, 255, 0.2);
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
             outline: none;
+            background: rgba(0, 123, 255, 0.2);
         }
 
         .hamburger {
@@ -163,7 +140,7 @@
             color: var(--primary-color);
             font-size: 1.5rem;
             cursor: pointer;
-            display: none;
+            display: none; /* Hidden by default, shown on mobile */
             transition: transform 0.3s ease;
         }
 
@@ -173,100 +150,48 @@
 
         .nav-buttons {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
         }
 
         .nav-btn {
             color: var(--primary-color);
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
             text-decoration: none;
-            position: relative;
-            padding: 5px 10px;
-        }
-
-        .nav-btn::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 50%;
-            background: var(--secondary-color);
+            padding: 8px 12px;
+            border-radius: 5px;
             transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-
-        .nav-btn:hover::after {
-            width: 100%;
         }
 
         .nav-btn:hover {
             color: var(--secondary-color);
-            transform: translateY(-2px);
         }
 
-        /* Mobile product name in header */
-        .mobile-product-name {
-            display: none;
-            text-align: center;
-            padding: 8px 15px;
-            background: linear-gradient(135deg, var(--highlight-color), var(--blue-name));
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-radius: 8px;
-            margin-top: 10px;
+        .main-content {
+            flex: 1;
+            padding: calc(var(--header-height) + 40px) 40px 40px;
+            max-width: 1400px;
             width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
-        /* ===== MAIN CONTENT AREA ===== */
-        main {
-            flex: 1 0 auto;
-            padding-top: var(--header-height);
-            padding-bottom: 20px;
-        }
-
-        /* Desktop product name banner */
-        .desktop-product-name {
-            background: linear-gradient(135deg, var(--highlight-color), var(--blue-name));
-            color: white;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-        }
-
-        .desktop-product-name h2 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Product details page specific styles */
         .content-wrapper {
             display: flex;
             width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
+            gap: 20px;
         }
 
-        /* Filter Sidebar */
         .filter-sidebar {
             width: 250px;
-            background: var(--filter-bg);
+            background: #f9f9f9;
             padding: 20px;
             flex-shrink: 0;
-            overflow-y: auto;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             z-index: 900;
             transition: transform 0.3s ease;
+            overflow-y: auto;
         }
 
         .filter-sidebar h3 {
@@ -297,71 +222,70 @@
             color: var(--primary-color);
         }
 
-        /* Main Content */
-        .main-content {
-            flex-grow: 1;
-            padding: 40px;
-            overflow-y: auto;
-            position: relative;
+        .desktop-product-name {
+            background: linear-gradient(135deg, var(--highlight-color), var(--blue-name));
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .desktop-product-name h2 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .cards-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
+            padding: 10px;
         }
 
         .card {
             background: var(--accent-color);
-            border-radius: 16px;
-            padding: 15px;
-            text-align: center;
+            border-radius: 12px;
             box-shadow: var(--shadow);
+            padding: 15px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
+            width: clamp(200px, 20vw, 280px);
+            min-width: 180px;
+            height: clamp(240px, 25vw, 320px);
+            overflow: hidden;
+            flex-shrink: 0;
         }
 
         .card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-5px);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
 
         .card img {
             width: 100%;
-            height: 140px;
+            height: 60%;
             object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
 
         .card h5 {
             color: var(--primary-color);
-            font-size: 1.2rem;
-            font-weight: 600;
+            font-size: clamp(1rem, 1.2vw, 1.3rem);
             margin-bottom: 8px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .product-specs {
-            margin: 10px 0;
-            text-align: left;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            flex-grow: 1;
-        }
-
-        .product-specs p {
-            margin-bottom: 5px;
-        }
-
         .explore-btn {
-            padding: 8px 20px;
+            padding: clamp(6px, 1vw, 8px) clamp(15px, 2vw, 20px);
             border: 2px solid var(--secondary-color);
             border-radius: 20px;
             background: transparent;
@@ -373,7 +297,9 @@
             transition: all 0.3s ease;
             text-decoration: none;
             text-align: center;
+            align-self: center;
             margin-top: auto;
+            font-size: clamp(0.8rem, 1vw, 1rem);
         }
 
         .explore-btn:hover {
@@ -386,28 +312,25 @@
         .error-message {
             background: rgba(255, 79, 79, 0.1);
             color: var(--error-color);
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            margin: 20px 0;
+            margin: 15px 0;
             text-align: center;
             font-size: 1.1rem;
         }
 
-        /* Filter Toggle Button */
         .filter-toggle {
             display: none;
             background: var(--secondary-color);
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 5px;
-            margin-bottom: 15px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
             position: fixed;
             left: 20px;
-            top: 120px;
             z-index: 950;
         }
 
@@ -416,7 +339,6 @@
             transform: translateY(-2px);
         }
 
-        /* ===== FOOTER STYLES ===== */
         footer {
             background: #333;
             padding: 40px 40px;
@@ -435,7 +357,6 @@
             flex-wrap: wrap;
             justify-content: space-between;
             gap: 30px;
-            position: relative;
         }
 
         .footer-left {
@@ -447,7 +368,6 @@
         .footer-middle {
             flex: 2;
             min-width: 300px;
-            position: relative;
         }
 
         .footer-left::after {
@@ -529,10 +449,6 @@
             width: 100%;
         }
 
-        .footer-left .social-links {
-            margin-bottom: 15px;
-        }
-
         .footer-left .social-links a {
             margin-right: 15px;
             font-size: 1.3rem;
@@ -592,18 +508,9 @@
             margin-top: 2px;
             width: 18px;
             text-align: center;
-            transition: color 0.3s ease;
         }
 
-        .footer-middle .contact-item p {
-            margin: 0;
-            flex: 1;
-        }
-
-        .footer-middle .contact-item:hover {
-            color: var(--highlight-color);
-        }
-
+        .footer-middle .contact-item:hover,
         .footer-middle .contact-item:hover i {
             color: var(--highlight-color);
         }
@@ -622,7 +529,6 @@
             width: 100%;
             display: flex;
             justify-content: center;
-            align-items: center;
             margin-top: 30px;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
             padding-top: 15px;
@@ -639,258 +545,105 @@
             opacity: 1;
         }
 
-        /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 1024px) {
-            :root {
-                --header-height: 90px;
-            }
-
-            header {
-                padding: 15px 30px;
-            }
-
-            main {
-                padding-top: var(--header-height);
-            }
-
-            .filter-sidebar {
-                width: 200px;
-            }
-
-            .main-content {
-                padding: 30px;
-            }
-
-            .cards-section {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
-
-            .search-bar {
-                width: 250px;
-            }
+            :root { --header-height: 90px; }
+            .filter-sidebar { width: 200px; }
+            .main-content { padding: calc(var(--header-height) + 30px) 30px 30px; }
+            header { padding: 15px 30px; }
         }
 
         @media (max-width: 768px) {
-            :root {
-                --header-height: 80px;
-            }
-
-            header {
-                padding: 15px 20px;
-            }
-
-            .header-container {
-                gap: 15px;
-            }
-
-            .mobile-product-name {
-                display: block;
-            }
-
-            .desktop-product-name {
-                display: none;
-            }
-
-            .content-wrapper {
-                flex-direction: column;
-                padding-top: 0;
-            }
-
-            .search-bar {
-                width: 200px;
-            }
-
-            .hamburger {
-                display: block;
-            }
-
+            :root { --header-height: 80px; }
+            .hamburger { display: block; } /* Show hamburger on mobile */
             .nav-buttons {
                 display: none;
-                flex-direction: column;
-                width: 100%;
-                gap: 15px;
-                background: rgba(255, 255, 255, 0.95);
-                padding: 15px;
                 position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                z-index: 999;
-                box-shadow: var(--shadow);
-            }
-
-            .nav-buttons.active {
-                display: flex;
-            }
-
-            .filter-sidebar {
-                position: fixed;
                 top: var(--header-height);
                 left: 0;
-                height: calc(100vh - var(--header-height));
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: var(--shadow);
+                z-index: 999;
+            }
+            .nav Buttons.active { display: flex; }
+            .content-wrapper {
+                flex-direction: column;
+                padding: 0;
+            }
+            .filter-sidebar {
+                position: fixed;
+                left: 0;
+                width: 280px;
+                height: 100%;
                 transform: translateX(-100%);
                 z-index: 998;
-                width: 280px;
+                overflow-y: auto;
+                background: #f9f9f9;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             }
-
-            .filter-sidebar.active {
-                transform: translateX(0);
-            }
-
-            .filter-toggle {
-                display: block;
-            }
-
-            .main-content {
-                padding: 20px;
-                padding-top: 70px;
-            }
-
-            .cards-section {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            }
-
-            .footer-left, .footer-middle {
-                flex: 100%;
-                text-align: center;
-            }
-
-            .footer-left::after {
-                display: none;
-            }
-
-            .footer-left .footer-label {
-                display: block;
-                text-align: center;
-            }
-
-            .footer-left .footer-label::after {
-                left: 50%;
-                transform: translateX(-50%);
-            }
-
-            .footer-left .social-links a {
-                margin: 0 10px;
-            }
-
-            .footer-middle .footer-label {
-                display: block;
-                text-align: center;
-            }
-
-            .footer-middle .footer-label::after {
-                left: 50%;
-                transform: translateX(-50%);
-            }
-
-            .footer-middle .contact-info {
-                align-items: center;
-                text-align: center;
-            }
-
-            .footer-bottom {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .footer-bottom .copyright {
-                text-align: center;
-            }
+            .filter-sidebar.active { transform: translateX(0); }
+            .filter-toggle { display: block; }
+            .main-content { padding: calc(var(--header-height) + 40px) 15px 15px; }
+            .cards-section { justify-content: center; }
+            header { padding: 15px 20px; }
         }
 
         @media (max-width: 480px) {
-            :root {
-                --header-height: 70px;
-            }
-
-            header {
-                padding: 10px 15px;
-            }
-
-            .logo-text .hydrospark {
-                font-size: 1.5rem;
-            }
-
-            .logo-text .innovations {
-                font-size: 1rem;
-            }
-
-            .logo img {
-                width: 45px;
-                height: 45px;
-            }
-
-            .search-bar {
-                width: 180px;
-            }
-
-            .main-content {
-                padding: 15px;
-                padding-top: 60px;
-            }
-
-            .cards-section {
-                grid-template-columns: 1fr;
-            }
-
-            .filter-toggle {
-                top: 110px;
-            }
+            :root { --header-height: 70px; }
+            .main-content { padding: calc(var(--header-height) + 20px) 20px 20px; }
+            .cards-section { flex-direction: column; align-items: center; }
+            .filter-sidebar { width: 100%; max-width: 280px; }
+            .desktop-product-name h2 { font-size: 1.5rem; }
+            header { padding: 10px 15px; }
+            .logo img { width: 40px; height: 40px; }
+            .logo-text .hydrospark { font-size: 1.5rem; }
+            .logo-text .innovations { font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
-<!-- Header -->
 <header>
     <div class="header-container">
-        <div class="header-top">
-            <div class="logo">
-                <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />
-                <div class="logo-text">
-                    <a th:href="@{ / }" class="hydrospark">Hydrospark</a>
-                    <a th:href="@{ / }" class="innovations">Innovations</a>
-                </div>
+        <div class="logo">
+            <img th:src="@{'data:image/*;base64,' + ${session.img}}" alt="Hydrospark"/>
+            <div class="logo-text">
+                <a th:href="@{/}" class="hydrospark">Hydrospark</a>
+                <a th:href="@{/}" class="innovations">Innovations</a>
             </div>
-            <div class="search-nav">
-                <button class="hamburger" onclick="toggleMenu()">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="nav-buttons">
-                    <form class="search-bar" action="/search" method="GET">
-                        <i class="fas fa-search"></i>
-                        <input type="text" name="query" placeholder="Search...">
-                    </form>
-                    <a class="nav-btn" th:href="@{/}">Home</a>
-                    <a class="nav-btn" th:href="@{/about}">About</a>
-                    <a class="nav-btn" th:href="@{/enquiry}">Contact Us</a>
-                    <div th:if="${session.employee != null}">
-                        <a class="nav-btn" th:href="@{/admin}">Admin</a>
-                        <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>
-                        <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>
-                    </div>
-                    <div th:if="${session.employee == null and session.user != null}">
-                        <a class="nav-btn" th:href="@{/profile}">Profile</a>
-                        <a class="nav-btn" th:href="@{/logout}">Logout</a>
-                    </div>
-                    <div th:if="${session.employee == null and session.user == null}">
-                        <a class="nav-btn" th:href="@{/signin}">Sign In</a>
-                        <a class="nav-btn" th:href="@{/signup}">Sign Up</a>
-                    </div>
+        </div>
+        <div class="search-nav">
+            <form class="search-bar" th:action="@{/search}" method="get">
+                <i class="fas fa-search"></i>
+                <input type="text" name="query" placeholder="Search..."/>
+            </form>
+            <button class="hamburger" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-buttons">
+                <a class="nav-btn" th:href="@{/}">Home</a>
+                <a class="nav-btn" th:href="@{/about}">About</a>
+                <a class="nav-btn" th:href="@{/enquiry}">Enquiry</a>
+                <div th:if="${session.employee != null}">
+                    <a class="nav-btn" th:href="@{/admin}">Admin</a>
+                    <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>
+                    <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>
+                </div>
+                <div th:if="${session.employee == null and session.user != null}">
+                    <a class="nav-btn" th:href="@{/profile}">Profile</a>
+                    <a class="nav-btn" th:href="@{/logout}">Logout</a>
+                </div>
+                <div th:if="${session.employee == null and session.user == null}">
+                    <a class="nav-btn" th:href="@{/signin}">Sign In</a>
+                    <a class="nav-btn" th:href="@{/signup}">Sign Up</a>
                 </div>
             </div>
         </div>
-        <!-- Mobile product name in header -->
-        <div class="mobile-product-name" th:if="${session.prdName}" th:text="${session.prdName}"></div>
     </div>
 </header>
 
-<!-- Main Content -->
-<main>
-    <!-- Desktop product name banner -->
-    <div class="desktop-product-name" th:if="${session.prdName}">
-        <h2 th:text="${session.prdName}"></h2>
-    </div>
-
+<div class="main-content">
     <div class="content-wrapper">
         <!-- Filter Sidebar -->
         <div class="filter-sidebar" id="filterSidebar">
@@ -929,10 +682,13 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="main-content">
+        <div style="flex-grow: 1;">
             <button class="filter-toggle" id="filterToggleBtn">
                 <i class="fas fa-filter"></i> Filters
             </button>
+            <div class="desktop-product-name" th:if="${session.prdName}">
+                <h2 th:text="${session.prdName}"></h2>
+            </div>
             <div th:if="${error != null}" class="error-message">
                 <span th:text="${error}"></span>
             </div>
@@ -940,9 +696,6 @@
                 <div th:each="prod : ${productDetails}" class="card">
                     <img th:src="${prod.get('img') != null ? 'data:image/png;base64,' + prod.get('img') : '/default-image.png'}" alt="Product Image" />
                     <h5 th:text="${prod.get('prodName')} ?: 'Unnamed Product'"></h5>
-                    <div class="product-specs" th:if="${prod.get('specs')}">
-                        <p th:each="spec : ${prod.get('specs')}" th:text="${spec}"></p>
-                    </div>
                     <a th:href="@{${prod.get('suburl')} ?: '#'}" class="explore-btn">Explore</a>
                 </div>
             </div>
@@ -951,14 +704,13 @@
             </div>
         </div>
     </div>
-</main>
+</div>
 
-<!-- Footer -->
 <footer>
     <div class="footer-container">
         <div class="footer-left">
             <div class="logo-section">
-                <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />
+                <img th:src="@{'data:image/png;base64,' + ${session.img}}" alt="Hydrospark" />
                 <div class="logo-text">
                     <span class="hydrospark">Hydrospark</span>
                     <span class="innovations">Innovations</span>
@@ -998,96 +750,2095 @@
 </footer>
 
 <script>
-    // Toggle mobile menu
     function toggleMenu() {
         const navButtons = document.querySelector('.nav-buttons');
-        const header = document.querySelector('header');
-
         navButtons.classList.toggle('active');
-
-        if (window.innerWidth <= 768) {
-            if (navButtons.classList.contains('active')) {
-                header.style.height = 'auto';
-            } else {
-                header.style.height = '';
-            }
-        }
-        adjustContentPadding();
     }
 
-    // Toggle filter sidebar
     const filterToggleBtn = document.getElementById('filterToggleBtn');
     const filterSidebar = document.getElementById('filterSidebar');
+    const mainContent = document.querySelector('.main-content');
 
     if (filterToggleBtn && filterSidebar) {
         filterToggleBtn.addEventListener('click', function() {
             filterSidebar.classList.toggle('active');
+            adjustLayout();
         });
     }
 
-    // Adjust content padding based on header height
-    function adjustContentPadding() {
-        const header = document.querySelector('header');
-        const main = document.querySelector('main');
-        const headerHeight = header.offsetHeight;
-
-        main.style.paddingTop = `${headerHeight}px`;
-
-        // Adjust filter button position on mobile
-        const filterToggle = document.getElementById('filterToggleBtn');
-        if (filterToggle && window.innerWidth <= 768) {
-            filterToggle.style.top = `${headerHeight + 20}px`;
-        }
-    }
-
-    // Close menus when clicking outside
     document.addEventListener('click', function(event) {
-        const header = document.querySelector('header');
-        const isHeaderClick = header.contains(event.target);
-        const isFilterToggle = filterToggleBtn && filterToggleBtn.contains(event.target);
-        const isFilterSidebar = filterSidebar && filterSidebar.contains(event.target);
-        const navButtons = document.querySelector('.nav-buttons');
-        const hamburger = document.querySelector('.hamburger');
-
         if (window.innerWidth <= 768) {
-            // Handle nav menu
-            if (!isHeaderClick && navButtons.classList.contains('active')) {
+            const navButtons = document.querySelector('.nav-buttons');
+            const hamburger = document.querySelector('.hamburger');
+            if (!navButtons.contains(event.target) && !hamburger.contains(event.target)) {
                 navButtons.classList.remove('active');
-                header.style.height = '';
-                adjustContentPadding();
             }
 
-            // Handle filter sidebar
-            if (filterSidebar && filterSidebar.classList.contains('active') &&
-                !isFilterToggle && !isFilterSidebar) {
+            const isFilterToggle = filterToggleBtn.contains(event.target);
+            const isFilterSidebar = filterSidebar.contains(event.target);
+            if (!isFilterToggle && !isFilterSidebar && filterSidebar.classList.contains('active')) {
                 filterSidebar.classList.remove('active');
             }
         }
     });
 
-    // Initialize
     document.addEventListener('DOMContentLoaded', function() {
-        adjustContentPadding();
-
-        // Set up resize observer for header
         const header = document.querySelector('header');
-        const observer = new ResizeObserver(function() {
-            adjustContentPadding();
-            // Ensure mobile product name stays in header
-            if (window.innerWidth > 768) {
-                header.style.height = '';
+        const main = document.querySelector('.main-content');
+        const filterToggle = document.getElementById('filterSidebar');
+        const filterToggleBtn = document.getElementById('filterToggleBtn');
+
+        function adjustLayout() {
+            const headerHeight = header.offsetHeight;
+            document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+            main.style.paddingTop = `calc(${headerHeight}px + 40px)`;
+            if (window.innerWidth <= 768) {
+                filterSidebar.style.top = `${headerHeight}px`;
+                filterSidebar.style.height = `calc(100vh - ${headerHeight}px)`;
+                filterToggleBtn.style.top = `${headerHeight + 5}px`;
+            } else {
+                filterSidebar.style.top = '0';
+                filterSidebar.style.height = 'auto';
             }
-        });
-
-        if (header) {
-            observer.observe(header);
         }
-    });
 
-    window.addEventListener('resize', adjustContentPadding);
+        adjustLayout();
+        window.addEventListener('resize', adjustLayout);
+    });
 </script>
 </body>
 </html>
+
+<!--Working code-->
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">-->
+<!--    <title>Hydrospark - <span th:text="${session.prdName} ?: 'Products'"></span></title>-->
+<!--    <link rel="icon" type="image/png" th:href="@{'data:image/png;base64,' + ${session.img}}" />-->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">-->
+<!--    <style>-->
+<!--        * {-->
+<!--            margin: 0;-->
+<!--            padding: 0;-->
+<!--            box-sizing: border-box;-->
+<!--            font-family: 'Segoe UI', sans-serif;-->
+<!--        }-->
+
+<!--        :root {-->
+<!--            &#45;&#45;primary-color: #1a1a1a;-->
+<!--            &#45;&#45;secondary-color: #ff6b00;-->
+<!--            &#45;&#45;accent-color: #ffffff;-->
+<!--            &#45;&#45;background-color: #f5f5f5;-->
+<!--            &#45;&#45;highlight-color: #00c4b4;-->
+<!--            &#45;&#45;error-color: #ff4f4f;-->
+<!--            &#45;&#45;shadow: 0 8px 25px rgba(0, 0, 0, 0.1);-->
+<!--            &#45;&#45;text-muted: #666;-->
+<!--            &#45;&#45;header-height: 100px; /* Base value, will be overridden dynamically */-->
+<!--            &#45;&#45;blue-name: #007bff;-->
+<!--            &#45;&#45;filter-bg: #f9f9f9;-->
+<!--        }-->
+
+<!--        body {-->
+<!--            background: var(&#45;&#45;background-color);-->
+<!--            min-height: 100vh;-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--        }-->
+
+<!--        /* Header styles */-->
+<!--        header {-->
+<!--            background: var(&#45;&#45;accent-color);-->
+<!--            padding: 20px 40px;-->
+<!--            position: fixed;-->
+<!--            width: 100%;-->
+<!--            top: 0;-->
+<!--            z-index: 1000;-->
+<!--            box-shadow: var(&#45;&#45;shadow);-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            justify-content: center;-->
+<!--            background: linear-gradient(135deg, #ffffff, #f0f4f8);-->
+<!--        }-->
+
+<!--        .header-container {-->
+<!--            max-width: 1400px;-->
+<!--            width: 100%;-->
+<!--            display: flex;-->
+<!--            justify-content: space-between;-->
+<!--            align-items: center;-->
+<!--            flex-wrap: wrap;-->
+<!--            gap: 20px;-->
+<!--        }-->
+
+<!--        .logo {-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            gap: 15px;-->
+<!--            flex-shrink: 0;-->
+<!--        }-->
+
+<!--        .logo img {-->
+<!--            width: 73px;-->
+<!--            height: 57px;-->
+<!--            object-fit: contain;-->
+<!--            transition: transform 0.3s ease;-->
+<!--        }-->
+
+<!--        .logo:hover img {-->
+<!--            transform: scale(1.1);-->
+<!--        }-->
+
+<!--        .logo-text {-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            align-items: center;-->
+<!--            text-align: center;-->
+<!--        }-->
+
+<!--        .logo-text a {-->
+<!--            text-decoration: none;-->
+<!--            color: var(&#45;&#45;blue-name);-->
+<!--            font-weight: 700;-->
+<!--            line-height: 1.2;-->
+<!--        }-->
+
+<!--        .logo-text .hydrospark {-->
+<!--            font-size: 2rem;-->
+<!--            letter-spacing: 2px;-->
+<!--            text-transform: uppercase;-->
+<!--            text-shadow: 1px 1px 3px rgba(0, 123, 255, 0.3);-->
+<!--        }-->
+
+<!--        .logo-text .innovations {-->
+<!--            font-size: 1.2rem;-->
+<!--            letter-spacing: 1px;-->
+<!--            position: relative;-->
+<!--            left: -10px;-->
+<!--            text-transform: uppercase;-->
+<!--        }-->
+
+<!--        .search-nav {-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            gap: 20px;-->
+<!--            flex-grow: 1;-->
+<!--            justify-content: flex-end;-->
+<!--        }-->
+
+<!--        .search-bar-container {-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            gap: 15px;-->
+<!--        }-->
+
+<!--        .search-bar {-->
+<!--            position: relative;-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            width: 400px;-->
+<!--            max-width: 100%;-->
+<!--        }-->
+
+<!--        .search-bar i {-->
+<!--            position: absolute;-->
+<!--            left: 15px;-->
+<!--            color: var(&#45;&#45;text-muted);-->
+<!--            font-size: 1.2rem;-->
+<!--        }-->
+
+<!--        .search-bar input {-->
+<!--            padding: 12px 15px 12px 40px;-->
+<!--            border: none;-->
+<!--            border-radius: 30px;-->
+<!--            background: rgba(0, 123, 255, 0.1);-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            font-size: 1rem;-->
+<!--            width: 100%;-->
+<!--            transition: background 0.3s ease, box-shadow 0.3s ease;-->
+<!--        }-->
+
+<!--        .search-bar input:focus {-->
+<!--            background: rgba(0, 123, 255, 0.2);-->
+<!--            box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);-->
+<!--            outline: none;-->
+<!--        }-->
+
+<!--        .hamburger {-->
+<!--            background: none;-->
+<!--            border: none;-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            font-size: 1.5rem;-->
+<!--            cursor: pointer;-->
+<!--            display: none;-->
+<!--            transition: transform 0.3s ease;-->
+<!--        }-->
+
+<!--        .hamburger:hover {-->
+<!--            transform: scale(1.1);-->
+<!--        }-->
+
+<!--        .nav-buttons {-->
+<!--            display: flex;-->
+<!--            gap: 20px;-->
+<!--            align-items: center;-->
+<!--        }-->
+
+<!--        .nav-btn {-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            font-weight: 600;-->
+<!--            text-transform: uppercase;-->
+<!--            letter-spacing: 1.5px;-->
+<!--            cursor: pointer;-->
+<!--            transition: all 0.3s ease;-->
+<!--            text-decoration: none;-->
+<!--            position: relative;-->
+<!--            padding: 5px 10px;-->
+<!--        }-->
+
+<!--        .nav-btn::after {-->
+<!--            content: '';-->
+<!--            position: absolute;-->
+<!--            width: 0;-->
+<!--            height: 2px;-->
+<!--            bottom: 0;-->
+<!--            left: 50%;-->
+<!--            background: var(&#45;&#45;secondary-color);-->
+<!--            transition: all 0.3s ease;-->
+<!--            transform: translateX(-50%);-->
+<!--        }-->
+
+<!--        .nav-btn:hover::after {-->
+<!--            width: 100%;-->
+<!--        }-->
+
+<!--        /* Main content */-->
+<!--        main {-->
+<!--            flex: 1 0 auto;-->
+<!--            padding-top: 10px;-->
+<!--        }-->
+
+<!--        .content-wrapper {-->
+<!--            display: flex;-->
+<!--            width: 100%;-->
+<!--            max-width: 1400px;-->
+<!--            margin: 20px auto;-->
+<!--            padding: 0 20px;-->
+<!--            gap: 20px;-->
+<!--        }-->
+
+<!--        /* Filter Sidebar */-->
+<!--        .filter-sidebar {-->
+<!--            width: 250px;-->
+<!--            background: var(&#45;&#45;filter-bg);-->
+<!--            padding: 20px;-->
+<!--            flex-shrink: 0;-->
+<!--            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);-->
+<!--            z-index: 900;-->
+<!--            transition: transform 0.3s ease;-->
+<!--            overflow-y: auto;-->
+<!--        }-->
+
+<!--        .filter-sidebar h3 {-->
+<!--            font-size: 1.5rem;-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+
+<!--        .filter-group {-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+
+<!--        .filter-group label {-->
+<!--            display: block;-->
+<!--            font-size: 1.1rem;-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            margin-bottom: 8px;-->
+<!--            font-weight: 600;-->
+<!--        }-->
+
+<!--        .filter-group select {-->
+<!--            width: 100%;-->
+<!--            padding: 10px;-->
+<!--            border: 1px solid #ddd;-->
+<!--            border-radius: 8px;-->
+<!--            font-size: 1rem;-->
+<!--            background: #fff;-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--        }-->
+
+<!--        /* Main Content */-->
+<!--        .main-content {-->
+<!--            flex-grow: 1;-->
+<!--            padding: 10px;-->
+<!--            position: relative;-->
+<!--            z-index: 1;-->
+<!--        }-->
+
+<!--        .desktop-product-name {-->
+<!--            background: linear-gradient(135deg, var(&#45;&#45;highlight-color), var(&#45;&#45;blue-name));-->
+<!--            color: white;-->
+<!--            padding: 15px;-->
+<!--            text-align: center;-->
+<!--            margin-bottom: 15px;-->
+<!--            border-radius: 8px;-->
+<!--            box-shadow: var(&#45;&#45;shadow);-->
+<!--        }-->
+
+<!--        .desktop-product-name h2 {-->
+<!--            font-size: 2rem;-->
+<!--            margin-bottom: 5px;-->
+<!--            text-transform: uppercase;-->
+<!--            letter-spacing: 1px;-->
+<!--        }-->
+
+<!--        .cards-section {-->
+<!--            display: grid;-->
+<!--            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));-->
+<!--            gap: 15px;-->
+<!--        }-->
+
+<!--        .card {-->
+<!--            background: var(&#45;&#45;accent-color);-->
+<!--            border-radius: 12px;-->
+<!--            box-shadow: var(&#45;&#45;shadow);-->
+<!--            padding: 15px;-->
+<!--            transition: transform 0.3s ease, box-shadow 0.3s ease;-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            height: 300px;-->
+<!--            overflow: hidden;-->
+<!--        }-->
+
+<!--        .card:hover {-->
+<!--            transform: translateY(-5px);-->
+<!--            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);-->
+<!--        }-->
+
+<!--        .card img {-->
+<!--            width: 100%;-->
+<!--            height: 180px;-->
+<!--            object-fit: cover;-->
+<!--            border-radius: 8px;-->
+<!--            margin-bottom: 10px;-->
+<!--        }-->
+
+<!--        .card h5 {-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            font-size: 1.3rem;-->
+<!--            margin-bottom: 10px;-->
+<!--        }-->
+
+<!--        .explore-btn {-->
+<!--            padding: 8px 20px;-->
+<!--            border: 2px solid var(&#45;&#45;secondary-color);-->
+<!--            border-radius: 20px;-->
+<!--            background: transparent;-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            font-weight: 600;-->
+<!--            text-transform: uppercase;-->
+<!--            letter-spacing: 1px;-->
+<!--            cursor: pointer;-->
+<!--            transition: all 0.3s ease;-->
+<!--            text-decoration: none;-->
+<!--            text-align: center;-->
+<!--            align-self: center;-->
+<!--            margin-top: auto;-->
+<!--        }-->
+
+<!--        .explore-btn:hover {-->
+<!--            background: var(&#45;&#45;secondary-color);-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            transform: translateY(-2px);-->
+<!--            box-shadow: var(&#45;&#45;shadow);-->
+<!--        }-->
+
+<!--        .error-message {-->
+<!--            background: rgba(255, 79, 79, 0.1);-->
+<!--            color: var(&#45;&#45;error-color);-->
+<!--            padding: 15px;-->
+<!--            border-radius: 10px;-->
+<!--            margin: 15px 0;-->
+<!--            text-align: center;-->
+<!--            font-size: 1.1rem;-->
+<!--        }-->
+
+<!--        .filter-toggle {-->
+<!--            display: none;-->
+<!--            background: var(&#45;&#45;secondary-color);-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            padding: 8px 12px;-->
+<!--            border-radius: 5px;-->
+<!--            cursor: pointer;-->
+<!--            font-weight: 600;-->
+<!--            transition: all 0.3s ease;-->
+<!--            position: fixed;-->
+<!--            left: 20px;-->
+<!--            z-index: 950;-->
+<!--        }-->
+
+<!--        .filter-toggle:hover {-->
+<!--            background: #e05d00;-->
+<!--            transform: translateY(-2px);-->
+<!--        }-->
+
+<!--        /* Footer styles */-->
+<!--        footer {-->
+<!--            background: #333;-->
+<!--            padding: 40px 40px;-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            text-align: left;-->
+<!--            flex-shrink: 0;-->
+<!--            position: relative;-->
+<!--            z-index: 1;-->
+<!--            font-size: 0.9rem;-->
+<!--        }-->
+
+<!--        .footer-container {-->
+<!--            max-width: 1400px;-->
+<!--            margin: 0 auto;-->
+<!--            display: flex;-->
+<!--            flex-wrap: wrap;-->
+<!--            justify-content: space-between;-->
+<!--            gap: 30px;-->
+<!--        }-->
+
+<!--        .footer-left {-->
+<!--            flex: 1;-->
+<!--            min-width: 250px;-->
+<!--            position: relative;-->
+<!--        }-->
+
+<!--        .footer-middle {-->
+<!--            flex: 2;-->
+<!--            min-width: 300px;-->
+<!--        }-->
+
+<!--        .footer-left::after {-->
+<!--            content: '';-->
+<!--            position: absolute;-->
+<!--            top: 0;-->
+<!--            right: -15px;-->
+<!--            width: 1px;-->
+<!--            height: 100%;-->
+<!--            background: rgba(255, 255, 255, 0.2);-->
+<!--        }-->
+
+<!--        .footer-left .logo-section {-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            gap: 10px;-->
+<!--            margin-bottom: 20px;-->
+<!--            transition: transform 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-left .logo-section:hover {-->
+<!--            transform: scale(1.05);-->
+<!--        }-->
+
+<!--        .footer-left .logo-section img {-->
+<!--            width: 75px;-->
+<!--            height: 56px;-->
+<!--            transition: filter 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-left .logo-section:hover img {-->
+<!--            filter: brightness(1.2);-->
+<!--        }-->
+
+<!--        .footer-left .logo-section .logo-text {-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--        }-->
+
+<!--        .footer-left .logo-section .logo-text span {-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            font-weight: 700;-->
+<!--            line-height: 1.2;-->
+<!--        }-->
+
+<!--        .footer-left .logo-section .logo-text .hydrospark {-->
+<!--            font-size: 1.2rem;-->
+<!--            text-transform: uppercase;-->
+<!--        }-->
+
+<!--        .footer-left .logo-section .logo-text .innovations {-->
+<!--            font-size: 0.9rem;-->
+<!--            text-transform: uppercase;-->
+<!--            opacity: 0.9;-->
+<!--        }-->
+
+<!--        .footer-left .footer-label {-->
+<!--            font-size: 1rem;-->
+<!--            font-weight: 600;-->
+<!--            text-transform: uppercase;-->
+<!--            color: var(&#45;&#45;highlight-color);-->
+<!--            margin-bottom: 15px;-->
+<!--            position: relative;-->
+<!--            display: inline-block;-->
+<!--        }-->
+
+<!--        .footer-left .footer-label::after {-->
+<!--            content: '';-->
+<!--            position: absolute;-->
+<!--            width: 50%;-->
+<!--            height: 2px;-->
+<!--            background: var(&#45;&#45;highlight-color);-->
+<!--            bottom: -5px;-->
+<!--            left: 0;-->
+<!--            transition: width 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-left .footer-label:hover::after {-->
+<!--            width: 100%;-->
+<!--        }-->
+
+<!--        .footer-left .social-links a {-->
+<!--            margin-right: 15px;-->
+<!--            font-size: 1.3rem;-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            transition: transform 0.3s ease, color 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-left .social-links a:hover {-->
+<!--            color: var(&#45;&#45;highlight-color);-->
+<!--            transform: scale(1.2) rotate(10deg);-->
+<!--        }-->
+
+<!--        .footer-middle .footer-label {-->
+<!--            font-size: 1rem;-->
+<!--            font-weight: 600;-->
+<!--            text-transform: uppercase;-->
+<!--            color: var(&#45;&#45;highlight-color);-->
+<!--            margin-bottom: 15px;-->
+<!--            position: relative;-->
+<!--            display: inline-block;-->
+<!--        }-->
+
+<!--        .footer-middle .footer-label::after {-->
+<!--            content: '';-->
+<!--            position: absolute;-->
+<!--            width: 50%;-->
+<!--            height: 2px;-->
+<!--            background: var(&#45;&#45;highlight-color);-->
+<!--            bottom: -5px;-->
+<!--            left: 0;-->
+<!--            transition: width 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-middle .footer-label:hover::after {-->
+<!--            width: 100%;-->
+<!--        }-->
+
+<!--        .footer-middle .contact-info {-->
+<!--            margin: 10px 0;-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            gap: 12px;-->
+<!--        }-->
+
+<!--        .footer-middle .contact-item {-->
+<!--            display: flex;-->
+<!--            align-items: flex-start;-->
+<!--            gap: 10px;-->
+<!--            font-size: 0.9rem;-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            transition: color 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-middle .contact-item i {-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            font-size: 1.1rem;-->
+<!--            margin-top: 2px;-->
+<!--            width: 18px;-->
+<!--            text-align: center;-->
+<!--        }-->
+
+<!--        .footer-middle .contact-item:hover,-->
+<!--        .footer-middle .contact-item:hover i {-->
+<!--            color: var(&#45;&#45;highlight-color);-->
+<!--        }-->
+
+<!--        .footer-middle a {-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            text-decoration: none;-->
+<!--            transition: color 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-middle a:hover {-->
+<!--            color: var(&#45;&#45;highlight-color);-->
+<!--        }-->
+
+<!--        .footer-bottom {-->
+<!--            width: 100%;-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            margin-top: 30px;-->
+<!--            border-top: 1px solid rgba(255, 255, 255, 0.2);-->
+<!--            padding-top: 15px;-->
+<!--        }-->
+
+<!--        .footer-bottom .copyright {-->
+<!--            font-size: 0.8rem;-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            opacity: 0.8;-->
+<!--            transition: opacity 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-bottom .copyright:hover {-->
+<!--            opacity: 1;-->
+<!--        }-->
+
+<!--        /* Responsive Design */-->
+<!--        @media (max-width: 1024px) {-->
+<!--            header {-->
+<!--                padding: 15px 30px;-->
+<!--            }-->
+
+<!--            .search-bar {-->
+<!--                width: 350px;-->
+<!--            }-->
+
+<!--            .filter-sidebar {-->
+<!--                width: 200px;-->
+<!--            }-->
+
+<!--            .main-content {-->
+<!--                padding: 10px;-->
+<!--            }-->
+
+<!--            main {-->
+<!--                padding-top: 10px;-->
+<!--            }-->
+
+<!--            .content-wrapper {-->
+<!--                margin: 15px auto;-->
+<!--            }-->
+<!--        }-->
+
+<!--        @media (max-width: 768px) {-->
+<!--            header {-->
+<!--                padding: 15px 20px;-->
+<!--            }-->
+
+<!--            .hamburger {-->
+<!--                display: block;-->
+<!--            }-->
+
+<!--            .nav-buttons {-->
+<!--                display: none;-->
+<!--                flex-direction: column;-->
+<!--                width: 100%;-->
+<!--                gap: 15px;-->
+<!--                background: rgba(255, 255, 255, 0.95);-->
+<!--                padding: 15px;-->
+<!--                position: absolute;-->
+<!--                top: 100%;-->
+<!--                left: 0;-->
+<!--                right: 0;-->
+<!--                z-index: 999;-->
+<!--                box-shadow: var(&#45;&#45;shadow);-->
+<!--            }-->
+
+<!--            .nav-buttons.active {-->
+<!--                display: flex;-->
+<!--            }-->
+
+<!--            .search-bar {-->
+<!--                width: 250px;-->
+<!--            }-->
+
+<!--            .content-wrapper {-->
+<!--                flex-direction: column;-->
+<!--                padding: 0;-->
+<!--                margin: 10px auto;-->
+<!--            }-->
+
+<!--            .filter-sidebar {-->
+<!--                position: fixed;-->
+<!--                left: 0;-->
+<!--                width: 280px;-->
+<!--                height: 100%; /* Full height initially */-->
+<!--                transform: translateX(-100%);-->
+<!--                z-index: 998;-->
+<!--                overflow-y: auto;-->
+<!--                background: var(&#45;&#45;filter-bg);-->
+<!--                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);-->
+<!--            }-->
+
+<!--            .filter-sidebar.active {-->
+<!--                transform: translateX(0);-->
+<!--            }-->
+
+<!--            .filter-toggle {-->
+<!--                display: block;-->
+<!--                z-index: 950;-->
+<!--            }-->
+
+<!--            .main-content {-->
+<!--                padding: 40px 15px 15px;-->
+<!--                margin-left: 0;-->
+<!--                transition: margin-left 0.3s ease;-->
+<!--            }-->
+
+<!--            main {-->
+<!--                padding-top: 5px;-->
+<!--            }-->
+<!--        }-->
+
+<!--        @media (max-width: 480px) {-->
+<!--            header {-->
+<!--                padding: 10px 15px;-->
+<!--            }-->
+
+<!--            .logo-text .hydrospark {-->
+<!--                font-size: 1.5rem;-->
+<!--            }-->
+
+<!--            .logo-text .innovations {-->
+<!--                font-size: 1rem;-->
+<!--            }-->
+
+<!--            .logo img {-->
+<!--                width: 45px;-->
+<!--                height: 45px;-->
+<!--            }-->
+
+<!--            .search-bar {-->
+<!--                width: 180px;-->
+<!--            }-->
+
+<!--            .main-content {-->
+<!--                padding: 35px 10px 10px;-->
+<!--            }-->
+
+<!--            .cards-section {-->
+<!--                grid-template-columns: 1fr;-->
+<!--            }-->
+
+<!--            .content-wrapper {-->
+<!--                margin: 5px auto;-->
+<!--            }-->
+
+<!--            main {-->
+<!--                padding-top: 5px;-->
+<!--            }-->
+
+<!--            .filter-sidebar {-->
+<!--                width: 100%;-->
+<!--                max-width: 280px;-->
+<!--            }-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--&lt;!&ndash; Header &ndash;&gt;-->
+<!--<header>-->
+<!--    <div class="header-container">-->
+<!--        <div class="logo">-->
+<!--            <img th:src="@{'data:image/png;base64,' + ${session.img}}" alt="Hydrospark" />-->
+<!--            <div class="logo-text">-->
+<!--                <a th:href="@{/}" class="hydrospark">Hydrospark</a>-->
+<!--                <a th:href="@{/}" class="innovations">Innovations</a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="search-nav">-->
+<!--            <div class="search-bar-container">-->
+<!--                <form class="search-bar" th:action="@{/search}" method="GET">-->
+<!--                    <i class="fas fa-search"></i>-->
+<!--                    <input type="text" name="query" placeholder="Search..." />-->
+<!--                </form>-->
+<!--                <button class="hamburger" onclick="toggleMenu()">-->
+<!--                    <i class="fas fa-bars"></i>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--            <div class="nav-buttons">-->
+<!--                <a class="nav-btn" th:href="@{/}">Home</a>-->
+<!--                <a class="nav-btn" th:href="@{/about}">About</a>-->
+<!--                <a class="nav-btn" th:href="@{/enquiry}">Contact Us</a>-->
+<!--                <div th:if="${session.employee != null}">-->
+<!--                    <a class="nav-btn" th:href="@{/admin}">Admin</a>-->
+<!--                    <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>-->
+<!--                    <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>-->
+<!--                </div>-->
+<!--                <div th:if="${session.employee == null and session.user != null}">-->
+<!--                    <a class="nav-btn" th:href="@{/profile}">Profile</a>-->
+<!--                    <a class="nav-btn" th:href="@{/logout}">Logout</a>-->
+<!--                </div>-->
+<!--                <div th:if="${session.employee == null and session.user == null}">-->
+<!--                    <a class="nav-btn" th:href="@{/signin}">Sign In</a>-->
+<!--                    <a class="nav-btn" th:href="@{/signup}">Sign Up</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</header>-->
+
+<!--&lt;!&ndash; Main Content &ndash;&gt;-->
+<!--<main>-->
+<!--    <div class="content-wrapper">-->
+<!--        &lt;!&ndash; Filter Sidebar &ndash;&gt;-->
+<!--        <div class="filter-sidebar" id="filterSidebar">-->
+<!--            <h3>Filters</h3>-->
+<!--            <form th:action="@{/product/productdetails/{prodId}(prodId=${prodId})}" method="get">-->
+<!--                <div class="filter-group">-->
+<!--                    <label for="dashSize">Dash Size</label>-->
+<!--                    <select id="dashSize" name="dashSize">-->
+<!--                        <option value="">Any</option>-->
+<!--                        <option th:each="dash : ${dashSizes}" th:value="${dash}" th:text="${dash}"></option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="filter-group">-->
+<!--                    <label for="termination">Termination</label>-->
+<!--                    <select id="termination" name="termination">-->
+<!--                        <option value="">Any</option>-->
+<!--                        <option th:each="term : ${terminations}" th:value="${term}" th:text="${term}"></option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="filter-group">-->
+<!--                    <label for="threadSize">Thread Size</label>-->
+<!--                    <select id="threadSize" name="threadSize">-->
+<!--                        <option value="">Any</option>-->
+<!--                        <option th:each="thread : ${threadSizes}" th:value="${thread}" th:text="${thread}"></option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="filter-group">-->
+<!--                    <label for="group">Group</label>-->
+<!--                    <select id="group" name="group">-->
+<!--                        <option value="">Any</option>-->
+<!--                        <option th:each="grp : ${groups}" th:value="${grp}" th:text="${grp}"></option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <button type="submit" class="explore-btn" style="width: 100%; margin-top: 10px;">Apply Filters</button>-->
+<!--            </form>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Main Content Area &ndash;&gt;-->
+<!--        <div class="main-content">-->
+<!--            <button class="filter-toggle" id="filterToggleBtn">-->
+<!--                <i class="fas fa-filter"></i> Filters-->
+<!--            </button>-->
+<!--            <div class="desktop-product-name" th:if="${session.prdName}">-->
+<!--                <h2 th:text="${session.prdName}"></h2>-->
+<!--            </div>-->
+<!--            <div th:if="${error != null}" class="error-message">-->
+<!--                <span th:text="${error}"></span>-->
+<!--            </div>-->
+<!--            <div th:if="${error == null and productDetails != null and !productDetails.isEmpty()}" class="cards-section">-->
+<!--                <div th:each="prod : ${productDetails}" class="card">-->
+<!--                    <img th:src="${prod.get('img') != null ? 'data:image/png;base64,' + prod.get('img') : '/default-image.png'}" alt="Product Image" />-->
+<!--                    <h5 th:text="${prod.get('prodName')} ?: 'Unnamed Product'"></h5>-->
+<!--                    <a th:href="@{${prod.get('suburl')} ?: '#'}" class="explore-btn">Explore</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div th:if="${error == null and (productDetails == null or productDetails.isEmpty())}" class="error-message">-->
+<!--                No products available.-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</main>-->
+
+<!--&lt;!&ndash; Footer &ndash;&gt;-->
+<!--<footer>-->
+<!--    <div class="footer-container">-->
+<!--        <div class="footer-left">-->
+<!--            <div class="logo-section">-->
+<!--                <img th:src="@{'data:image/png;base64,' + ${session.img}}" alt="Hydrospark" />-->
+<!--                <div class="logo-text">-->
+<!--                    <span class="hydrospark">Hydrospark</span>-->
+<!--                    <span class="innovations">Innovations</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="footer-label">Follow Us</div>-->
+<!--            <div class="social-links">-->
+<!--                <a href="#"><i class="fab fa-facebook-f"></i></a>-->
+<!--                <a href="#"><i class="fab fa-twitter"></i></a>-->
+<!--                <a href="#"><i class="fab fa-linkedin-in"></i></a>-->
+<!--                <a href="#"><i class="fab fa-instagram"></i></a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="footer-middle">-->
+<!--            <div class="footer-label">Contact Info</div>-->
+<!--            <div class="contact-info">-->
+<!--                <div class="contact-item">-->
+<!--                    <i class="fas fa-map-marker-alt"></i>-->
+<!--                    <p>Sr. No. 101, Wadmukhwadi Road, Tapkir Nagar, Alandi Haveli, Pune - 412105</p>-->
+<!--                </div>-->
+<!--                <div class="contact-item">-->
+<!--                    <i class="fas fa-phone-alt"></i>-->
+<!--                    <p><a href="tel:+919156261672">+91 91562 61672</a> | <a href="tel:+918691937235">+91 86919 37235</a></p>-->
+<!--                </div>-->
+<!--                <div class="contact-item">-->
+<!--                    <i class="fas fa-envelope"></i>-->
+<!--                    <p><a href="mailto:sachin@hydrospark.org">sachin@hydrospark.org</a> | <a href="mailto:info@hydrospark.org">info@hydrospark.org</a></p>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="footer-bottom">-->
+<!--            <div class="copyright">-->
+<!--                © 2025 Hydrospark Innovations. All rights reserved.-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</footer>-->
+
+<!--<script>-->
+<!--    // Toggle mobile menu-->
+<!--    function toggleMenu() {-->
+<!--        const navButtons = document.querySelector('.nav-buttons');-->
+<!--        navButtons.classList.toggle('active');-->
+<!--        adjustLayout();-->
+<!--    }-->
+
+<!--    // Toggle filter sidebar-->
+<!--    const filterToggleBtn = document.getElementById('filterToggleBtn');-->
+<!--    const filterSidebar = document.getElementById('filterSidebar');-->
+<!--    const mainContent = document.querySelector('.main-content');-->
+
+<!--    if (filterToggleBtn && filterSidebar) {-->
+<!--        filterToggleBtn.addEventListener('click', function() {-->
+<!--            filterSidebar.classList.toggle('active');-->
+<!--            adjustLayout();-->
+<!--        });-->
+<!--    }-->
+
+<!--    // Close filter sidebar when clicking outside on mobile-->
+<!--    document.addEventListener('click', function(event) {-->
+<!--        if (window.innerWidth <= 768) {-->
+<!--            const isFilterToggle = filterToggleBtn.contains(event.target);-->
+<!--            const isFilterSidebar = filterSidebar.contains(event.target);-->
+<!--            if (!isFilterToggle && !isFilterSidebar && filterSidebar.classList.contains('active')) {-->
+<!--                filterSidebar.classList.remove('active');-->
+<!--                mainContent.style.marginLeft = '0';-->
+<!--                adjustLayout();-->
+<!--            }-->
+<!--        }-->
+<!--    });-->
+
+<!--    // Dynamically adjust layout based on header height-->
+<!--    document.addEventListener('DOMContentLoaded', function() {-->
+<!--        const header = document.querySelector('header');-->
+<!--        const main = document.querySelector('main');-->
+<!--        const filterToggle = document.getElementById('filterSidebar');-->
+<!--        const filterToggleBtn = document.getElementById('filterToggleBtn');-->
+
+<!--        function adjustLayout() {-->
+<!--            const headerHeight = header.offsetHeight;-->
+<!--            // Set CSS variable for header height-->
+<!--            document.documentElement.style.setProperty('&#45;&#45;header-height', `${headerHeight}px`);-->
+
+<!--            // Adjust main padding-->
+<!--            main.style.paddingTop = `${headerHeight + 5}px`;-->
+
+<!--            // Adjust filter sidebar and toggle button position-->
+<!--            if (window.innerWidth <= 768) {-->
+<!--                filterSidebar.style.top = `${headerHeight}px`;-->
+<!--                filterSidebar.style.height = `calc(100vh - ${headerHeight}px)`;-->
+<!--                filterToggleBtn.style.top = `${headerHeight + 5}px`;-->
+<!--            } else {-->
+<!--                filterSidebar.style.top = '0'; // Reset for larger screens-->
+<!--                filterSidebar.style.height = 'auto';-->
+<!--            }-->
+<!--        }-->
+
+<!--        adjustLayout();-->
+<!--        window.addEventListener('resize', adjustLayout);-->
+<!--    });-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">-->
+<!--    <title>Hydrospark - <span th:text="${session.prdName} ?: 'Products'"></span></title>-->
+<!--    <link rel="icon" type="image/png" th:href="'data:image/png;base64,' + ${session.img}" />-->
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">-->
+<!--    <style>-->
+<!--        * {-->
+<!--            margin: 0;-->
+<!--            padding: 0;-->
+<!--            box-sizing: border-box;-->
+<!--            font-family: 'Segoe UI', sans-serif;-->
+<!--        }-->
+
+<!--        :root {-->
+<!--            &#45;&#45;primary-color: #1a1a1a;-->
+<!--            &#45;&#45;secondary-color: #ff6b00;-->
+<!--            &#45;&#45;accent-color: #ffffff;-->
+<!--            &#45;&#45;background-color: #f5f5f5;-->
+<!--            &#45;&#45;highlight-color: #00c4b4;-->
+<!--            &#45;&#45;error-color: #ff4f4f;-->
+<!--            &#45;&#45;shadow: 0 8px 25px rgba(0, 0, 0, 0.1);-->
+<!--            &#45;&#45;text-muted: #666;-->
+<!--            &#45;&#45;header-height: 100px;-->
+<!--            &#45;&#45;blue-name: #007bff;-->
+<!--            &#45;&#45;filter-bg: #f9f9f9;-->
+<!--        }-->
+
+<!--        body {-->
+<!--            background: var(&#45;&#45;background-color);-->
+<!--            min-height: 100vh;-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--        }-->
+
+<!--        /* ===== HEADER STYLES ===== */-->
+<!--        header {-->
+<!--            background: var(&#45;&#45;accent-color);-->
+<!--            padding: 20px 40px;-->
+<!--            position: fixed;-->
+<!--            width: 100%;-->
+<!--            top: 0;-->
+<!--            z-index: 1000;-->
+<!--            box-shadow: var(&#45;&#45;shadow);-->
+<!--            min-height: var(&#45;&#45;header-height);-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            justify-content: center;-->
+<!--            background: linear-gradient(135deg, #ffffff, #f0f4f8);-->
+<!--        }-->
+
+<!--        .header-container {-->
+<!--            max-width: 1400px;-->
+<!--            width: 100%;-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            gap: 10px;-->
+<!--        }-->
+
+<!--        .header-top {-->
+<!--            display: flex;-->
+<!--            justify-content: space-between;-->
+<!--            align-items: center;-->
+<!--            flex-wrap: wrap;-->
+<!--            gap: 20px;-->
+<!--        }-->
+
+<!--        .logo {-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            gap: 15px;-->
+<!--            flex-shrink: 0;-->
+<!--            position: relative;-->
+<!--        }-->
+
+<!--        .logo img {-->
+<!--            width: 73px;-->
+<!--            height: 57px;-->
+<!--            object-fit: contain;-->
+<!--            transition: transform 0.3s ease;-->
+<!--        }-->
+
+<!--        .logo:hover img {-->
+<!--            transform: scale(1.1);-->
+<!--        }-->
+
+<!--        .logo-text {-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            align-items: center;-->
+<!--            text-align: center;-->
+<!--        }-->
+
+<!--        .logo-text a {-->
+<!--            text-decoration: none;-->
+<!--            color: var(&#45;&#45;blue-name);-->
+<!--            font-weight: 700;-->
+<!--            line-height: 1.2;-->
+<!--        }-->
+
+<!--        .logo-text .hydrospark {-->
+<!--            font-size: 2rem;-->
+<!--            letter-spacing: 2px;-->
+<!--            text-transform: uppercase;-->
+<!--            text-shadow: 1px 1px 3px rgba(0, 123, 255, 0.3);-->
+<!--        }-->
+
+<!--        .logo-text .innovations {-->
+<!--            font-size: 1.2rem;-->
+<!--            letter-spacing: 1px;-->
+<!--            position: relative;-->
+<!--            left: -10px;-->
+<!--            text-transform: uppercase;-->
+<!--        }-->
+
+<!--        .search-nav {-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            gap: 20px;-->
+<!--            flex-grow: 1;-->
+<!--            justify-content: flex-end;-->
+<!--        }-->
+
+<!--        .search-bar {-->
+<!--            position: relative;-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            width: 300px;-->
+<!--            max-width: 100%;-->
+<!--            margin-right: 10px;-->
+<!--        }-->
+
+<!--        .search-bar i {-->
+<!--            position: absolute;-->
+<!--            left: 15px;-->
+<!--            color: var(&#45;&#45;text-muted);-->
+<!--            font-size: 1.2rem;-->
+<!--        }-->
+
+<!--        .search-bar input {-->
+<!--            padding: 10px 15px 10px 40px;-->
+<!--            border: none;-->
+<!--            border-radius: 30px;-->
+<!--            background: rgba(0, 123, 255, 0.1);-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            font-size: 1rem;-->
+<!--            width: 100%;-->
+<!--            transition: background 0.3s ease, box-shadow 0.3s ease;-->
+<!--        }-->
+
+<!--        .search-bar input:focus {-->
+<!--            background: rgba(0, 123, 255, 0.2);-->
+<!--            box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);-->
+<!--            outline: none;-->
+<!--        }-->
+
+<!--        .hamburger {-->
+<!--            background: none;-->
+<!--            border: none;-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            font-size: 1.5rem;-->
+<!--            cursor: pointer;-->
+<!--            display: none;-->
+<!--            transition: transform 0.3s ease;-->
+<!--        }-->
+
+<!--        .hamburger:hover {-->
+<!--            transform: scale(1.1);-->
+<!--        }-->
+
+<!--        .nav-buttons {-->
+<!--            display: flex;-->
+<!--            gap: 20px;-->
+<!--            align-items: center;-->
+<!--        }-->
+
+<!--        .nav-btn {-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            font-weight: 600;-->
+<!--            text-transform: uppercase;-->
+<!--            letter-spacing: 1.5px;-->
+<!--            cursor: pointer;-->
+<!--            transition: all 0.3s ease;-->
+<!--            text-decoration: none;-->
+<!--            position: relative;-->
+<!--            padding: 5px 10px;-->
+<!--        }-->
+
+<!--        .nav-btn::after {-->
+<!--            content: '';-->
+<!--            position: absolute;-->
+<!--            width: 0;-->
+<!--            height: 2px;-->
+<!--            bottom: 0;-->
+<!--            left: 50%;-->
+<!--            background: var(&#45;&#45;secondary-color);-->
+<!--            transition: all 0.3s ease;-->
+<!--            transform: translateX(-50%);-->
+<!--        }-->
+
+<!--        .nav-btn:hover::after {-->
+<!--            width: 100%;-->
+<!--        }-->
+
+<!--        .nav-btn:hover {-->
+<!--            color: var(&#45;&#45;secondary-color);-->
+<!--            transform: translateY(-2px);-->
+<!--        }-->
+
+<!--        /* Mobile product name in header */-->
+<!--        .mobile-product-name {-->
+<!--            display: none;-->
+<!--            text-align: center;-->
+<!--            padding: 8px 15px;-->
+<!--            background: linear-gradient(135deg, var(&#45;&#45;highlight-color), var(&#45;&#45;blue-name));-->
+<!--            color: white;-->
+<!--            font-size: 1.2rem;-->
+<!--            font-weight: 600;-->
+<!--            border-radius: 8px;-->
+<!--            margin-top: 10px;-->
+<!--            width: 100%;-->
+<!--        }-->
+
+<!--        /* ===== MAIN CONTENT AREA ===== */-->
+<!--        main {-->
+<!--            flex: 1 0 auto;-->
+<!--            padding-top: var(&#45;&#45;header-height);-->
+<!--            padding-bottom: 20px;-->
+<!--        }-->
+
+<!--        /* Desktop product name banner */-->
+<!--        .desktop-product-name {-->
+<!--            background: linear-gradient(135deg, var(&#45;&#45;highlight-color), var(&#45;&#45;blue-name));-->
+<!--            color: white;-->
+<!--            padding: 20px;-->
+<!--            text-align: center;-->
+<!--            margin-bottom: 30px;-->
+<!--            border-radius: 8px;-->
+<!--            box-shadow: var(&#45;&#45;shadow);-->
+<!--        }-->
+
+<!--        .desktop-product-name h2 {-->
+<!--            font-size: 2rem;-->
+<!--            margin-bottom: 10px;-->
+<!--            text-transform: uppercase;-->
+<!--            letter-spacing: 1px;-->
+<!--        }-->
+
+<!--        /* Product details page specific styles */-->
+<!--        .content-wrapper {-->
+<!--            display: flex;-->
+<!--            width: 100%;-->
+<!--            max-width: 1400px;-->
+<!--            margin: 0 auto;-->
+<!--        }-->
+
+<!--        /* Filter Sidebar */-->
+<!--        .filter-sidebar {-->
+<!--            width: 250px;-->
+<!--            background: var(&#45;&#45;filter-bg);-->
+<!--            padding: 20px;-->
+<!--            flex-shrink: 0;-->
+<!--            overflow-y: auto;-->
+<!--            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);-->
+<!--            z-index: 900;-->
+<!--            transition: transform 0.3s ease;-->
+<!--        }-->
+
+<!--        .filter-sidebar h3 {-->
+<!--            font-size: 1.5rem;-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+
+<!--        .filter-group {-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+
+<!--        .filter-group label {-->
+<!--            display: block;-->
+<!--            font-size: 1.1rem;-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            margin-bottom: 8px;-->
+<!--            font-weight: 600;-->
+<!--        }-->
+
+<!--        .filter-group select {-->
+<!--            width: 100%;-->
+<!--            padding: 10px;-->
+<!--            border: 1px solid #ddd;-->
+<!--            border-radius: 8px;-->
+<!--            font-size: 1rem;-->
+<!--            background: #fff;-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--        }-->
+
+<!--        /* Main Content */-->
+<!--        .main-content {-->
+<!--            flex-grow: 1;-->
+<!--            padding: 40px;-->
+<!--            overflow-y: auto;-->
+<!--            position: relative;-->
+<!--        }-->
+
+<!--        .cards-section {-->
+<!--            display: grid;-->
+<!--            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));-->
+<!--            gap: 20px;-->
+<!--            max-width: 1400px;-->
+<!--            margin: 0 auto;-->
+<!--        }-->
+
+<!--        .card {-->
+<!--            background: var(&#45;&#45;accent-color);-->
+<!--            border-radius: 16px;-->
+<!--            padding: 15px;-->
+<!--            text-align: center;-->
+<!--            box-shadow: var(&#45;&#45;shadow);-->
+<!--            transition: transform 0.3s ease, box-shadow 0.3s ease;-->
+<!--            overflow: hidden;-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--        }-->
+
+<!--        .card:hover {-->
+<!--            transform: translateY(-8px);-->
+<!--            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);-->
+<!--        }-->
+
+<!--        .card img {-->
+<!--            width: 100%;-->
+<!--            height: 140px;-->
+<!--            object-fit: cover;-->
+<!--            border-radius: 10px;-->
+<!--            margin-bottom: 12px;-->
+<!--        }-->
+
+<!--        .card h5 {-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            font-size: 1.2rem;-->
+<!--            font-weight: 600;-->
+<!--            margin-bottom: 8px;-->
+<!--            white-space: nowrap;-->
+<!--            overflow: hidden;-->
+<!--            text-overflow: ellipsis;-->
+<!--        }-->
+
+<!--        .product-specs {-->
+<!--            margin: 10px 0;-->
+<!--            text-align: left;-->
+<!--            font-size: 0.9rem;-->
+<!--            color: var(&#45;&#45;text-muted);-->
+<!--            flex-grow: 1;-->
+<!--        }-->
+
+<!--        .product-specs p {-->
+<!--            margin-bottom: 5px;-->
+<!--        }-->
+
+<!--        .explore-btn {-->
+<!--            padding: 8px 20px;-->
+<!--            border: 2px solid var(&#45;&#45;secondary-color);-->
+<!--            border-radius: 20px;-->
+<!--            background: transparent;-->
+<!--            color: var(&#45;&#45;primary-color);-->
+<!--            font-weight: 600;-->
+<!--            text-transform: uppercase;-->
+<!--            letter-spacing: 1px;-->
+<!--            cursor: pointer;-->
+<!--            transition: all 0.3s ease;-->
+<!--            text-decoration: none;-->
+<!--            text-align: center;-->
+<!--            margin-top: auto;-->
+<!--        }-->
+
+<!--        .explore-btn:hover {-->
+<!--            background: var(&#45;&#45;secondary-color);-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            transform: translateY(-2px);-->
+<!--            box-shadow: var(&#45;&#45;shadow);-->
+<!--        }-->
+
+<!--        .error-message {-->
+<!--            background: rgba(255, 79, 79, 0.1);-->
+<!--            color: var(&#45;&#45;error-color);-->
+<!--            padding: 20px;-->
+<!--            border-radius: 10px;-->
+<!--            margin: 20px 0;-->
+<!--            text-align: center;-->
+<!--            font-size: 1.1rem;-->
+<!--        }-->
+
+<!--        /* Filter Toggle Button */-->
+<!--        .filter-toggle {-->
+<!--            display: none;-->
+<!--            background: var(&#45;&#45;secondary-color);-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            padding: 10px 15px;-->
+<!--            border-radius: 5px;-->
+<!--            margin-bottom: 15px;-->
+<!--            cursor: pointer;-->
+<!--            font-weight: 600;-->
+<!--            transition: all 0.3s ease;-->
+<!--            position: fixed;-->
+<!--            left: 20px;-->
+<!--            top: 120px;-->
+<!--            z-index: 950;-->
+<!--        }-->
+
+<!--        .filter-toggle:hover {-->
+<!--            background: #e05d00;-->
+<!--            transform: translateY(-2px);-->
+<!--        }-->
+
+<!--        /* ===== FOOTER STYLES ===== */-->
+<!--        footer {-->
+<!--            background: #333;-->
+<!--            padding: 40px 40px;-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            text-align: left;-->
+<!--            flex-shrink: 0;-->
+<!--            position: relative;-->
+<!--            z-index: 1;-->
+<!--            font-size: 0.9rem;-->
+<!--        }-->
+
+<!--        .footer-container {-->
+<!--            max-width: 1400px;-->
+<!--            margin: 0 auto;-->
+<!--            display: flex;-->
+<!--            flex-wrap: wrap;-->
+<!--            justify-content: space-between;-->
+<!--            gap: 30px;-->
+<!--            position: relative;-->
+<!--        }-->
+
+<!--        .footer-left {-->
+<!--            flex: 1;-->
+<!--            min-width: 250px;-->
+<!--            position: relative;-->
+<!--        }-->
+
+<!--        .footer-middle {-->
+<!--            flex: 2;-->
+<!--            min-width: 300px;-->
+<!--            position: relative;-->
+<!--        }-->
+
+<!--        .footer-left::after {-->
+<!--            content: '';-->
+<!--            position: absolute;-->
+<!--            top: 0;-->
+<!--            right: -15px;-->
+<!--            width: 1px;-->
+<!--            height: 100%;-->
+<!--            background: rgba(255, 255, 255, 0.2);-->
+<!--        }-->
+
+<!--        .footer-left .logo-section {-->
+<!--            display: flex;-->
+<!--            align-items: center;-->
+<!--            gap: 10px;-->
+<!--            margin-bottom: 20px;-->
+<!--            transition: transform 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-left .logo-section:hover {-->
+<!--            transform: scale(1.05);-->
+<!--        }-->
+
+<!--        .footer-left .logo-section img {-->
+<!--            width: 75px;-->
+<!--            height: 56px;-->
+<!--            transition: filter 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-left .logo-section:hover img {-->
+<!--            filter: brightness(1.2);-->
+<!--        }-->
+
+<!--        .footer-left .logo-section .logo-text {-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--        }-->
+
+<!--        .footer-left .logo-section .logo-text span {-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            font-weight: 700;-->
+<!--            line-height: 1.2;-->
+<!--        }-->
+
+<!--        .footer-left .logo-section .logo-text .hydrospark {-->
+<!--            font-size: 1.2rem;-->
+<!--            text-transform: uppercase;-->
+<!--        }-->
+
+<!--        .footer-left .logo-section .logo-text .innovations {-->
+<!--            font-size: 0.9rem;-->
+<!--            text-transform: uppercase;-->
+<!--            opacity: 0.9;-->
+<!--        }-->
+
+<!--        .footer-left .footer-label {-->
+<!--            font-size: 1rem;-->
+<!--            font-weight: 600;-->
+<!--            text-transform: uppercase;-->
+<!--            color: var(&#45;&#45;highlight-color);-->
+<!--            margin-bottom: 15px;-->
+<!--            position: relative;-->
+<!--            display: inline-block;-->
+<!--        }-->
+
+<!--        .footer-left .footer-label::after {-->
+<!--            content: '';-->
+<!--            position: absolute;-->
+<!--            width: 50%;-->
+<!--            height: 2px;-->
+<!--            background: var(&#45;&#45;highlight-color);-->
+<!--            bottom: -5px;-->
+<!--            left: 0;-->
+<!--            transition: width 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-left .footer-label:hover::after {-->
+<!--            width: 100%;-->
+<!--        }-->
+
+<!--        .footer-left .social-links {-->
+<!--            margin-bottom: 15px;-->
+<!--        }-->
+
+<!--        .footer-left .social-links a {-->
+<!--            margin-right: 15px;-->
+<!--            font-size: 1.3rem;-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            transition: transform 0.3s ease, color 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-left .social-links a:hover {-->
+<!--            color: var(&#45;&#45;highlight-color);-->
+<!--            transform: scale(1.2) rotate(10deg);-->
+<!--        }-->
+
+<!--        .footer-middle .footer-label {-->
+<!--            font-size: 1rem;-->
+<!--            font-weight: 600;-->
+<!--            text-transform: uppercase;-->
+<!--            color: var(&#45;&#45;highlight-color);-->
+<!--            margin-bottom: 15px;-->
+<!--            position: relative;-->
+<!--            display: inline-block;-->
+<!--        }-->
+
+<!--        .footer-middle .footer-label::after {-->
+<!--            content: '';-->
+<!--            position: absolute;-->
+<!--            width: 50%;-->
+<!--            height: 2px;-->
+<!--            background: var(&#45;&#45;highlight-color);-->
+<!--            bottom: -5px;-->
+<!--            left: 0;-->
+<!--            transition: width 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-middle .footer-label:hover::after {-->
+<!--            width: 100%;-->
+<!--        }-->
+
+<!--        .footer-middle .contact-info {-->
+<!--            margin: 10px 0;-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            gap: 12px;-->
+<!--        }-->
+
+<!--        .footer-middle .contact-item {-->
+<!--            display: flex;-->
+<!--            align-items: flex-start;-->
+<!--            gap: 10px;-->
+<!--            font-size: 0.9rem;-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            transition: color 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-middle .contact-item i {-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            font-size: 1.1rem;-->
+<!--            margin-top: 2px;-->
+<!--            width: 18px;-->
+<!--            text-align: center;-->
+<!--            transition: color 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-middle .contact-item p {-->
+<!--            margin: 0;-->
+<!--            flex: 1;-->
+<!--        }-->
+
+<!--        .footer-middle .contact-item:hover {-->
+<!--            color: var(&#45;&#45;highlight-color);-->
+<!--        }-->
+
+<!--        .footer-middle .contact-item:hover i {-->
+<!--            color: var(&#45;&#45;highlight-color);-->
+<!--        }-->
+
+<!--        .footer-middle a {-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            text-decoration: none;-->
+<!--            transition: color 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-middle a:hover {-->
+<!--            color: var(&#45;&#45;highlight-color);-->
+<!--        }-->
+
+<!--        .footer-bottom {-->
+<!--            width: 100%;-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            align-items: center;-->
+<!--            margin-top: 30px;-->
+<!--            border-top: 1px solid rgba(255, 255, 255, 0.2);-->
+<!--            padding-top: 15px;-->
+<!--        }-->
+
+<!--        .footer-bottom .copyright {-->
+<!--            font-size: 0.8rem;-->
+<!--            color: var(&#45;&#45;accent-color);-->
+<!--            opacity: 0.8;-->
+<!--            transition: opacity 0.3s ease;-->
+<!--        }-->
+
+<!--        .footer-bottom .copyright:hover {-->
+<!--            opacity: 1;-->
+<!--        }-->
+
+<!--        /* ===== RESPONSIVE DESIGN ===== */-->
+<!--        @media (max-width: 1024px) {-->
+<!--            :root {-->
+<!--                &#45;&#45;header-height: 90px;-->
+<!--            }-->
+
+<!--            header {-->
+<!--                padding: 15px 30px;-->
+<!--            }-->
+
+<!--            main {-->
+<!--                padding-top: var(&#45;&#45;header-height);-->
+<!--            }-->
+
+<!--            .filter-sidebar {-->
+<!--                width: 200px;-->
+<!--            }-->
+
+<!--            .main-content {-->
+<!--                padding: 30px;-->
+<!--            }-->
+
+<!--            .cards-section {-->
+<!--                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));-->
+<!--            }-->
+
+<!--            .search-bar {-->
+<!--                width: 250px;-->
+<!--            }-->
+<!--        }-->
+
+<!--        @media (max-width: 768px) {-->
+<!--            :root {-->
+<!--                &#45;&#45;header-height: 80px;-->
+<!--            }-->
+
+<!--            header {-->
+<!--                padding: 15px 20px;-->
+<!--            }-->
+
+<!--            .header-container {-->
+<!--                gap: 15px;-->
+<!--            }-->
+
+<!--            .mobile-product-name {-->
+<!--                display: block;-->
+<!--            }-->
+
+<!--            .desktop-product-name {-->
+<!--                display: none;-->
+<!--            }-->
+
+<!--            .content-wrapper {-->
+<!--                flex-direction: column;-->
+<!--                padding-top: 0;-->
+<!--            }-->
+
+<!--            .search-bar {-->
+<!--                width: 200px;-->
+<!--            }-->
+
+<!--            .hamburger {-->
+<!--                display: block;-->
+<!--            }-->
+
+<!--            .nav-buttons {-->
+<!--                display: none;-->
+<!--                flex-direction: column;-->
+<!--                width: 100%;-->
+<!--                gap: 15px;-->
+<!--                background: rgba(255, 255, 255, 0.95);-->
+<!--                padding: 15px;-->
+<!--                position: absolute;-->
+<!--                top: 100%;-->
+<!--                left: 0;-->
+<!--                right: 0;-->
+<!--                z-index: 999;-->
+<!--                box-shadow: var(&#45;&#45;shadow);-->
+<!--            }-->
+
+<!--            .nav-buttons.active {-->
+<!--                display: flex;-->
+<!--            }-->
+
+<!--            .filter-sidebar {-->
+<!--                position: fixed;-->
+<!--                top: var(&#45;&#45;header-height);-->
+<!--                left: 0;-->
+<!--                height: calc(100vh - var(&#45;&#45;header-height));-->
+<!--                transform: translateX(-100%);-->
+<!--                z-index: 998;-->
+<!--                width: 280px;-->
+<!--            }-->
+
+<!--            .filter-sidebar.active {-->
+<!--                transform: translateX(0);-->
+<!--            }-->
+
+<!--            .filter-toggle {-->
+<!--                display: block;-->
+<!--            }-->
+
+<!--            .main-content {-->
+<!--                padding: 20px;-->
+<!--                padding-top: 70px;-->
+<!--            }-->
+
+<!--            .cards-section {-->
+<!--                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));-->
+<!--            }-->
+
+<!--            .footer-left, .footer-middle {-->
+<!--                flex: 100%;-->
+<!--                text-align: center;-->
+<!--            }-->
+
+<!--            .footer-left::after {-->
+<!--                display: none;-->
+<!--            }-->
+
+<!--            .footer-left .footer-label {-->
+<!--                display: block;-->
+<!--                text-align: center;-->
+<!--            }-->
+
+<!--            .footer-left .footer-label::after {-->
+<!--                left: 50%;-->
+<!--                transform: translateX(-50%);-->
+<!--            }-->
+
+<!--            .footer-left .social-links a {-->
+<!--                margin: 0 10px;-->
+<!--            }-->
+
+<!--            .footer-middle .footer-label {-->
+<!--                display: block;-->
+<!--                text-align: center;-->
+<!--            }-->
+
+<!--            .footer-middle .footer-label::after {-->
+<!--                left: 50%;-->
+<!--                transform: translateX(-50%);-->
+<!--            }-->
+
+<!--            .footer-middle .contact-info {-->
+<!--                align-items: center;-->
+<!--                text-align: center;-->
+<!--            }-->
+
+<!--            .footer-bottom {-->
+<!--                flex-direction: column;-->
+<!--                gap: 10px;-->
+<!--            }-->
+
+<!--            .footer-bottom .copyright {-->
+<!--                text-align: center;-->
+<!--            }-->
+<!--        }-->
+
+<!--        @media (max-width: 480px) {-->
+<!--            :root {-->
+<!--                &#45;&#45;header-height: 70px;-->
+<!--            }-->
+
+<!--            header {-->
+<!--                padding: 10px 15px;-->
+<!--            }-->
+
+<!--            .logo-text .hydrospark {-->
+<!--                font-size: 1.5rem;-->
+<!--            }-->
+
+<!--            .logo-text .innovations {-->
+<!--                font-size: 1rem;-->
+<!--            }-->
+
+<!--            .logo img {-->
+<!--                width: 45px;-->
+<!--                height: 45px;-->
+<!--            }-->
+
+<!--            .search-bar {-->
+<!--                width: 180px;-->
+<!--            }-->
+
+<!--            .main-content {-->
+<!--                padding: 15px;-->
+<!--                padding-top: 60px;-->
+<!--            }-->
+
+<!--            .cards-section {-->
+<!--                grid-template-columns: 1fr;-->
+<!--            }-->
+
+<!--            .filter-toggle {-->
+<!--                top: 110px;-->
+<!--            }-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--&lt;!&ndash; Header &ndash;&gt;-->
+<!--<header>-->
+<!--    <div class="header-container">-->
+<!--        <div class="header-top">-->
+<!--            <div class="logo">-->
+<!--                <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />-->
+<!--                <div class="logo-text">-->
+<!--                    <a th:href="@{ / }" class="hydrospark">Hydrospark</a>-->
+<!--                    <a th:href="@{ / }" class="innovations">Innovations</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="search-nav">-->
+<!--                <button class="hamburger" onclick="toggleMenu()">-->
+<!--                    <i class="fas fa-bars"></i>-->
+<!--                </button>-->
+<!--                <div class="nav-buttons">-->
+<!--                    <form class="search-bar" action="/search" method="GET">-->
+<!--                        <i class="fas fa-search"></i>-->
+<!--                        <input type="text" name="query" placeholder="Search...">-->
+<!--                    </form>-->
+<!--                    <a class="nav-btn" th:href="@{/}">Home</a>-->
+<!--                    <a class="nav-btn" th:href="@{/about}">About</a>-->
+<!--                    <a class="nav-btn" th:href="@{/enquiry}">Contact Us</a>-->
+<!--                    <div th:if="${session.employee != null}">-->
+<!--                        <a class="nav-btn" th:href="@{/admin}">Admin</a>-->
+<!--                        <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>-->
+<!--                        <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>-->
+<!--                    </div>-->
+<!--                    <div th:if="${session.employee == null and session.user != null}">-->
+<!--                        <a class="nav-btn" th:href="@{/profile}">Profile</a>-->
+<!--                        <a class="nav-btn" th:href="@{/logout}">Logout</a>-->
+<!--                    </div>-->
+<!--                    <div th:if="${session.employee == null and session.user == null}">-->
+<!--                        <a class="nav-btn" th:href="@{/signin}">Sign In</a>-->
+<!--                        <a class="nav-btn" th:href="@{/signup}">Sign Up</a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        &lt;!&ndash; Mobile product name in header &ndash;&gt;-->
+<!--        <div class="mobile-product-name" th:if="${session.prdName}" th:text="${session.prdName}"></div>-->
+<!--    </div>-->
+<!--</header>-->
+
+<!--&lt;!&ndash; Main Content &ndash;&gt;-->
+<!--<main>-->
+<!--    &lt;!&ndash; Desktop product name banner &ndash;&gt;-->
+<!--    <div class="desktop-product-name" th:if="${session.prdName}">-->
+<!--        <h2 th:text="${session.prdName}"></h2>-->
+<!--    </div>-->
+
+<!--    <div class="content-wrapper">-->
+<!--        &lt;!&ndash; Filter Sidebar &ndash;&gt;-->
+<!--        <div class="filter-sidebar" id="filterSidebar">-->
+<!--            <h3>Filters</h3>-->
+<!--            <form th:action="@{/product/productdetails/{prodId}(prodId=${prodId})}" method="get">-->
+<!--                <div class="filter-group">-->
+<!--                    <label for="dashSize">Dash Size</label>-->
+<!--                    <select id="dashSize" name="dashSize">-->
+<!--                        <option value="">Any</option>-->
+<!--                        <option th:each="dash : ${dashSizes}" th:value="${dash}" th:text="${dash}"></option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="filter-group">-->
+<!--                    <label for="termination">Termination</label>-->
+<!--                    <select id="termination" name="termination">-->
+<!--                        <option value="">Any</option>-->
+<!--                        <option th:each="term : ${terminations}" th:value="${term}" th:text="${term}"></option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="filter-group">-->
+<!--                    <label for="threadSize">Thread Size</label>-->
+<!--                    <select id="threadSize" name="threadSize">-->
+<!--                        <option value="">Any</option>-->
+<!--                        <option th:each="thread : ${threadSizes}" th:value="${thread}" th:text="${thread}"></option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="filter-group">-->
+<!--                    <label for="group">Group</label>-->
+<!--                    <select id="group" name="group">-->
+<!--                        <option value="">Any</option>-->
+<!--                        <option th:each="grp : ${groups}" th:value="${grp}" th:text="${grp}"></option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <button type="submit" class="explore-btn" style="width: 100%; margin-top: 10px;">Apply Filters</button>-->
+<!--            </form>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Main Content Area &ndash;&gt;-->
+<!--        <div class="main-content">-->
+<!--            <button class="filter-toggle" id="filterToggleBtn">-->
+<!--                <i class="fas fa-filter"></i> Filters-->
+<!--            </button>-->
+<!--            <div th:if="${error != null}" class="error-message">-->
+<!--                <span th:text="${error}"></span>-->
+<!--            </div>-->
+<!--            <div th:if="${error == null and productDetails != null and !productDetails.isEmpty()}" class="cards-section">-->
+<!--                <div th:each="prod : ${productDetails}" class="card">-->
+<!--                    <img th:src="${prod.get('img') != null ? 'data:image/png;base64,' + prod.get('img') : '/default-image.png'}" alt="Product Image" />-->
+<!--                    <h5 th:text="${prod.get('prodName')} ?: 'Unnamed Product'"></h5>-->
+<!--                    <div class="product-specs" th:if="${prod.get('specs')}">-->
+<!--                        <p th:each="spec : ${prod.get('specs')}" th:text="${spec}"></p>-->
+<!--                    </div>-->
+<!--                    <a th:href="@{${prod.get('suburl')} ?: '#'}" class="explore-btn">Explore</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div th:if="${error == null and (productDetails == null or productDetails.isEmpty())}" class="error-message">-->
+<!--                No products available.-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</main>-->
+
+<!--&lt;!&ndash; Footer &ndash;&gt;-->
+<!--<footer>-->
+<!--    <div class="footer-container">-->
+<!--        <div class="footer-left">-->
+<!--            <div class="logo-section">-->
+<!--                <img th:src="'data:image/png;base64,' + ${session.img}" alt="Hydrospark" />-->
+<!--                <div class="logo-text">-->
+<!--                    <span class="hydrospark">Hydrospark</span>-->
+<!--                    <span class="innovations">Innovations</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="footer-label">Follow Us</div>-->
+<!--            <div class="social-links">-->
+<!--                <a href="#"><i class="fab fa-facebook-f"></i></a>-->
+<!--                <a href="#"><i class="fab fa-twitter"></i></a>-->
+<!--                <a href="#"><i class="fab fa-linkedin-in"></i></a>-->
+<!--                <a href="#"><i class="fab fa-instagram"></i></a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="footer-middle">-->
+<!--            <div class="footer-label">Contact Info</div>-->
+<!--            <div class="contact-info">-->
+<!--                <div class="contact-item">-->
+<!--                    <i class="fas fa-map-marker-alt"></i>-->
+<!--                    <p>Sr. No. 101, Wadmukhwadi Road, Tapkir Nagar, Alandi Haveli, Pune - 412105</p>-->
+<!--                </div>-->
+<!--                <div class="contact-item">-->
+<!--                    <i class="fas fa-phone-alt"></i>-->
+<!--                    <p><a href="tel:+919156261672">+91 91562 61672</a> | <a href="tel:+918691937235">+91 86919 37235</a></p>-->
+<!--                </div>-->
+<!--                <div class="contact-item">-->
+<!--                    <i class="fas fa-envelope"></i>-->
+<!--                    <p><a href="mailto:sachin@hydrospark.org">sachin@hydrospark.org</a> | <a href="mailto:info@hydrospark.org">info@hydrospark.org</a></p>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="footer-bottom">-->
+<!--            <div class="copyright">-->
+<!--                © 2025 Hydrospark Innovations. All rights reserved.-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</footer>-->
+
+<!--<script>-->
+<!--    // Toggle mobile menu-->
+<!--    function toggleMenu() {-->
+<!--        const navButtons = document.querySelector('.nav-buttons');-->
+<!--        const header = document.querySelector('header');-->
+
+<!--        navButtons.classList.toggle('active');-->
+
+<!--        if (window.innerWidth <= 768) {-->
+<!--            if (navButtons.classList.contains('active')) {-->
+<!--                header.style.height = 'auto';-->
+<!--            } else {-->
+<!--                header.style.height = '';-->
+<!--            }-->
+<!--        }-->
+<!--        adjustContentPadding();-->
+<!--    }-->
+
+<!--    // Toggle filter sidebar-->
+<!--    const filterToggleBtn = document.getElementById('filterToggleBtn');-->
+<!--    const filterSidebar = document.getElementById('filterSidebar');-->
+
+<!--    if (filterToggleBtn && filterSidebar) {-->
+<!--        filterToggleBtn.addEventListener('click', function() {-->
+<!--            filterSidebar.classList.toggle('active');-->
+<!--        });-->
+<!--    }-->
+
+<!--    // Adjust content padding based on header height-->
+<!--    function adjustContentPadding() {-->
+<!--        const header = document.querySelector('header');-->
+<!--        const main = document.querySelector('main');-->
+<!--        const headerHeight = header.offsetHeight;-->
+
+<!--        main.style.paddingTop = `${headerHeight}px`;-->
+
+<!--        // Adjust filter button position on mobile-->
+<!--        const filterToggle = document.getElementById('filterToggleBtn');-->
+<!--        if (filterToggle && window.innerWidth <= 768) {-->
+<!--            filterToggle.style.top = `${headerHeight + 20}px`;-->
+<!--        }-->
+<!--    }-->
+
+<!--    // Close menus when clicking outside-->
+<!--    document.addEventListener('click', function(event) {-->
+<!--        const header = document.querySelector('header');-->
+<!--        const isHeaderClick = header.contains(event.target);-->
+<!--        const isFilterToggle = filterToggleBtn && filterToggleBtn.contains(event.target);-->
+<!--        const isFilterSidebar = filterSidebar && filterSidebar.contains(event.target);-->
+<!--        const navButtons = document.querySelector('.nav-buttons');-->
+<!--        const hamburger = document.querySelector('.hamburger');-->
+
+<!--        if (window.innerWidth <= 768) {-->
+<!--            // Handle nav menu-->
+<!--            if (!isHeaderClick && navButtons.classList.contains('active')) {-->
+<!--                navButtons.classList.remove('active');-->
+<!--                header.style.height = '';-->
+<!--                adjustContentPadding();-->
+<!--            }-->
+
+<!--            // Handle filter sidebar-->
+<!--            if (filterSidebar && filterSidebar.classList.contains('active') &&-->
+<!--                !isFilterToggle && !isFilterSidebar) {-->
+<!--                filterSidebar.classList.remove('active');-->
+<!--            }-->
+<!--        }-->
+<!--    });-->
+
+<!--    // Initialize-->
+<!--    document.addEventListener('DOMContentLoaded', function() {-->
+<!--        adjustContentPadding();-->
+
+<!--        // Set up resize observer for header-->
+<!--        const header = document.querySelector('header');-->
+<!--        const observer = new ResizeObserver(function() {-->
+<!--            adjustContentPadding();-->
+<!--            // Ensure mobile product name stays in header-->
+<!--            if (window.innerWidth > 768) {-->
+<!--                header.style.height = '';-->
+<!--            }-->
+<!--        });-->
+
+<!--        if (header) {-->
+<!--            observer.observe(header);-->
+<!--        }-->
+<!--    });-->
+
+<!--    window.addEventListener('resize', adjustContentPadding);-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
 
 <!--<!DOCTYPE html>-->
 <!--<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">-->
