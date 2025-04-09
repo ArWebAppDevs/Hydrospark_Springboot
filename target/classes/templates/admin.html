@@ -409,10 +409,7 @@
                 </button>
                 <div class="nav-buttons">
                     <a class="nav-btn" th:href="@{/}">Home</a>
-                    <a class="nav-btn" th:href="@{/about}">About</a>
-                    <a class="nav-btn" th:href="@{/enquiry}">Enquiry</a>
                     <div th:if="${session.employee != null}">
-                        <a class="nav-btn" th:href="@{/admin}">Admin</a>
                         <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>
                         <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>
                     </div>
@@ -420,10 +417,10 @@
                         <a class="nav-btn" th:href="@{/profile}">Profile</a>
                         <a class="nav-btn" th:href="@{/logout}">Logout</a>
                     </div>
-                    <div th:if="${session.employee == null and session.user == null}">
-                        <a class="nav-btn" th:href="@{/signin}">Sign In</a>
-                        <a class="nav-btn" th:href="@{/signup}">Sign Up</a>
-                    </div>
+<!--                    <div th:if="${session.employee == null and session.user == null}">-->
+<!--                        <a class="nav-btn" th:href="@{/signin}">Sign In</a>-->
+<!--                        <a class="nav-btn" th:href="@{/signup}">Sign Up</a>-->
+<!--                    </div>-->
                 </div>
             </div>
         </div>
@@ -439,7 +436,7 @@
             <a th:href="@{/admin/showvisited}"><i class="fas fa-eye"></i> Show Who Visited</a>
         </div>
         <div class="sidebar" th:if="${session.employee == null}">
-            <a th:href="@{/admin/employeeLogin}"><i class="fas fa-user-plus"></i> Employee Login </a>
+            <a th:href="@{/admin/employeeLogin}"><i class="fas fa-sign-in-alt"></i> Employee Login </a>
 <!--            <a th:href="@{/admin/removeEmployee}"><i class="fas fa-user-minus"></i> Remove Employee</a>-->
 <!--            <a th:href="@{/admin/addProduct}"><i class="fas fa-box-open"></i> Add Product</a>-->
 <!--            <a th:href="@{/admin/products}"><i class="fas fa-th-list"></i> All Products</a>-->

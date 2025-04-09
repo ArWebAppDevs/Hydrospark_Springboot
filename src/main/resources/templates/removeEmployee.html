@@ -466,8 +466,6 @@
         </button>
         <div class="nav-buttons">
           <a class="nav-btn" th:href="@{/}">Home</a>
-          <a class="nav-btn" th:href="@{/about}">About</a>
-          <a class="nav-btn" th:href="@{/enquiry}">Enquiry</a>
           <div th:if="${session.employee != null}">
             <a class="nav-btn" th:href="@{/admin}">Admin</a>
             <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>
