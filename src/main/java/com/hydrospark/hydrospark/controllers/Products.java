@@ -334,7 +334,7 @@ public String getSubType(@PathVariable int subId, Model model, HttpSession sessi
         userRepo.save(userUp);
     }
 
-    session.setAttribute("subProductName", subId);
+
     List<SubProducts> subProducts = subProdRepo.findSubProductById(subId);
     List<Map<String, String>> base64Images = new ArrayList<>();
     List<Map<String, String>> componentEntries = new ArrayList<>();
@@ -345,6 +345,7 @@ public String getSubType(@PathVariable int subId, Model model, HttpSession sessi
         if (prdImg == null) {
             prdImg = subProd.getProduct().getProdImg();
         }
+        session.setAttribute("subProductName", subProd.getSubTypeName());
 
         Blob blob = new SerialBlob(prdImg);
         byte[] bytes = blob.getBytes(1, (int) blob.length());

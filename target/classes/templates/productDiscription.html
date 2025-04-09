@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-    <title th:text="'Hydrospark - ' + ${prod.prodName}">Hydrospark</title>
+    <title th:text="'Hydrospark - ' + ${session.subProductName}">Hydrospark</title>
     <link rel="icon" type="image/png" th:href="@{'data:image/png;base64,' + ${session.img}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
     <style>
@@ -675,7 +675,7 @@
 <div class="main-content">
     <div class="product-container" th:each="prod : ${product}">
         <div class="product-header">
-            <h1 class="product-name" th:text="${prod.prodName}"></h1>
+            <h1 class="product-name" th:text="${session.subProductName}"></h1>
         </div>
         <div class="product-content">
             <div class="image-column">
