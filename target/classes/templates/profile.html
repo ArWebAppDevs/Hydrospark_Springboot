@@ -543,9 +543,16 @@
         <div class="profile-item" th:if="${email != null}">
             Email Address: <span th:text="${email}"></span>
         </div>
-        <div class="profile-item" th:if="${password != null}">
+<!--        <div class="profile-item" th:if="${password != null}">-->
+<!--            Password: <span th:text="${password}">  <a class="nav-btn" th:href="@{/forgetpassword}">Change Password</a></span>-->
+<!--        </div>-->
+        <div class="profile-item" th:if="${password != null}" style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
             Password: <span th:text="${password}"></span>
+            <div th:if="${session.employee == null and session.user != null}">
+                <a class="nav-btn" th:href="@{/forgetpassword}">Change Password</a>
+            </div>
         </div>
+
         <div class="profile-item" th:if="${phoneNumber != null}">
             Phone Number: <span th:text="${phoneNumber}"></span>
         </div>

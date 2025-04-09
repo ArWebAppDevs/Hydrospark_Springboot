@@ -186,6 +186,7 @@ public class Home {
         if(session.getAttribute("user")!=null){
             return "redirect:/";
         }
+        session.setAttribute("lastUrl","signin");
         return "signin.html";
     }
 
@@ -293,7 +294,7 @@ public class Home {
     }
 
     @GetMapping("/forgetpassword")
-    public String getForgetPassword(){
+    public String getForgetPassword(HttpSession session){
 //        Random random = new Random();
 //        String otp = 1000 + random.nextInt(9000)+"";
 //        session.setAttribute("otp",otp);
@@ -303,7 +304,14 @@ public class Home {
 //                + "Thanks and regards,\n"
 //                + "Hydrospark inno.";
 //        emailService.sendEmail(session,email,subject,body);
-        return "forgetpassword.html";
+        if( session.getAttribute("lastUrl")!=null){
+            String lastUrl = (String) session.getAttribute("lastUrl");
+            if (lastUrl.equalsIgnoreCase("signin") ||lastUrl.equalsIgnoreCase("profile") ){
+                System.out.println("Hiiiiiiiii");
+                return "forgetpassword.html";
+            }
+        }
+        return "redirect:/";
     }
 
     @PostMapping("/forgetpassword")
@@ -336,7 +344,6 @@ public class Home {
 
         emailService.sendEmail(session,email,subject,body);
         session.setAttribute("sentMail","Otp has been sent to email: "+email+" if u dont get please check email and forget again");
-        model.addAttribute("sentMail","Otp has been sent to email: "+email+" if u dont get please check email and forget again");
         return "validate.html";
     }
 
@@ -357,7 +364,6 @@ public class Home {
 
         emailService.sendEmail(session,email,subject,body);
         session.setAttribute("sentMail","Otp has been sent to email: "+email+" if u don't get please check email or forget again");
-        model.addAttribute("sentMail","Otp has been sent to email: "+email+" if u dont get please check email and forget again");
         return "validate.html";
     }
 
@@ -445,6 +451,7 @@ public class Home {
             model.addAttribute("phoneNumber",userProfile.number);
 
         }
+        session.setAttribute("lastUrl","profile");
         return "profile.html";
     }
 
