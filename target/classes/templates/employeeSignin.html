@@ -129,36 +129,29 @@
 
         .nav-buttons {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             align-items: center;
         }
 
         .nav-btn {
-            color: var(--primary-color);
+            padding: 8px 20px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--accent-color);
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
+            text-decoration: none;
+            text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
-            position: relative;
-            padding: 5px 10px;
         }
 
-        .nav-btn::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: 0;
-            left: 50%;
+        .nav-btn:hover {
             background: var(--secondary-color);
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-
-        .nav-btn:hover::after {
-            width: 100%;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
 
         /* Body Styles */

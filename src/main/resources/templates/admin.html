@@ -438,6 +438,13 @@
             <a th:href="@{/admin/products}"><i class="fas fa-th-list"></i> All Products</a>
             <a th:href="@{/admin/showvisited}"><i class="fas fa-eye"></i> Show Who Visited</a>
         </div>
+        <div class="sidebar" th:if="${session.employee == null}">
+            <a th:href="@{/admin/employeeLogin}"><i class="fas fa-user-plus"></i> Employee Login </a>
+<!--            <a th:href="@{/admin/removeEmployee}"><i class="fas fa-user-minus"></i> Remove Employee</a>-->
+<!--            <a th:href="@{/admin/addProduct}"><i class="fas fa-box-open"></i> Add Product</a>-->
+<!--            <a th:href="@{/admin/products}"><i class="fas fa-th-list"></i> All Products</a>-->
+<!--            <a th:href="@{/admin/showvisited}"><i class="fas fa-eye"></i> Show Who Visited</a>-->
+        </div>
 
         <div class="main-content" th:classappend="${session.employee != null} ? 'sidebar-shown' : ''">
             <button class="sidebar-toggle" th:if="${session.employee != null}" onclick="toggleSidebar(event)">
