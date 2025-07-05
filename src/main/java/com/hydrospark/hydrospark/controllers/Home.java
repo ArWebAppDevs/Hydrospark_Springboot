@@ -55,7 +55,6 @@ public class Home {
     public String home(Model model,HttpSession session) throws SQLException {
 //        email="sachin@hydrospark.org";
 //        password="Sachin@10";
-
         List<Product> products=productRepo.findAll();
         System.out.println(products);
         List<Map<String,String>> base64Images = new ArrayList<>();
@@ -69,11 +68,11 @@ public class Home {
             prodDetails.put("url","/product/productdetails/"+prod.getProId());
             base64Images.add(prodDetails);
         }
-        Hydrospark hyd=hydrosparkRepo.findByName("Hydro1...").get(0);
-        Blob blob = new SerialBlob(hyd.getImg());
-        byte[] bytes = blob.getBytes(1, (int) blob.length());
-        String base64Image = Base64.getEncoder().encodeToString(bytes);
-        session.setAttribute("img", base64Image);
+//        Hydrospark hyd=hydrosparkRepo.findByName("Hydro1...").get(0);
+//        Blob blob = new SerialBlob(hyd.getImg());
+//        byte[] bytes = blob.getBytes(1, (int) blob.length());
+//        String base64Image = Base64.getEncoder().encodeToString(bytes);
+//        session.setAttribute("img", base64Image);
 
 
         model.addAttribute("product", base64Images);
