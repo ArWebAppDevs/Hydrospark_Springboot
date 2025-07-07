@@ -1,0 +1,669 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Hydrospark - Admin</title>
+    <link rel="icon" type="image/png" th:href="@{'data:image/png;base64,' + ${session.img}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #ff6b00;
+            --accent-color: #ffffff;
+            --background-color: #f5f5f5;
+            --highlight-color: #00c4b4;
+            --error-color: #ff4f4f;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --text-muted: #666;
+            --header-height: 90px;
+            --sidebar-width: 300px;
+            --sidebar-bg: #000000;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #333);
+            padding: 20px 40px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            height: var(--header-height);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            color: var(--accent-color);
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .nav-toggle {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .hamburger:hover {
+            transform: scale(1.1);
+            background: var(--secondary-color);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 8px 20px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        body {
+            background: var(--background-color);
+            margin: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            padding-top: var(--header-height);
+            flex: 1;
+            width: 100%;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: var(--sidebar-bg);
+            padding: 20px;
+            z-index: 999;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.visible {
+            transform: translateX(0);
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            padding: 15px 20px;
+            margin: 8px 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar a:hover {
+            background: var(--secondary-color);
+            transform: translateX(5px);
+        }
+
+        .sidebar a.active {
+            background: var(--highlight-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .sidebar a i {
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+
+        .sidebar .logo {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar .logo img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .logo span {
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            padding: 40px;
+            background: var(--background-color);
+            transition: margin-left 0.3s ease;
+            width: 100%;
+            margin-left: 0;
+            flex: 1;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+            position: fixed;
+            top: calc(var(--header-height) + 20px);
+            left: 20px;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            color: var(--secondary-color);
+        }
+
+        .visited-users {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .visited-users h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(90deg, var(--secondary-color), var(--highlight-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .visited-users p {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f8f8;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        button[type="submit"] {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button[type="submit"]:hover:not(:disabled) {
+            background: #e65c00;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button[type="submit"]:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* New style for the contacted button with text and icon */
+        .contacted-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px; /* Space between icon and text */
+        }
+
+        .contacted-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .contacted-btn:not(:disabled):hover {
+            background: #e65c00;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .contacted-btn i {
+            font-size: 1rem;
+        }
+
+        @media (min-width: 769px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: var(--sidebar-width);
+                width: calc(100% - var(--sidebar-width));
+                padding-left: 60px;
+                padding-right: 60px;
+            }
+
+            .sidebar-toggle,
+            .hamburger {
+                display: none !important;
+            }
+
+            .nav-buttons {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --header-height: 70px;
+                --sidebar-width: 260px;
+            }
+
+            header {
+                padding: 15px 20px;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-buttons {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.9);
+                padding: 15px;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                z-index: 999;
+            }
+
+            .nav-buttons.active {
+                display: flex;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                display: block;
+            }
+
+            .sidebar .logo {
+                display: flex;
+            }
+
+            .sidebar-toggle {
+                display: flex;
+            }
+
+            .sidebar.visible + .main-content .sidebar-toggle {
+                display: none;
+            }
+
+            .main-content {
+                padding: 25px;
+            }
+
+            .sidebar.visible + .main-content {
+                margin-left: var(--sidebar-width);
+                width: calc(100% - var(--sidebar-width));
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --header-height: 60px;
+                --sidebar-width: 240px;
+            }
+
+            header {
+                padding: 10px 15px;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .logo img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .sidebar-toggle {
+                top: calc(var(--header-height) + 10px);
+                left: 10px;
+            }
+
+            .visited-users h2 {
+                font-size: 1.7rem;
+            }
+
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrapper">
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img th:src="@{'data:image/png;base64,' + ${session.img}}" alt="Hydrospark">
+                <a th:href="@{/}" style="text-decoration: none; color: white;">Hydrospark</a>
+            </div>
+            <div class="nav-toggle">
+                <button class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-buttons">
+                    <a class="nav-btn" th:href="@{/}">Home</a>
+                    <div th:if="${session.employee != null}">
+                        <a class="nav-btn" th:href="@{/admin}">Admin</a>
+                        <a class="nav-btn" th:href="@{/admin/profile}">Profile</a>
+                        <a class="nav-btn" th:href="@{/admin/logout}">Logout</a>
+                    </div>
+                    <div th:if="${session.employee == null and session.user != null}">
+                        <a class="nav-btn" th:href="@{/profile}">Profile</a>
+                        <a class="nav-btn" th:href="@{/logout}">Logout</a>
+                    </div>
+                    <div th:if="${session.employee == null and session.user == null}">
+                        <a class="nav-btn" th:href="@{/signin}">Sign In</a>
+                        <a class="nav-btn" th:href="@{/signup}">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="sidebar" th:classappend="${session.employee != null} ? '' : 'hidden'">
+            <div class="logo">
+                <img th:src="@{'data:image/png;base64,' + ${session.img}}" alt="Hydrospark">
+                <span>Hydrospark</span>
+            </div>
+            <a th:href="@{/admin/addEmployee}">
+                <i class="fas fa-user-plus"></i> Add Employee
+            </a>
+            <a th:href="@{/admin/removeEmployee}">
+                <i class="fas fa-user-minus"></i> Remove Employee
+            </a>
+            <a th:href="@{/admin/addProduct}">
+                <i class="fas fa-box-open"></i> Add Product
+            </a>
+            <a th:href="@{/admin/products}">
+                <i class="fas fa-th-list"></i> All Products
+            </a>
+            <a th:href="@{/admin/showvisited}" class="active">
+                <i class="fas fa-eye"></i> Show Who Visited
+            </a>
+        </div>
+
+        <div class="main-content">
+            <button class="sidebar-toggle" th:if="${session.employee != null}" onclick="toggleSidebar(event)">
+                <i class="fas fa-list"></i>
+            </button>
+            <div class="visited-users">
+                <h2>Visited Users</h2>
+
+                <!-- Check if visited is null or empty -->
+                <div th:if="${#lists.isEmpty(visited)}">
+                    <p>No views present.</p>
+                </div>
+
+                <!-- Display table when visited is not empty -->
+                <table th:unless="${#lists.isEmpty(visited)}">
+                    <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Mobile Number</th>
+                        <th>Date</th>
+                        <th>Contacted</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${visited}">
+                        <td th:text="${user.firstName}"></td>
+                        <td th:text="${user.lastName}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.number}"></td>
+                        <td th:text="${user.date}"></td>
+                        <td th:text="${user.contacted}"></td>
+                        <td>
+                            <form th:action="@{/admin/contacted/{id}(id=${user.email})}" method="post">
+                                <button type="submit" class="contacted-btn" th:disabled="${user.contacted}">
+                                    <i class="fas fa-check"></i> Contacted
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize sidebar state based on screen size
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar && window.innerWidth <= 768) {
+            sidebar.classList.remove('visible');
+        } else if (sidebar) {
+            sidebar.classList.add('visible');
+        }
+        adjustContentPadding();
+    });
+
+    function toggleMenu() {
+      const navButtons = document.querySelector('.nav-buttons');
+      navButtons.classList.toggle('active');
+      adjustContentPadding();
+    }
+
+    function toggleSidebar(event) {
+        event.stopPropagation();
+        const sidebar = document.querySelector('.sidebar');
+        const navButtons = document.querySelector('.nav-buttons');
+
+        if (navButtons && navButtons.classList.contains('active')) {
+            navButtons.classList.remove('active');
+        }
+
+        if (sidebar) {
+            sidebar.classList.toggle('visible');
+        }
+        adjustContentPadding();
+    }
+
+    function adjustContentPadding() {
+      const mainContent = document.querySelector('.main-content');
+      const header = document.querySelector('header');
+      const navButtons = document.querySelector('.nav-buttons');
+      const headerHeight = header.offsetHeight;
+
+      if (navButtons.classList.contains('active') && window.innerWidth <= 768) {
+        const navHeight = navButtons.offsetHeight;
+        mainContent.style.paddingTop = `${headerHeight + navHeight + 20}px`;
+      } else {
+        mainContent.style.paddingTop = `${headerHeight + 40}px`;
+      }
+    }
+
+    document.addEventListener('click', function(event) {
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        const navButtons = document.querySelector('.nav-buttons');
+        const hamburger = document.querySelector('.hamburger');
+
+        const isClickInsideSidebar = sidebar ? sidebar.contains(event.target) : false;
+        const isClickOnSidebarToggle = sidebarToggle ? sidebarToggle.contains(event.target) : false;
+        const isClickInsideNavButtons = navButtons ? navButtons.contains(event.target) : false;
+        const isClickOnHamburger = hamburger ? hamburger.contains(event.target) : false;
+
+        if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('visible') &&
+            !isClickInsideSidebar && !isClickOnSidebarToggle) {
+            sidebar.classList.remove('visible');
+        }
+
+        if (navButtons && navButtons.classList.contains('active') &&
+            !isClickInsideNavButtons && !isClickOnHamburger) {
+            navButtons.classList.remove('active');
+        }
+        adjustContentPadding();
+    });
+
+    window.addEventListener('resize', function() {
+        const sidebar = document.querySelector('.sidebar');
+        const navButtons = document.querySelector('.nav-buttons');
+
+        if (sidebar) {
+            if (window.innerWidth > 768) {
+                sidebar.classList.add('visible');
+                if (navButtons) {
+                    navButtons.classList.remove('active');
+                }
+            } else {
+                sidebar.classList.remove('visible');
+                if (navButtons) {
+                    navButtons.classList.remove('active');
+                }
+            }
+        }
+        adjustContentPadding();
+    });
+</script>
+</body>
+</html>
+-->
