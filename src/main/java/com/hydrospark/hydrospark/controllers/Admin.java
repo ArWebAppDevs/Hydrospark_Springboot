@@ -28,7 +28,7 @@ import static ch.qos.logback.core.util.StringUtil.capitalizeFirstLetter;
 
 
 @Controller
-//@RequestMapping("admin")
+@RequestMapping("admin")
 public class Admin {
 
     @Autowired
@@ -48,7 +48,7 @@ public class Admin {
     @Autowired
     private UserRepo userRepo;
 
-//    @GetMapping("")
+    @GetMapping("")
     public String adminHome(HttpSession session,Model model) throws SQLException {
         Hydrospark hyd=hydrosparkRepo.findByName("Hydro1...").get(0);
         Blob blob = new SerialBlob(hyd.getImg());
@@ -61,11 +61,11 @@ public class Admin {
 
 
 
-//    @GetMapping("/employeeLogin")
+    @GetMapping("/employeeLogin")
     public String getEmployeeLogin(HttpSession session){
         return "employeeSignin.html";
     }
-//    @PostMapping("/employeeLogin")
+    @PostMapping("/employeeLogin")
     public String PostEmployeeLogin(HttpServletRequest request, Model model, HttpSession session){
         System.out.println(session.getAttribute("error"));
         session.setAttribute("error","In employeeLogin post");
@@ -88,7 +88,7 @@ public class Admin {
     }
 
 
-//    @GetMapping("/addEmployee")
+    @GetMapping("/addEmployee")
     public String getAddEmployee(Model model,HttpSession session){
         List<String> validRoles=List.of("admin","manager");
         if(session.getAttribute("employee")==null && validRoles.contains(session.getAttribute("role"))){
@@ -112,7 +112,7 @@ public class Admin {
         return Integer.parseInt(curr);
     }
 
-//    @PostMapping("/addEmployee")
+    @PostMapping("/addEmployee")
     public String postAddEmployee(Model model,HttpServletRequest request,HttpSession session){
         List<String> validRoles=List.of("admin","manager");
         if(session.getAttribute("employee")==null && validRoles.contains(session.getAttribute("role"))){
@@ -138,7 +138,7 @@ public class Admin {
     }
 
 
-//    @GetMapping("/addProduct")
+    @GetMapping("/addProduct")
     public String getAddProducts(HttpSession session){
         List<String> validRoles=List.of("admin","manager");
         if(session.getAttribute("employee")!=null && validRoles.contains(session.getAttribute("role"))){
@@ -148,7 +148,7 @@ public class Admin {
 
     }
 
-//    @PostMapping("/addProduct")
+    @PostMapping("/addProduct")
     public String postAddProducts(HttpServletRequest request,HttpSession session, Model model) throws ServletException, IOException {
         List<String> validRoles=List.of("admin","manager");
         if(session.getAttribute("employee")!=null && validRoles.contains(session.getAttribute("role"))) {
@@ -220,7 +220,7 @@ public class Admin {
         return null; // Return null if no filename found
     }
 
-//    @GetMapping("componentEntry/{subProdId}")
+    @GetMapping("componentEntry/{subProdId}")
     public String getComponentEntry(@PathVariable int subProdId,HttpSession session){
         if(session.getAttribute("lastUrl")==null){
             return "redirect:/admin";
@@ -305,7 +305,7 @@ public class Admin {
 //        return "redirect:/admin/products";
 //    }
 
-//    @PostMapping("componentEntry/{subProdId}")
+    @PostMapping("componentEntry/{subProdId}")
     public String setComponentEntry(
             @PathVariable int subProdId,
             @RequestParam("partNo[]") String[] partNos,
@@ -353,7 +353,7 @@ public class Admin {
         return "redirect:/admin/products";
     }
 
-//    @GetMapping("/prod/{id}")
+    @GetMapping("/prod/{id}")
     public String getProduct(@PathVariable int id,Model model) throws SQLException {
         Product product = productRepo.findById(id);
         Blob blob = new SerialBlob(product.getProdImg());
@@ -373,8 +373,8 @@ public class Admin {
         return "img.html";
     }
 
-//    @GetMapping("/image/{id}")
-//    @ResponseBody
+    @GetMapping("/image/{id}")
+    @ResponseBody
     public ResponseEntity<byte[]> getProductImage(@PathVariable int id) {
         Product product = productRepo.findById(id);
 
@@ -388,7 +388,7 @@ public class Admin {
                 .body(product.getProdImg()); // Return the image as a byte array
     }
 
-//    @GetMapping("/removeEmployee")
+    @GetMapping("/removeEmployee")
     public String getRemoveEmployee(HttpSession session){
         List<String> validRoles=List.of("admin","manager");
         if(session.getAttribute("employee")!=null && validRoles.contains(session.getAttribute("role"))){
@@ -397,7 +397,7 @@ public class Admin {
         return "redirect:/admin/error";
     }
 
-//    @PostMapping("/removeEmployee")
+    @PostMapping("/removeEmployee")
     public String postRemoveEmployee(HttpServletRequest request,HttpSession session,Model model){
         List<String> validRoles=List.of("admin","manager");
         if(session.getAttribute("employee")!=null && validRoles.contains(session.getAttribute("role"))){
@@ -410,7 +410,7 @@ public class Admin {
         return "redirect:/admin/error";
     }
 
-//    @GetMapping("/showvisited")
+    @GetMapping("/showvisited")
     public String shoVistedUsers(Model model,HttpSession session){
         List<String> roles=List.of("admin","manager");
         if(session.getAttribute("employee")!=null && roles.contains(session.getAttribute("role").toString().toLowerCase())){
@@ -446,7 +446,7 @@ public class Admin {
         return "redirect:/admin";
     }
 
-//    @PostMapping("/contacted/{email}")
+    @PostMapping("/contacted/{email}")
     public String contacted(@PathVariable String email){
         email = URLDecoder.decode(email, StandardCharsets.UTF_8);
         User user=userRepo.findByEmail(email).get(0);
@@ -457,7 +457,7 @@ public class Admin {
 //        System.out.println(user.contacted);
         return "redirect:/admin/showvisited";
     }
-//    @GetMapping("/profile")
+    @GetMapping("/profile")
     public String Userprofile(HttpSession session,Model model){
         String employee= (String) session.getAttribute("employee");
         if(session.getAttribute("employee")==null){
@@ -618,7 +618,7 @@ public class Admin {
 //    return "allproducts";
 //}
 
-//@GetMapping("/products")
+@GetMapping("/products")
 public String allProducts(
         @RequestParam(value = "search", required = false) String search,
         @RequestParam(value = "subsearch", required = false) String subsearch,
@@ -679,7 +679,7 @@ public String allProducts(
 
     return "allproducts";
 }
-//    @GetMapping("/products/{search}")
+    @GetMapping("/products/{search}")
     public String searchProducts(@PathVariable("search") String search, Model model, HttpSession session) {
         String employee = (String) session.getAttribute("employee");
         if (session.getAttribute("employee") == null) {
@@ -709,7 +709,7 @@ public String allProducts(
         return "allproducts"; // your view name
     }
 
-//    @GetMapping("/subproducts/{subsearch}")
+    @GetMapping("/subproducts/{subsearch}")
     public String searchSubProducts(@PathVariable("subsearch") String subsearch, Model model, HttpSession session) {
         String employee = (String) session.getAttribute("employee");
         if (session.getAttribute("employee") == null) {
@@ -741,8 +741,8 @@ public String allProducts(
 
 
 
-//    @PostMapping("/removeproduct/{prodId}")
-//    @Transactional
+    @PostMapping("/removeproduct/{prodId}")
+    @Transactional
     public String removeProduct(@PathVariable int prodId,HttpSession session){
         String employee= (String) session.getAttribute("employee");
         if(session.getAttribute("employee")==null){
@@ -753,8 +753,8 @@ public String allProducts(
         productRepo.deleteById(prod.getProId());
         return "redirect:/admin/products";
     }
-//    @PostMapping("/removesubproduct/{subprodId}")
-//    @Transactional
+    @PostMapping("/removesubproduct/{subprodId}")
+    @Transactional
     public String removeSubProduct(@PathVariable int subprodId,HttpSession session){
         String employee= (String) session.getAttribute("employee");
         if(session.getAttribute("employee")==null){
@@ -766,7 +766,7 @@ public String allProducts(
         return "redirect:/admin/products";
     }
 
-//    @GetMapping("/editproduct/{prodId}")
+    @GetMapping("/editproduct/{prodId}")
     public String getEditProduct(@PathVariable int prodId,Model model,HttpSession session){
 //        System.out.println(prodId);
         String employee= (String) session.getAttribute("employee");
@@ -776,7 +776,7 @@ public String allProducts(
             model.addAttribute("redirect","/admin/editproduct/"+prodId);
             return "editProduct.html";
     }
-//    @PostMapping("/editproduct/{prodId}")
+    @PostMapping("/editproduct/{prodId}")
     public String editProduct(@PathVariable int prodId,HttpServletRequest request,HttpSession session,Model model) throws ServletException, IOException {
         String employee= (String) session.getAttribute("employee");
         if(session.getAttribute("employee")==null){
@@ -811,7 +811,7 @@ public String allProducts(
         return "redirect:/admin/products";
     }
 
-//    @GetMapping("/editsubproduct/{subprodId}")
+    @GetMapping("/editsubproduct/{subprodId}")
     public String getEditSubProduct(@PathVariable int subprodId,HttpSession session,Model model) throws ServletException, IOException {
         String employee= (String) session.getAttribute("employee");
         if(session.getAttribute("employee")==null){
@@ -822,7 +822,7 @@ public String allProducts(
         return "editProduct.html";
     }
 
-//    @PostMapping("/editsubproduct/{subprodId}")
+    @PostMapping("/editsubproduct/{subprodId}")
     public String postEditSubProduct(@PathVariable int subprodId,HttpSession session,HttpServletRequest request,Model model) throws ServletException, IOException {
         String employee= (String) session.getAttribute("employee");
         if(session.getAttribute("employee")==null){
@@ -887,12 +887,12 @@ public String allProducts(
     }
 
 
-//    @GetMapping("/logout")
+    @GetMapping("/logout")
     public String logout(HttpSession session){
         session.invalidate();
         return  "redirect:/admin";
     }
-//    @GetMapping("/error")
+    @GetMapping("/error")
     public String error(){
         return "unauthorized.html";
     }
