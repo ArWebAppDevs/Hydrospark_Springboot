@@ -55,8 +55,6 @@ public class Home {
     @Autowired
     private EmailService emailService;
 
-    @Value("${recaptcha.secret}")
-    private String recaptchaSecret;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
