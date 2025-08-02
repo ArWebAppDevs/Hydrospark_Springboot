@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -485,50 +482,93 @@
   </header>
 
   <div class="container">
-    <div class="sidebar" th:classappend="${session.employee != null} ? '' : 'hidden'">
-      <div class="logo">
-        <img th:src="@{'data:image/png;base64,' + ${session.img}}" alt="Hydrospark">
-        <span>Hydrospark</span>
-      </div>
-      <a th:href="@{/admin/addEmployee}"
-         th:class="${#httpServletRequest.requestURI != null && #httpServletRequest.requestURI.contains('/addEmployee')} ? 'active' : ''">
-        <i class="fas fa-user-plus"></i> Add Employee
-      </a>
-      <a th:href="@{/admin/removeEmployee}"
-         th:class="${#httpServletRequest.requestURI != null && #httpServletRequest.requestURI.contains('/removeEmployee')} ? 'active' : ''">
-        <i class="fas fa-user-minus"></i> Remove Employee
-      </a>
-      <a th:href="@{/admin/addProduct}"
-         th:class="${#httpServletRequest.requestURI != null && #httpServletRequest.requestURI.contains('/addProduct')} ? 'active' : ''">
-        <i class="fas fa-box-open"></i> Add Product
-      </a>
-      <a th:href="@{/admin/products}"
-         th:class="${#httpServletRequest.requestURI != null && #httpServletRequest.requestURI.contains('/products')} ? 'active' : ''">
-        <i class="fas fa-th-list"></i> All Products
-      </a>
-      <a th:href="@{/admin/showvisited}"
-         th:class="${#httpServletRequest.requestURI != null && #httpServletRequest.requestURI.contains('/showvisited')} ? 'active' : ''">
-        <i class="fas fa-eye"></i> Show Who Visited
-      </a>
+<!--    <div class="sidebar" th:classappend="${session.employee != null} ? '' : 'hidden'">-->
+<!--      <div class="logo">-->
+<!--        <img th:src="@{'data:image/png;base64,' + ${session.img}}" alt="Hydrospark">-->
+<!--        <span>Hydrospark</span>-->
+<!--      </div>-->
+<!--      <a th:href="@{/admin/addEmployee}"-->
+<!--         th:class="${#httpServletRequest.requestURI != null && #httpServletRequest.requestURI.contains('/addEmployee')} ? 'active' : ''">-->
+<!--        <i class="fas fa-user-plus"></i> Add Employee-->
+<!--      </a>-->
+<!--      <a th:href="@{/admin/removeEmployee}"-->
+<!--         th:class="${#httpServletRequest.requestURI != null && #httpServletRequest.requestURI.contains('/removeEmployee')} ? 'active' : ''">-->
+<!--        <i class="fas fa-user-minus"></i> Remove Employee-->
+<!--      </a>-->
+<!--      <a th:href="@{/admin/addProduct}"-->
+<!--         th:class="${#httpServletRequest.requestURI != null && #httpServletRequest.requestURI.contains('/addProduct')} ? 'active' : ''">-->
+<!--        <i class="fas fa-box-open"></i> Add Product-->
+<!--      </a>-->
+<!--      <a th:href="@{/admin/products}"-->
+<!--         th:class="${#httpServletRequest.requestURI != null && #httpServletRequest.requestURI.contains('/products')} ? 'active' : ''">-->
+<!--        <i class="fas fa-th-list"></i> All Products-->
+<!--      </a>-->
+<!--      <a th:href="@{/admin/showvisited}"-->
+<!--         th:class="${#httpServletRequest.requestURI != null && #httpServletRequest.requestURI.contains('/showvisited')} ? 'active' : ''">-->
+<!--        <i class="fas fa-eye"></i> Show Who Visited-->
+<!--      </a>-->
+<!--    </div>-->
+    <!-- Sidebar - Only shown when employee is logged in -->
+    <div class="sidebar" th:if="${session.employee != null}">
+      <a th:href="@{/admin/addEmployee}"><i class="fas fa-user-plus"></i> Add Employee</a>
+      <a th:href="@{/admin/removeEmployee}"><i class="fas fa-user-minus"></i> Remove Employee</a>
+      <a th:href="@{/admin/addProduct}"><i class="fas fa-box-open"></i> Add Product</a>
+      <a th:href="@{/admin/products}"><i class="fas fa-th-list"></i> All Products</a>
+      <a th:href="@{/admin/showvisited}"><i class="fas fa-eye"></i> Show Who Visited</a>
     </div>
-
+    <div class="sidebar" th:if="${session.employee == null}">
+      <a th:href="@{/admin/employeeLogin}"><i class="fas fa-sign-in-alt"></i> Employee Login </a>
+      <!--            <a th:href="@{/admin/removeEmployee}"><i class="fas fa-user-minus"></i> Remove Employee</a>-->
+      <!--            <a th:href="@{/admin/addProduct}"><i class="fas fa-box-open"></i> Add Product</a>-->
+      <!--            <a th:href="@{/admin/products}"><i class="fas fa-th-list"></i> All Products</a>-->
+      <!--            <a th:href="@{/admin/showvisited}"><i class="fas fa-eye"></i> Show Who Visited</a>-->
+    </div>
     <div class="main-content">
       <button class="sidebar-toggle" th:if="${session.employee != null}" onclick="toggleSidebar(event)">
         <i class="fas fa-list"></i>
       </button>
       <div class="form-content">
         <div class="form-container">
-          <form method="post" th:action="@{/admin/removeEmployee}">
-            <h4>Remove Employee</h4>
+          <form method="post" th:action="@{${redirect}}" enctype="multipart/form-data">
+            <h4>Edit Product</h4>
+
             <div class="form-group">
-              <label for="Email">Email address</label>
-              <input type="email" id="Email" name="Email" required placeholder="Enter email address">
+              <label for="ProductName">Product Name</label>
+              <input type="text" id="ProductName" name="ProductName" >
             </div>
+
+            <div class="form-group">
+              <label for="Description">Description</label>
+              <textarea id="Description" name="Description" rows="4" ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="Price">Price</label>
+              <input type="number" id="Price" name="Price" step="0.01" min="0">
+            </div>
+
+            <div class="form-group">
+              <label for="Group">Group</label>
+              <input type="text" id="Group" name="Group" >
+            </div>
+
+            <div class="form-group">
+              <label for="ThreadSize">Thread Size</label>
+              <input type="text" id="ThreadSize" name="ThreadSize" >
+            </div>
+
+            <div class="form-group">
+              <label for="ProductImage">Product Image</label>
+              <input type="file" id="ProductImage" name="ProductImage" accept="image/*">
+            </div>
+
             <div th:if="${error}" class="error-message">
               <p th:text="${error}"></p>
             </div>
-            <button type="submit">Remove Employee</button>
+
+            <button type="submit">Add Product</button>
           </form>
+
         </div>
       </div>
     </div>

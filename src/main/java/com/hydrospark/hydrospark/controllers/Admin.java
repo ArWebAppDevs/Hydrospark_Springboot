@@ -766,123 +766,226 @@ public String allProducts(
         return "redirect:/admin/products";
     }
 
-    @GetMapping("/editproduct/{prodId}")
-    public String getEditProduct(@PathVariable int prodId,Model model,HttpSession session){
-//        System.out.println(prodId);
-        String employee= (String) session.getAttribute("employee");
-            if(session.getAttribute("employee")==null){
-                return "redirect:/admin";
-            }
-            model.addAttribute("redirect","/admin/editproduct/"+prodId);
-            return "editProduct.html";
+//    @GetMapping("/editproduct/{prodId}")
+//    public String getEditProduct(@PathVariable int prodId,Model model,HttpSession session){
+////        System.out.println(prodId);
+//        String employee= (String) session.getAttribute("employee");
+//            if(session.getAttribute("employee")==null){
+//                return "redirect:/admin";
+//            }
+//            model.addAttribute("redirect","/admin/editproduct/"+prodId);
+//            return "editProduct.html";
+//    }
+//    @PostMapping("/editproduct/{prodId}")
+//    public String editProduct(@PathVariable int prodId,HttpServletRequest request,HttpSession session,Model model) throws ServletException, IOException {
+//        String employee= (String) session.getAttribute("employee");
+//        if(session.getAttribute("employee")==null){
+//            return "redirect:/admin";
+//        }
+////        productName = URLDecoder.decode(productName, StandardCharsets.UTF_8);
+//        Product prod=productRepo.findById(prodId);
+//
+//        String prodName=request.getParameter("ProductName");
+//
+//        Part filePart = request.getPart("ProductImage");
+//        long fileSizeInBytes = filePart.getSize();
+//        long fileSizeInKB = fileSizeInBytes / 1024;
+//        if (fileSizeInKB > 50) {
+//            model.addAttribute("error","Pic size should be less than 50 KB");
+//            return "addProducts.html";
+//
+//        }
+//        byte[] imageBytes = filePart.getInputStream().readAllBytes();
+//        if(prodName!=null){
+//            prod.setProductName(prodName);
+//        }
+//
+//        if(fileSizeInKB>0){
+//            prod.setProdImg(imageBytes);
+//        }
+//
+//        productRepo.save(prod);
+//        model.addAttribute("error","Product edited sucessfully");
+////        productRepo.deleteById(prod.getProId());
+//
+//        return "redirect:/admin/products";
+//    }
+//
+//    @GetMapping("/editsubproduct/{subprodId}")
+//    public String getEditSubProduct(@PathVariable int subprodId,HttpSession session,Model model) throws ServletException, IOException {
+//        String employee= (String) session.getAttribute("employee");
+//        if(session.getAttribute("employee")==null){
+//            return "redirect:/admin";
+//        }
+//        model.addAttribute("redirect","/admin/editsubproduct/"+subprodId);
+////        productRepo.deleteById(prod.getProId());
+//        return "editProduct.html";
+//    }
+//
+//    @PostMapping("/editsubproduct/{subprodId}")
+//    public String postEditSubProduct(@PathVariable int subprodId,HttpSession session,HttpServletRequest request,Model model) throws ServletException, IOException {
+//        String employee= (String) session.getAttribute("employee");
+//        if(session.getAttribute("employee")==null){
+//            return "redirect:/admin";
+//        }
+//        SubProducts subProduct=subProdRepo.findSubProductById(subprodId).get(0);
+//        String prodName=request.getParameter("ProductName");
+//        String description=request.getParameter("Description");
+//        String price= request.getParameter("price");
+//        String dashSize= request.getParameter("dashsize");
+//        String group=request.getParameter("group");
+//        String termination=request.getParameter("Termination");
+//        String threadSize=request.getParameter("threadsize");
+//        Part filePart = request.getPart("ProductImage");
+//
+//
+////        if(subProducts==null){
+////            model.addAttribute("error","No product Found")
+////            return "allproducts";
+////        }
+//        long fileSizeInBytes = filePart.getSize();
+//        long fileSizeInKB = fileSizeInBytes / 1024;
+//        if (fileSizeInKB > 50) {
+//            model.addAttribute("error","Pic size should be less than 50 KB");
+////            System.out.println("size exceed");
+//            return "addProducts.html";
+//
+//        }
+//
+//        if(prodName.length()>0){
+//            subProduct.setSubTypeName(prodName);
+//        }
+//        if(description.length()>0){
+//            subProduct.setDescription(description);
+//        }
+//        if(price.length()>0){
+//            subProduct.setSubTypePrice(Double.parseDouble(price));
+//        }
+//
+//
+//        if(fileSizeInKB>0){
+//            byte[] imageBytes = filePart.getInputStream().readAllBytes();
+//            subProduct.setSubProdImg(imageBytes);
+//        }
+//        if(dashSize.length()>0){
+//            subProduct.setDashSize(Integer.valueOf(dashSize));
+//        }
+//        if(group.length()>0){
+//            subProduct.setGroup(group);
+//        }
+//        if(termination.length()>0){
+//            subProduct.setTermination(termination);
+//        }
+//        if(threadSize.length()>0){
+//            subProduct.setThreadSize(threadSize);
+//        }
+//
+//
+//        subProdRepo.save(subProduct);
+////        productRepo.deleteById(prod.getProId());
+//        return "redirect:/admin/products";
+//    }
+
+@GetMapping("/editproduct/{prodId}")
+public String getEditProduct(@PathVariable int prodId, Model model, HttpSession session, HttpServletRequest request) {
+    if (session.getAttribute("employee") == null) {
+        return "redirect:/admin";
     }
+    model.addAttribute("redirect", "/admin/editproduct/" + prodId);
+    model.addAttribute("currentPath", request.getRequestURI()); // ✅ Added for Thymeleaf
+    return "editProduct.html";
+}
+
     @PostMapping("/editproduct/{prodId}")
-    public String editProduct(@PathVariable int prodId,HttpServletRequest request,HttpSession session,Model model) throws ServletException, IOException {
-        String employee= (String) session.getAttribute("employee");
-        if(session.getAttribute("employee")==null){
+    public String editProduct(@PathVariable int prodId, HttpServletRequest request, HttpSession session, Model model) throws ServletException, IOException {
+        if (session.getAttribute("employee") == null) {
             return "redirect:/admin";
         }
-//        productName = URLDecoder.decode(productName, StandardCharsets.UTF_8);
-        Product prod=productRepo.findById(prodId);
-
-        String prodName=request.getParameter("ProductName");
-
+        System.out.println("Editting prod");
+        Product prod = productRepo.findById(prodId);
+        String prodName = request.getParameter("ProductName");
         Part filePart = request.getPart("ProductImage");
-        long fileSizeInBytes = filePart.getSize();
-        long fileSizeInKB = fileSizeInBytes / 1024;
-        if (fileSizeInKB > 50) {
-            model.addAttribute("error","Pic size should be less than 50 KB");
-            return "addProducts.html";
+        long fileSizeInKB = filePart.getSize() / 1024;
 
+        if (fileSizeInKB > 50) {
+            model.addAttribute("error", "Pic size should be less than 50 KB");
+            model.addAttribute("currentPath", request.getRequestURI()); // ✅ Include again on error
+            return "addProducts.html";
         }
-        byte[] imageBytes = filePart.getInputStream().readAllBytes();
-        if(prodName!=null){
+
+        if (prodName != null) {
             prod.setProductName(prodName);
         }
 
-        if(fileSizeInKB>0){
+        if (fileSizeInKB > 0) {
+            byte[] imageBytes = filePart.getInputStream().readAllBytes();
             prod.setProdImg(imageBytes);
         }
 
         productRepo.save(prod);
-        model.addAttribute("error","Product edited sucessfully");
-//        productRepo.deleteById(prod.getProId());
-
         return "redirect:/admin/products";
     }
 
     @GetMapping("/editsubproduct/{subprodId}")
-    public String getEditSubProduct(@PathVariable int subprodId,HttpSession session,Model model) throws ServletException, IOException {
-        String employee= (String) session.getAttribute("employee");
-        if(session.getAttribute("employee")==null){
+    public String getEditSubProduct(@PathVariable int subprodId, HttpSession session, Model model, HttpServletRequest request) throws ServletException, IOException {
+        if (session.getAttribute("employee") == null) {
             return "redirect:/admin";
         }
-        model.addAttribute("redirect","/admin/editsubproduct/"+subprodId);
-//        productRepo.deleteById(prod.getProId());
+        model.addAttribute("redirect", "/admin/editsubproduct/" + subprodId);
+        model.addAttribute("currentPath", request.getRequestURI()); // ✅ Added for Thymeleaf
         return "editProduct.html";
     }
 
     @PostMapping("/editsubproduct/{subprodId}")
-    public String postEditSubProduct(@PathVariable int subprodId,HttpSession session,HttpServletRequest request,Model model) throws ServletException, IOException {
-        String employee= (String) session.getAttribute("employee");
-        if(session.getAttribute("employee")==null){
+    public String postEditSubProduct(@PathVariable int subprodId, HttpSession session, HttpServletRequest request, Model model) throws ServletException, IOException {
+        if (session.getAttribute("employee") == null) {
             return "redirect:/admin";
         }
-        SubProducts subProduct=subProdRepo.findSubProductById(subprodId).get(0);
-        String prodName=request.getParameter("ProductName");
-        String description=request.getParameter("Description");
-        String price= request.getParameter("price");
-        String dashSize= request.getParameter("dashsize");
-        String group=request.getParameter("group");
-        String termination=request.getParameter("Termination");
-        String threadSize=request.getParameter("threadsize");
+
+        SubProducts subProduct = subProdRepo.findSubProductById(subprodId).get(0);
+        String prodName = request.getParameter("ProductName");
+        String description = request.getParameter("Description");
+        String price = request.getParameter("price");
+//        String dashSize = request.getParameter("dashsize");
+        String group = request.getParameter("group");
+//        String termination = request.getParameter("Termination");
+        String threadSize = request.getParameter("threadsize");
         Part filePart = request.getPart("ProductImage");
 
-
-//        if(subProducts==null){
-//            model.addAttribute("error","No product Found")
-//            return "allproducts";
-//        }
-        long fileSizeInBytes = filePart.getSize();
-        long fileSizeInKB = fileSizeInBytes / 1024;
+        long fileSizeInKB = filePart.getSize() / 1024;
         if (fileSizeInKB > 50) {
-            model.addAttribute("error","Pic size should be less than 50 KB");
-//            System.out.println("size exceed");
+            model.addAttribute("error", "Pic size should be less than 50 KB");
+            model.addAttribute("currentPath", request.getRequestURI()); // ✅ Include again on error
             return "addProducts.html";
-
         }
 
-        if(prodName.length()>0){
+        if (prodName != null && !prodName.isEmpty()) {
             subProduct.setSubTypeName(prodName);
         }
-        if(description.length()>0){
+        if (description != null && !description.isEmpty()) {
             subProduct.setDescription(description);
         }
-        if(price.length()>0){
+        if (price != null && !price.isEmpty()) {
             subProduct.setSubTypePrice(Double.parseDouble(price));
         }
-
-
-        if(fileSizeInKB>0){
+        if (fileSizeInKB > 0) {
             byte[] imageBytes = filePart.getInputStream().readAllBytes();
             subProduct.setSubProdImg(imageBytes);
         }
-        if(dashSize.length()>0){
-            subProduct.setDashSize(Integer.valueOf(dashSize));
-        }
-        if(group.length()>0){
+//        if (dashSize != null && !dashSize.isEmpty()) {
+//            subProduct.setDashSize(Integer.valueOf(dashSize));
+//        }
+        if (group != null && !group.isEmpty()) {
             subProduct.setGroup(group);
         }
-        if(termination.length()>0){
-            subProduct.setTermination(termination);
-        }
-        if(threadSize.length()>0){
+//        if (termination != null && !termination.isEmpty()) {
+//            subProduct.setTermination(termination);
+//        }
+        if (threadSize != null && !threadSize.isEmpty()) {
             subProduct.setThreadSize(threadSize);
         }
 
-
         subProdRepo.save(subProduct);
-//        productRepo.deleteById(prod.getProId());
         return "redirect:/admin/products";
     }
 

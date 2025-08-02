@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.mail.MessagingException;
 import javax.sql.rowset.serial.SerialBlob;
@@ -26,6 +27,18 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+//import javax.servlet.http.HttpSession;
+
+
 
 @Controller
 @RequestMapping("/")
@@ -41,6 +54,11 @@ public class Home {
 
     @Autowired
     private EmailService emailService;
+
+    @Value("${recaptcha.secret}")
+    private String recaptchaSecret;
+
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("/try")
     public String tryHtml(){
@@ -454,8 +472,42 @@ public class Home {
         return "profile.html";
     }
 
+//    @GetMapping("/enquiry")
+//    public String enquiry(){
+//        return "enquiry";
+//    }
+//
+//    @PostMapping("/enquiry")
+//    public String handleEnquiry(
+//            @RequestParam("Name") String name,
+//            @RequestParam("Email") String email,
+//            @RequestParam("Enquiry") String enquiry,
+//            HttpSession session,
+//            Model model) {
+//
+//        // Email to the team
+//        String teamEmailBody = "Subject: New Enquiry from Hydrospark Website\n\n" +
+//                "Dear Team,\n\n" +
+//                "A new enquiry has been submitted through the website. Below are the details:\n\n" +
+//                "Name: " + name + "\n" +
+//                "Email: " + email + "\n" +
+//                "Enquiry:\n" + enquiry + "\n\n" +
+//                "Please respond to the customer at your earliest convenience.\n\n" +
+//                "Best regards,\n" +
+//                "Hydrospark Innovations Team";
+//
+//        emailService.sendEmail(session, "info@hydrospark.com","New Enquiry Submission", teamEmailBody);
+//
+//
+//        session.setAttribute("error","Enquiry Submitted sucessfully");
+//        return "enquiry";
+//        }
+
+
+
+
     @GetMapping("/enquiry")
-    public String enquiry(){
+    public String enquiry() {
         return "enquiry";
     }
 
@@ -464,10 +516,19 @@ public class Home {
             @RequestParam("Name") String name,
             @RequestParam("Email") String email,
             @RequestParam("Enquiry") String enquiry,
+            @RequestParam(name = "website", required = false) String honeypot,
             HttpSession session,
             Model model) {
 
-        // Email to the team
+        // 🕳️ Honeypot: bot filled this
+        if (honeypot != null && !honeypot.isEmpty()) {
+            session.setAttribute("error", "Bot submission detected. Action denied.");
+            return "enquiry";
+        }
+
+
+
+        // ✅ Send Email
         String teamEmailBody = "Subject: New Enquiry from Hydrospark Website\n\n" +
                 "Dear Team,\n\n" +
                 "A new enquiry has been submitted through the website. Below are the details:\n\n" +
@@ -478,12 +539,14 @@ public class Home {
                 "Best regards,\n" +
                 "Hydrospark Innovations Team";
 
-        emailService.sendEmail(session, "info@hydrospark.com","New Enquiry Submission", teamEmailBody);
+        emailService.sendEmail(session, "info@hydrospark.com", "New Enquiry Submission", teamEmailBody);
 
-
-        session.setAttribute("error","Enquiry Submitted sucessfully");
+        session.setAttribute("error", "Enquiry submitted successfully. Thank you!");
         return "enquiry";
-        }
+    }
+
+
+
     @GetMapping("/error")
     public String error(){
         return "unauthorized.html";
