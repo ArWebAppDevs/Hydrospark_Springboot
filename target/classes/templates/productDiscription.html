@@ -713,27 +713,31 @@
         <table class="component-table">
             <thead>
             <tr>
-                <th>Part No</th>
-                <th>Hose Size D</th>
-                <th>BSP Thread Size D</th>
+                <th>Part Name</th>
+                <th>g</th>
+                <th>g1</th>
                 <th>A</th>
                 <th>B</th>
                 <th>C</th>
+                <th>D</th>
                 <th>E</th>
-                <th>F</th>
+                <th>L</th>
+                <th>DN</th>
                 <th>A/F HEX</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="component : ${components}">
-                <td th:text="${component.partNo}"></td>
-                <td th:text="${component.hoseSizeD}"></td>
-                <td th:text="${component.bspThreadSizeD}"></td>
+                <td th:text="${component.partName}"></td>
+                <td th:text="${component.g}"></td>
+                <td th:text="${component.g1}"></td>
                 <td th:text="${component.a}"></td>
                 <td th:text="${component.b}"></td>
                 <td th:text="${component.c}"></td>
+                <td th:text="${component.d}"></td>
                 <td th:text="${component.e}"></td>
-                <td th:text="${component.f}"></td>
+                <td th:text="${component.l}"></td>
+                <td th:text="${component.dn}"></td>
                 <td th:text="${component.afHex}"></td>
             </tr>
             </tbody>

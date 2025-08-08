@@ -166,7 +166,9 @@ public String getProducts(
 
     // Fetch unique filter values from all subproducts
     String prdName = productRepo.findById(prodId).getProductName();
+    String prdDesc = productRepo.findById(prodId).getDescription();
     session.setAttribute("prdName",prdName);
+    session.setAttribute("prdDesc",prdDesc);
     Set<Integer> dashSizes = new TreeSet<>();
     Set<String> terminations = new TreeSet<>();
     Set<String> threadSizes = new TreeSet<>();
@@ -370,21 +372,24 @@ public String getSubType(@PathVariable int subId, Model model, HttpSession sessi
         if (components != null && !components.isEmpty()) {
             // Sort components by partNo (or another field if preferred)
             List<ComponentEntry> sortedComponents = components.stream()
-                    .sorted(Comparator.comparing(ComponentEntry::getPartNo))
+                    .sorted(Comparator.comparing(ComponentEntry::getPartName))
                     .collect(Collectors.toList());
 
             for (ComponentEntry component : sortedComponents) {
                 Map<String, String> componentData = new HashMap<>();
-                componentData.put("partNo", component.getPartNo());
-                componentData.put("hoseSizeD", component.getHoseSizeD());
-                componentData.put("bspThreadSizeD", component.getBspThreadSizeD());
+                componentData.put("partName", component.getPartName());
+                componentData.put("g", component.getG());
+                componentData.put("g1", component.getG1());
                 componentData.put("a", component.getA());
                 componentData.put("b", component.getB());
                 componentData.put("c", component.getC());
+                componentData.put("d", component.getD());
                 componentData.put("e", component.getE());
-                componentData.put("f", component.getF());
+                componentData.put("l", component.getL());
+                componentData.put("dn", component.getDn());
                 componentData.put("afHex", component.getAfHex());
                 componentEntries.add(componentData);
+                System.out.println(component.getAfHex());
             }
         }
     }

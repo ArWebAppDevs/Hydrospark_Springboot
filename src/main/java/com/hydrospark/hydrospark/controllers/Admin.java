@@ -189,7 +189,7 @@ public class Admin {
             byte[] detailedImgBytes = detailedImg.getInputStream().readAllBytes();
             Product getProd=productRepo.findByName(prodName);
             if (getProd==null){
-                Product product=new Product(prodName,imageBytes);
+                Product product=new Product(prodName,imageBytes,description);
                 productRepo.save(product);
 //               System.out.println(this.getFileName(filePart));
             }
@@ -308,14 +308,16 @@ public class Admin {
     @PostMapping("componentEntry/{subProdId}")
     public String setComponentEntry(
             @PathVariable int subProdId,
-            @RequestParam("partNo[]") String[] partNos,
-            @RequestParam("hoseSizeD[]") String[] hoseSizeDs,
-            @RequestParam("bspThreadSizeD[]") String[] bspThreadSizeDs,
+            @RequestParam("partname[]") String[] partName,
+            @RequestParam("g[]") String[] g,
+            @RequestParam("g1[]") String[] g1,
             @RequestParam("a[]") String[] as,
             @RequestParam("b[]") String[] bs,
             @RequestParam("c[]") String[] cs,
+            @RequestParam("d[]") String[] ds,
             @RequestParam("e[]") String[] es,
-            @RequestParam("f[]") String[] fs,
+            @RequestParam("l[]") String[] ls,
+            @RequestParam("dn[]") String[] dn,
             @RequestParam("afHex[]") String[] afHexs,
             HttpSession session) {
 
@@ -323,14 +325,14 @@ public class Admin {
                 .orElseThrow(() -> new IllegalArgumentException("SubProduct not found: " + subProdId));
 
 
-        int entryCount = partNos.length;
+        int entryCount = partName.length;
         for (int i = 0; i < entryCount; i++) {
             // Skip empty or invalid entries
-            if (partNos[i].trim().isEmpty() || hoseSizeDs[i].trim().isEmpty() ||
-                    bspThreadSizeDs[i].trim().isEmpty() || as[i].trim().isEmpty() ||
+            if (partName[i].trim().isEmpty() || g[i].trim().isEmpty() ||
+                    g1[i].trim().isEmpty() || as[i].trim().isEmpty() ||
                     bs[i].trim().isEmpty() || cs[i].trim().isEmpty() ||
-                    es[i].trim().isEmpty() || fs[i].trim().isEmpty() ||
-                    afHexs[i].trim().isEmpty()) {
+                    es[i].trim().isEmpty() || ds[i].trim().isEmpty() ||
+                    afHexs[i].trim().isEmpty() || ls[i].trim().isEmpty() || dn[i].trim().isEmpty()) {
 
                 continue;
             }
@@ -340,8 +342,7 @@ public class Admin {
 //                    es[i] + " " + fs[i] + " " + afHexs[i]);
 
             ComponentEntry componentEntry = new ComponentEntry(
-                    partNos[i], hoseSizeDs[i], bspThreadSizeDs[i],
-                    as[i], bs[i], cs[i], es[i], fs[i], afHexs[i]
+                    partName[i],g[i],g1[i],as[i],bs[i],cs[i],ds[i],es[i],ls[i],dn[i],afHexs[i]
             );
 
             subProd.addComponent(componentEntry); // This handles the bidirectional sync

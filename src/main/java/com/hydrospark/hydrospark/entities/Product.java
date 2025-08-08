@@ -103,6 +103,9 @@ public class Product {
     @Basic(fetch = FetchType.LAZY)
     private byte[] prodImg;
 
+    @Column(name = "description",length = 5000)
+    private String description;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product", orphanRemoval = true)
     private List<SubProducts> subProducts = new ArrayList<>();
 
@@ -110,9 +113,18 @@ public class Product {
     public Product() {
     }
 
-    public Product(String productName, byte[] prodImg) {
+    public Product(String productName, byte[] prodImg,String description) {
         this.productName = productName;
         this.prodImg = prodImg;
+        this.description=description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     // Getters and Setters

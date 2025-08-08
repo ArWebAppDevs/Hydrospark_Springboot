@@ -679,28 +679,28 @@
             <h3>Filters</h3>
             <form th:action="@{/product/productdetails/{prodId}(prodId=${prodId})}" method="get">
                 <div class="filter-group">
-                    <label for="dashSize">Dash Size</label>
+                    <label for="dashSize">Product Type</label>
                     <select id="dashSize" name="dashSize">
                         <option value="">Any</option>
                         <option th:each="dash : ${dashSizes}" th:value="${dash}" th:text="${dash}"></option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label for="termination">Termination</label>
+                    <label for="termination">Termination/ Connection Type</label>
                     <select id="termination" name="termination">
                         <option value="">Any</option>
                         <option th:each="term : ${terminations}" th:value="${term}" th:text="${term}"></option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label for="threadSize">Thread Size</label>
+                    <label for="threadSize">Thread Type</label>
                     <select id="threadSize" name="threadSize">
                         <option value="">Any</option>
                         <option th:each="thread : ${threadSizes}" th:value="${thread}" th:text="${thread}"></option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label for="group">Group</label>
+                    <label for="group">Group/ Category</label>
                     <select id="group" name="group">
                         <option value="">Any</option>
                         <option th:each="grp : ${groups}" th:value="${grp}" th:text="${grp}"></option>
@@ -717,6 +717,10 @@
             </button>
             <div class="desktop-product-name" th:if="${session.prdName}">
                 <h2 th:text="${session.prdName}"></h2>
+            </div>
+            <div th:if="${session.prdDesc}"
+                 style="font-size: 1rem; font-weight: 400; color: #333; margin-bottom: 20px; text-align: center; max-width: 900px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+                <span th:text="${session.prdDesc}"></span>
             </div>
             <div th:if="${error != null}" class="error-message">
                 <span th:text="${error}"></span>

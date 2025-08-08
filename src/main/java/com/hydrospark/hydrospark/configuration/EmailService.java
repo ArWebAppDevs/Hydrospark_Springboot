@@ -1,6 +1,7 @@
 package com.hydrospark.hydrospark.configuration;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -9,10 +10,13 @@ import javax.mail.internet.*;
 
 @Service
 public class EmailService {
+
+    @Value("${smpt.username}")
+    private String username;
+    @Value("${smpt.passowrd}")
+    private String password;
     public void sendEmail(HttpSession session,String email,String subject,String body) {
         String host = "smtpout.secureserver.net";
-        final String username = "info@hydrospark.org"; // your email
-        final String password = "Hydrospark@123";   // your email password
 
         // Recipient's email
         String to = email;
