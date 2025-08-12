@@ -11,10 +11,10 @@ import javax.mail.internet.*;
 @Service
 public class EmailService {
 
-    @Value("${spring.mail.username}")
-    private String username;
-    @Value("${spring.mail.password}")
-    private String password;
+
+    private String username="info@hydrospark.org";
+
+    private String password="Info1@123";
     public void sendEmail(HttpSession session,String email,String subject,String body) {
         String host = "smtpout.secureserver.net";
 
