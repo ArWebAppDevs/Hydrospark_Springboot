@@ -199,6 +199,7 @@ public class Admin {
             SubProducts subProd=new SubProducts(subtype, price, description,imageBytes,detailedImgBytes,dashSize,termination,threadSize,group,getProd);
             subProdRepo.save(subProd);
             session.setAttribute("lastUrl","admin/addProduct");
+            System.out.println("From here to componant");
             return  "redirect:/admin/componentEntry/"+subProd.getSubProdId();
 //            return "redirect:/admin/products";
         }
