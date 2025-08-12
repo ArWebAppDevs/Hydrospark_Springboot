@@ -156,7 +156,7 @@ public class Admin {
             String prodName=request.getParameter("ProductName");
             String subtype=request.getParameter("Category");
             String description=request.getParameter("description");
-            int dashSize= Integer.parseInt(request.getParameter("dashsize"));
+            String dashSize= request.getParameter("dashsize");
             String group=request.getParameter("group");
             String termination=request.getParameter("Termination");
             String threadSize=request.getParameter("threadsize");
@@ -199,7 +199,6 @@ public class Admin {
             SubProducts subProd=new SubProducts(subtype, price, description,imageBytes,detailedImgBytes,dashSize,termination,threadSize,group,getProd);
             subProdRepo.save(subProd);
             session.setAttribute("lastUrl","admin/addProduct");
-            System.out.println("From here to componant");
             return  "redirect:/admin/componentEntry/"+subProd.getSubProdId();
 //            return "redirect:/admin/products";
         }

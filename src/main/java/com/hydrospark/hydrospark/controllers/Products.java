@@ -169,7 +169,7 @@ public String getProducts(
     String prdDesc = productRepo.findById(prodId).getDescription();
     session.setAttribute("prdName",prdName);
     session.setAttribute("prdDesc",prdDesc);
-    Set<Integer> dashSizes = new TreeSet<>();
+    Set<String> dashSizes = new TreeSet<>();
     Set<String> terminations = new TreeSet<>();
     Set<String> threadSizes = new TreeSet<>();
     Set<String> groups = new TreeSet<>();

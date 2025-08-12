@@ -294,7 +294,7 @@ public class SubProducts {
     private byte[] detailedImg;
 
     @Column(name = "dash_size")
-    private Integer dashSize;
+    private String dashSize;
 
     @Column(name = "termination")
     private String termination;
@@ -316,7 +316,7 @@ public class SubProducts {
     public SubProducts() {}
 
     public SubProducts(String subTypeName, double subTypePrice, String description, byte[] subProdImg,byte[] detailedImg,
-                       Integer dashSize, String termination, String threadSize, String group, Product product) {
+                       String dashSize, String termination, String threadSize, String group, Product product) {
         this.subTypeName = subTypeName;
         this.subTypePrice = subTypePrice;
         this.description = description;
@@ -340,8 +340,8 @@ public class SubProducts {
     public void setDescription(String description) { this.description = description; }
     public byte[] getSubProdImg() { return subProdImg; }
     public void setSubProdImg(byte[] subProdImg) { this.subProdImg = subProdImg; }
-    public Integer getDashSize() { return dashSize; }
-    public void setDashSize(Integer dashSize) { this.dashSize = dashSize; }
+    public String getDashSize() { return dashSize; }
+    public void setDashSize(String dashSize) { this.dashSize = dashSize; }
     public String getTermination() { return termination; }
     public void setTermination(String termination) { this.termination = termination; }
     public String getThreadSize() { return threadSize; }
