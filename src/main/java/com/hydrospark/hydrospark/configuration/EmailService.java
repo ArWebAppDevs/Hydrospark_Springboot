@@ -11,9 +11,9 @@ import javax.mail.internet.*;
 @Service
 public class EmailService {
 
-    @Value("${smpt.username}")
+    @Value("${spring.mail.username}")
     private String username;
-    @Value("${smpt.passowrd}")
+    @Value("${spring.mail.password}")
     private String password;
     public void sendEmail(HttpSession session,String email,String subject,String body) {
         String host = "smtpout.secureserver.net";
