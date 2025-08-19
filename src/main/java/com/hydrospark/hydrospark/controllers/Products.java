@@ -103,7 +103,7 @@ public class Products {
 @GetMapping("productdetails/{prodId}")
 public String getProducts(
         @PathVariable int prodId,
-        @RequestParam(required = false) Integer dashSize,
+        @RequestParam(required = false) String dashSize,
         @RequestParam(required = false) String termination,
         @RequestParam(required = false) String threadSize,
         @RequestParam(required = false) String group,
