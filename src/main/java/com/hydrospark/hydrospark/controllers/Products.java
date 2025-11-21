@@ -320,11 +320,11 @@ public String getProducts(
 public String getSubType(@PathVariable int subId, Model model, HttpSession session) throws SQLException {
     session.removeAttribute("error");
 
-    if (session.getAttribute("user") == null && session.getAttribute("employee") == null) {
-        String redirectURL = "product/productdescription/" + subId;
-        session.setAttribute("redirectURL", redirectURL);
-        return "redirect:/signin";
-    }
+    // if (session.getAttribute("user") == null && session.getAttribute("employee") == null) {
+    //     String redirectURL = "product/productdescription/" + subId;
+    //     session.setAttribute("redirectURL", redirectURL);
+    //     return "redirect:/signin";
+    // }
 
     String user = (String) session.getAttribute("user");
     Date currentDate = new Date();
