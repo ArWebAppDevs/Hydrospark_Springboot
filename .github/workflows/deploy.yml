@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+  schedule:
+    # Runs every 2 months (on 1st day at 00:00)
+    - cron: "0 0 1 */2 *"
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
