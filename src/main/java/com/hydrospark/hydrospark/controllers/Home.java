@@ -550,4 +550,9 @@ public class Home {
         return "unauthorized.html";
     }
 
+    @GetMapping("/privacy-policy")
+    public String privacyPolicy(){
+        return "unauthorized.html";
+    }
+
 }
