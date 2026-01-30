@@ -544,7 +544,6 @@ public class Home {
     }
 
 
-
     @GetMapping("/error")
     public String error(){
         return "unauthorized.html";
