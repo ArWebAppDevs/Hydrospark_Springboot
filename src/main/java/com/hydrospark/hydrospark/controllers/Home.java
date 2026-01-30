@@ -552,7 +552,7 @@ public class Home {
 
     @GetMapping("/privacy-policy")
     public String privacyPolicy(){
-        return "unauthorized.html";
+        return "privacy-policy.html";
     }
 
 }
